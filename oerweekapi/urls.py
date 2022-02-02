@@ -3,6 +3,12 @@ from django.conf.urls.static import static
 from django.conf import settings
 from django.contrib import admin
 
+from django.urls import path
+
+from web import views
+
+from django.views.generic.base import RedirectView
+
 from rest_framework import routers
 import rest_framework_jwt.views
 
@@ -38,4 +44,32 @@ urlpatterns = [
     url(r"^api-token-auth/", rest_framework_jwt.views.obtain_jwt_token),
     url(r"^api-token-refresh/", rest_framework_jwt.views.refresh_jwt_token),
     url(r"^export/resources/$", ExportResources.as_view(), name="resource_export"),
-] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+
+    # url(r'^$', views.index, name='web_index'),
+    url(r'^$', RedirectView.as_view(url='https://www.oeglobal.org/activities/open-education-week/', permanent=False), name='root_redirect'),
+
+    # url(r'^page/what-is-open-education-week/$', views.page__what_is_open_education_week),
+    # url(r'^page/faq/$', views.page__faq),
+    # url(r'^page/contribute/$', views.page__contribute),
+    url(r'^submit$', RedirectView.as_view(url='/contribute/', permanent=False)),
+    url(r'^submit/$', RedirectView.as_view(url='/contribute/', permanent=False)),
+    url(r'^submit-activity$', RedirectView.as_view(url='/contribute-activity/', permanent=False)),
+    url(r'^submit-activity/$', RedirectView.as_view(url='/contribute-activity/', permanent=False)),
+    url(r'^submit-asset$', RedirectView.as_view(url='/contribute-asset/', permanent=False)),
+    url(r'^submit-asset/$', RedirectView.as_view(url='/contribute-asset/', permanent=False)),
+    url(r'^contribute$', RedirectView.as_view(url='/contribute/', permanent=False)),
+    url(r'^contribute/$', views.contribute),
+    url(r'^contribute-activity$', RedirectView.as_view(url='/contribute-activity/', permanent=False)),
+    url(r'^contribute-activity/$', views.contribute_activity),
+    url(r'^contribute-asset$', RedirectView.as_view(url='/contribute-asset/', permanent=False)),
+    url(r'^contribute-asset/$', views.contribute_asset),
+    path('edit/<uuid:identifier>/', views.edit_resource),
+    # OLD: url(r'^edit/$', views.edit_resource),
+    # url(r'^page/materials/$', views.page__materials),
+    url(r'^thanks/$', views.thanks),
+
+    # url(r'^page/home/$', views.index, name='web_index'),
+] \
++ static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT) \
++ static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
+

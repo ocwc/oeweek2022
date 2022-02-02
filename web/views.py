@@ -2,12 +2,13 @@ import arrow
 import xlwt
 import urllib.parse
 import twitter
+import uuid
 
 from itertools import groupby
 from datetime import datetime
 
 from django.views.generic import View
-from django.http import HttpResponse
+from django.http import HttpResponse, HttpResponseRedirect
 from django.db.models import Q
 from django.conf import settings
 from django.core.cache import cache
@@ -19,6 +20,7 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.pagination import PageNumberPagination
 
+from .forms import ActivityForm, AssetForm
 from .models import Page, Resource, ResourceImage, EmailTemplate
 from .serializers import (
     PageSerializer,
@@ -29,6 +31,100 @@ from .serializers import (
     ResourceImageSerializer,
 )
 
+
+from django.shortcuts import render
+
+# def index(request):
+#     return render(request, 'web/home.html', context={})
+
+# def page__what_is_open_education_week(request):
+#     return render(request, 'web/page--what-is-open-education-week.html')
+
+# def page__faq(request):
+#     return render(request, 'web/page--faq.html')
+
+# def page__contribute(request):
+#     return render(request, 'web/page--contribute.html')
+
+def contribute(request):
+    return render(request, 'web/contribute.html')
+
+def contribute_activity(request):
+    form = ActivityForm()
+    if request.method == 'POST':
+        # create a form instance & populate with request data
+        form = ActivityForm(request.POST)
+        if form.is_valid():
+            print(form.cleaned_data)
+            resource = form.save()
+            # process the data in form.cleaned_data as required
+            # user = CustomUser.objects.create_user(
+            #     form.cleaned_data['email'],
+            #     form.cleaned_data['full_name'],
+            # )
+            return render(request, 'web/thanks.html', context = { 'uuid': resource.uuid })
+
+    context = {
+        'form': form,
+        'action_verb': 'Contribute',
+        'submit_url': '/contribute-activity/',
+    }
+    return render(request, 'web/contribute-activity.html', context)
+
+def contribute_asset(request):
+    form = AssetForm()
+    if request.method == 'POST':
+        # create a form instance & populate with request data
+        form = AssetForm(request.POST)
+        if form.is_valid():
+            print(form.cleaned_data)
+            form.save()
+            print('UUID IS HERE2: ', form.uuid)
+            return HttpResponseRedirect('/thanks/')
+
+    context = {
+        'form': form,
+        'action_verb': 'Contribute',
+        'submit_url': '/contribute-asset/',
+    }
+    return render(request, 'web/contribute-asset.html', context)
+
+# def page__materials(request):
+#     return render(request, 'web/page--materials.html')
+
+def edit_resource(request, identifier):
+    uuid = identifier
+    resource = Resource.objects.get(uuid=uuid)
+    # form = ResourceForm(initial={'headline': 'Initial headline'}, instance=resource)
+    if resource.post_type == 'event':
+        form = AssetForm(instance=resource)
+        template_url = 'web/contribute-asset.html'
+    elif resource.post_type == 'resource':
+        form = ActivityForm(instance=resource)
+        template_url = 'web/contribute-activity.html'
+
+    if request.method == 'POST':
+        if resource.post_type == 'event':
+            form = AssetForm(request.POST or None, instance=resource)
+        elif resource.post_type == 'resource':
+            form = ActivityForm(request.POST or None, instance=resource)
+
+        if form.is_valid():
+            resource = Resource.objects.get(uuid=uuid)
+            form.save()
+            return HttpResponseRedirect('/') # #todo -- say "updated"
+        else:
+            print(form.errors)
+
+    context = {
+        'form': form,
+        'action_verb': 'Edit',
+        'submit_url': '/edit/' + str(uuid) + '/',
+    }
+    return render(request, template_url, context)
+
+def thanks(request):
+    return render(request, 'web/thanks.html')
 
 class LargeResultsSetPagination(PageNumberPagination):
     page_size = 1000
