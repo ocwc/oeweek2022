@@ -62,7 +62,11 @@ def contribute_activity(request):
             #     form.cleaned_data['email'],
             #     form.cleaned_data['full_name'],
             # )
-            return render(request, 'web/thanks.html', context = { 'uuid': resource.uuid })
+            context = {
+                'uuid': resource.uuid,
+                'title': resource.title,
+            }
+            return render(request, 'web/thanks.html', context=context)
 
     context = {
         'form': form,
@@ -78,9 +82,12 @@ def contribute_asset(request):
         form = AssetForm(request.POST)
         if form.is_valid():
             print(form.cleaned_data)
-            form.save()
-            print('UUID IS HERE2: ', form.uuid)
-            return HttpResponseRedirect('/thanks/')
+            resource = form.save()
+            context = {
+                'uuid': resource.uuid,
+                'title': resource.title,
+            }
+            return render(request, 'web/thanks.html', context=context)
 
     context = {
         'form': form,
