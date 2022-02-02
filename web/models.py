@@ -18,6 +18,8 @@ from model_utils.models import TimeStampedModel
 
 from mail_templated import send_mail
 
+from .data import COUNTRY_CHOICES, LANGUAGE_CHOICES
+
 User = get_user_model()
 
 
@@ -78,6 +80,20 @@ class Resource(TimeStampedModel, ReviewModel):
         ("anytime", "Anytime Event"),
     )
 
+    # #djangomodels #validation #database <!--[[2022-01-23]]@`15:59:28Z`-->
+    # Field.null // If True, Django will store empty values as NULL in the database. Default is False.
+    # Field.blank // If True, the field is allowed to be blank. Default is False.
+    # - blank=False, # required (default)
+    # - blank=True, # optional
+    # (...) I think this might not be clear for everyone: for a IntegerField to be nullable on both forms and db it is necessary to have both null=True and blank=True. See: https://code.djangoproject.com/wiki/NewbieMistakes#IntegerNULLS
+    # JG: there is a #supercool table in #twoscoopsofdjango -- see screenshot in https://web.archive.org/web/20211112230210/https://stackoverflow.com/questions/4384098/in-django-models-py-whats-the-difference-between-default-null-and-blank
+
+    uuid = models.UUIDField(
+         blank = True,
+         default = uuid.uuid4,
+         # editable = False, # DO NOT USE -- non-editable fields cannot be used with forms
+    )
+
     post_type = models.CharField(choices=RESOURCE_TYPES, max_length=25)
     post_status = models.CharField(choices=POST_STATUS_TYPES, max_length=25)
     post_id = models.IntegerField(default=0)
@@ -91,19 +107,35 @@ class Resource(TimeStampedModel, ReviewModel):
     firstname = models.CharField(max_length=255, blank=True, null=True)
     lastname = models.CharField(max_length=255, blank=True, null=True)
 
-    email = models.CharField(max_length=255, blank=True, null=True)
+    email = models.EmailField(max_length=255, blank=True, null=True)
     institution = models.CharField(max_length=255, blank=True, null=True)
-    institution_url = models.CharField(max_length=255, blank=True, null=True)
-    form_language = models.CharField(max_length=255, blank=True)
-    license = models.CharField(max_length=255, blank=True, null=True)
-    link = models.CharField(max_length=255, blank=True, null=True)
-    linkwebroom = models.CharField(max_length=255, blank=True, null=True)
+    institution_url = models.URLField(max_length=255, blank=True, null=True)
+    institution_is_oeg_member = models.BooleanField(blank=True, null=True)
+    form_language = models.CharField(
+        max_length=255, blank=True, null=True, choices=LANGUAGE_CHOICES
+    )
+
+    LICENSE_CHOICES = Choices(
+        ('Public domain', 'Public domain'),
+        ('CC-0', 'CC Zero (CC 0)'),
+        ('CC-BY', 'CC Attribution (CC BY)'),
+        ('CC-BY-SA', 'CC Attribution — Share-Alike (CC BY-SA)'),
+        ('CC-BY-NC', 'CC Attribution — Non-Commercial (CC BY-NC)'),
+        ('CC-NC-SA', 'CC Attribution — Non-Commercial — Share-Alike (CC BY-NC-SA)'),
+        ('Other', 'Other open license'),
+    )
+    license = models.CharField(
+        max_length=255, blank=True, null=True, choices=LICENSE_CHOICES
+    )
+    link = models.URLField(max_length=255, blank=True, null=True)
+    linkwebroom = models.URLField(max_length=255, blank=True, null=True)
 
     image_url = models.URLField(blank=True, null=True, max_length=500)
 
     city = models.CharField(max_length=255, blank=True)
-    country = models.CharField(max_length=255, blank=True)
-
+    country = models.CharField(
+        max_length=255, blank=True, null=True, choices=COUNTRY_CHOICES
+    )
     event_time = models.DateTimeField(blank=True, null=True)
     event_type = models.CharField(
         max_length=255, blank=True, null=True, choices=EVENT_TYPES
@@ -124,13 +156,15 @@ class Resource(TimeStampedModel, ReviewModel):
 
     categories = models.ManyToManyField(Category, blank=True)
     tags = TaggableManager(blank=True)
-    opentags = ArrayField(
-        models.CharField(
-            max_length=255,
-            blank=True,
-        ),
-        blank=True,
-    )
+    opentags = models.CharField(max_length=255, blank=True)
+
+    # opentags = ArrayField(
+    #     models.CharField(
+    #         max_length=255,
+    #         blank=True,
+    #     ),
+    #     blank=True,
+    # )
 
     notified = models.BooleanField(default=False)
     raw_post = models.TextField(blank=True)
@@ -144,6 +178,8 @@ class Resource(TimeStampedModel, ReviewModel):
         "ResourceImage", null=True, default=None, blank=True, on_delete=models.CASCADE
     )
     twitter = models.CharField(blank=True, null=True, max_length=255)
+    twitter_personal = models.CharField(blank=True, null=True, max_length=255)
+    twitter_institution = models.CharField(blank=True, null=True, max_length=255)
 
     def __str__(self):
         return "Resource #{}".format(self.id)

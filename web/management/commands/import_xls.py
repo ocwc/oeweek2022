@@ -40,9 +40,10 @@ class Command(BaseCommand):
                     "contributiontype": "resource",
                     "institution": institution,
                     "datetime": "2018-03-08T09:00:00.000Z",
-                    "opentags": [
-                        tags
-                    ]
+                    "opentags": tags,
+                    # "opentags": [
+                    #     tags
+                    # ]
                 }
 
                 import_submission(data)
