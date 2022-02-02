@@ -104,17 +104,17 @@ def edit_resource(request, identifier):
     resource = Resource.objects.get(uuid=uuid)
     # form = ResourceForm(initial={'headline': 'Initial headline'}, instance=resource)
     if resource.post_type == 'event':
-        form = AssetForm(instance=resource)
-        template_url = 'web/contribute-asset.html'
-    elif resource.post_type == 'resource':
         form = ActivityForm(instance=resource)
         template_url = 'web/contribute-activity.html'
+    elif resource.post_type == 'resource':
+        form = AssetForm(instance=resource)
+        template_url = 'web/contribute-asset.html'
 
     if request.method == 'POST':
         if resource.post_type == 'event':
-            form = AssetForm(request.POST or None, instance=resource)
-        elif resource.post_type == 'resource':
             form = ActivityForm(request.POST or None, instance=resource)
+        elif resource.post_type == 'resource':
+            form = AssetForm(request.POST or None, instance=resource)
 
         if form.is_valid():
             resource = Resource.objects.get(uuid=uuid)
