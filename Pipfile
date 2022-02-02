@@ -1,0 +1,40 @@
+[[source]]
+url = "https://pypi.org/simple"
+verify_ssl = true
+name = "pypi"
+
+[packages]
+arrow = "*"
+django-braces = "*"
+django-ckeditor = "*"
+django-cors-headers = "*"
+django-filter = "*"
+django-mail-templated = "*"
+django-model-utils = "*"
+django-rest-auth = "*"
+django-taggit = "*"
+django-wysiwyg = "*"
+djangorestframework = "*"
+djangorestframework-jsonapi = "*"
+djangorestframework-jwt = "*"
+future = "*"
+gunicorn = "*"
+psycopg2-binary = "*"
+pytest = "*"
+pytest-django = "*"
+pytest-flake8 = "*"
+python-twitter = "*"
+sentry-sdk = "*"
+requests = "*"
+requests-oauthlib = "*"
+virtualenv = "*"
+xlwt = "*"
+flake8 = "*"
+Django = ">=3.2,<=3.3"
+Markdown = "*"
+Pillow = "*"
+
+[dev-packages]
+
+[requires]
+python_version = "3.9"

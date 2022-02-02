@@ -1,59 +1,126 @@
-appnope==0.1.0
-arrow==0.12.1
-contextlib2==0.5.1
-decorator==4.2.1
-django==1.11.29
-django-braces==1.13.0
-django-ckeditor==5.6.1
-django-cors-headers==2.4.0
-django-filter==2.0.0
-django-mail-templated==2.6.5
-django-model-utils==3.1.2
-django-rest-auth==0.9.3
-django-taggit==0.23.0
-django-vanilla-views==1.0.5
-django-wysiwyg==0.8.0
-djangorestframework==3.9.1
-djangorestframework-jsonapi==2.5.0
-djangorestframework-jwt==1.11.0
-future==0.16.0
-gunicorn==19.9.0
-html5lib==1.0.1
-ipdb==0.11
-ipython==6.5.0
-ipython-genutils==0.2.0
-jedi==0.11.1
-Markdown==2.6.11
-micawber==0.3.5
-oauthlib==2.1.0
-olefile==0.45.1
-parso==0.3.1
-path.py==11.0.1
-pexpect==4.6.0
-pickleshare==0.7.4
-Pillow==7.1.0
-pluggy==0.7.1
-prompt-toolkit==1.0.15
-psycopg2_binary==2.7.5
-ptyprocess==0.5.2
-py==1.5.4
-Pygments==2.2.0
-PyJWT==1.6.4
-pytest==3.7.2
-pytest-django==3.4.1
-pytest-flake8==1.0.2
-python-dateutil==2.7.3
-python-oembed==0.2.4
-python-twitter==3.4.2
-sentry-sdk==0.20.2
-requests>=2.20.0
-requests-oauthlib==1.0.0
-simplegeneric==0.8.1
-six==1.11.0
-tox==3.2.1
-traitlets==4.3.2
-virtualenv==16.0.0
-wcwidth==0.1.7
-xlwt==1.3.0
-setuptools==40.4.3
-flake8==3.6.0
+# appnope==0.1.0
+
+# DONOTDELETE -- used in web/views.py
+arrow
+
+# contextlib2==0.5.1
+# decorator==4.2.1
+
+# DONOTDELETE -- <3
+django>=3.2,<=3.3
+
+# DONOTDELETE -- used in web/views.py
+django-braces
+
+# DONOTDELETE
+django-ckeditor
+
+# DONOTDELETE -- see settings.py (CORS middleware)
+django-cors-headers
+
+# DONOTDELETE -- used in multiple places
+django-filter
+
+# DONOTDELETE -- used in multiple places
+django-mail-templated
+
+# DONOTDELETE -- used in web/models.py
+django-model-utils
+
+# ??? -- enabled in settings.py
+django-rest-auth
+
+# DONOTDELETE -- used in web/models.py
+django-taggit
+
+# django-vanilla-views==1.0.5
+
+# DONOTDELETE -- used in settings.py (with ckeditor)
+django-wysiwyg
+
+# DONOTDELETE
+djangorestframework
+
+# DONOTDELETE -- see web/utils.py + settings.py
+djangorestframework-jsonapi
+
+# DONOTDELETE -- used in code
+djangorestframework-jwt
+
+# ???
+future
+
+# DONOTDELETE
+gunicorn
+
+# html5lib==1.0.1
+# ipdb==0.11
+# ipython==6.5.0
+# ipython-genutils==0.2.0
+# jedi==0.11.1
+
+# ??? -- enabled in settings.py
+Markdown
+
+# micawber==0.3.5
+# oauthlib==2.1.0
+# olefile==0.45.1
+# parso==0.3.1
+# path.py==11.0.1
+# pexpect==4.6.0
+# pickleshare==0.7.4
+
+# DO NOT DELETE -- web/models.py uses ImageField
+Pillow
+
+# pluggy==0.7.1
+# prompt-toolkit==1.0.15
+
+# ???
+psycopg2_binary
+# !!! #piphowto #pypihowto -- if this crashes, first do "sudo apt install postgresql postgresql-contrib" !!!
+# psycopg2_binary==2.7.5
+
+# ptyprocess==0.5.2
+# py==1.5.4
+# Pygments==2.2.0
+
+# ??? (not imported explicitly)
+# PyJWT==1.6.4
+
+pytest
+pytest-django
+pytest-flake8
+
+# python-dateutil==2.7.3
+# python-oembed==0.2.4
+
+# DONOTDELETE -- used in web/views.py
+python-twitter
+
+# DONOTDELETE -- used in web/utils.py
+sentry-sdk
+
+# DONOTDELETE
+requests
+# ???
+requests-oauthlib
+
+# simplegeneric==0.8.1
+# six==1.11.0
+# tox==3.2.1
+# traitlets==4.3.2
+
+# ???
+virtualenv
+
+# wcwidth==0.1.7
+
+# DONOTDELETE -- used in web/views.py
+xlwt
+
+# ???
+setuptools
+
+# ??? -- see pytest.ini
+flake8
