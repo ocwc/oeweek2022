@@ -6,7 +6,8 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/1.8/howto/deployment/checklist/
-ALLOWED_HOSTS = ["api.openeducationweek.org"]
+
+ALLOWED_HOSTS = ["api.openeducationweek.org", 'oeweek.oeglobal.org', 'oeweektest.oeglobal.org', 'localhost', '.lhr.life']
 
 # Application definition
 
@@ -37,7 +38,7 @@ MIDDLEWARE = [
     "django.middleware.common.CommonMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
     "django.contrib.auth.middleware.AuthenticationMiddleware",
-    "django.contrib.auth.middleware.SessionAuthenticationMiddleware",
+    #"django.contrib.auth.middleware.SessionAuthenticationMiddleware", # (...) The SessionAuthenticationMiddleware class is removed. It provided no functionality since session authentication is unconditionally enabled in Django 1.10.
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
     "django.middleware.security.SecurityMiddleware",
@@ -117,7 +118,14 @@ REST_FRAMEWORK = {
     "DEFAULT_FILTER_BACKENDS": ("django_filters.rest_framework.DjangoFilterBackend",),
 }
 
-CORS_ORIGIN_ALLOW_ALL = True
+# OLD: CORS_ORIGIN_ALLOW_ALL = True
+CORS_ALLOW_ALL_ORIGINS = True
+CORS_ALLOWED_ORIGINS = [
+    'https://oeweek.oeglobal.org',
+    'https://oeweektest.oeglobal.org',
+    'https://api.openeducationweek.org',
+    'http://localhost:4200',
+]
 
 REST_USE_JWT = True
 
@@ -133,11 +141,13 @@ JWT_AUTH = {
 DJANGO_WYSIWYG_FLAVOR = "ckeditor"
 
 LOGIN_URL = "/api-auth/login/"
-OEW_YEAR = 2021
-OEW_RANGE = ["2021-03-01 00:00:00", "2021-03-05 23:59:59"]
-OEW_CFP_OPEN = "2021-01-01"
+OEW_YEAR = 2022
+OEW_RANGE = ["2022-03-07 00:00:00", "2021-03-11 23:59:59"]
+OEW_CFP_OPEN = "2022-01-08"
 CI = os.environ.get("CI")
 if CI:
     from .testsettings import *  # noqa: F401, F403
 else:
     from .localsettings import *  # noqa: F401, F403
+
+DEFAULT_AUTO_FIELD='django.db.models.AutoField'
