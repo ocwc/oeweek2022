@@ -119,7 +119,7 @@ def edit_resource(request, identifier):
         if form.is_valid():
             resource = Resource.objects.get(uuid=uuid)
             form.save()
-            return HttpResponseRedirect('/') # #todo -- say "updated"
+            return render(request, 'web/updated.html')
         else:
             print(form.errors)
 
