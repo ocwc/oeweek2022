@@ -66,6 +66,14 @@ def contribute_activity(request):
                 'uuid': resource.uuid,
                 'title': resource.title,
             }
+
+            send_mail(
+                "emails/submission_received.tpl",
+                context, # {}, # {"user": user, "key": key},
+                "info@openeducationweek.org",
+                [resource.email],
+            )
+
             return render(request, 'web/thanks.html', context=context)
 
     context = {
