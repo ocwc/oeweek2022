@@ -7,7 +7,7 @@ OE Week submission received
 {% block body %}
 Dear Open Education Week Collaborator,
 
-We appreciate your contribution to Open Education Week (OE Week).  Your entry has been received and will be reviewed shortly by the OE Week Planning Committee.  We will notify you when your submission is approved and posted to the website. If you have questions, please contact us at info@openeducationweek.org.
+We appreciate your contribution to Open Education Week (OE Week).  Your entry has been received and will be reviewed shortly by the OE Week Planning Committee.  We will notify you when your submission is approved and posted to the website. If you have questions, please reply to this message.
 
 If you'd like to edit your entry, "{{ title }}", you can do so here: https://oeweek.oeglobal.org/edit/{{ uuid }}/
 
