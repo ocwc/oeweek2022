@@ -863,11 +863,11 @@
 <!--ADD STYLES HERE IF NEEDED-->
 <!--jan 2022-01-20-->
 {#<!--xoxox-->#}
+{% load static %}
+<link rel="stylesheet" href="{% static 'web/css/base.css' %}">
+
 <style>
-.oegcontent label { font-weight:  bold;}
-.oegcontent input { box-sizing: border-box; border-style: solid; border-width: 1px; border-color: #cccccc; }
-.oegcontent textarea { box-sizing: border-box; border-style: solid; border-width: 1px; border-color: #cccccc; }
-.errorlist { color: red; }
+/* moved to base.css */
 </style>
 
 <div id="oegcontent" class="oegcontent">
