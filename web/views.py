@@ -31,6 +31,7 @@ from .serializers import (
     ResourceImageSerializer,
 )
 
+from mail_templated import send_mail
 
 from django.shortcuts import render
 
@@ -67,12 +68,16 @@ def contribute_activity(request):
                 'title': resource.title,
             }
 
-            send_mail(
-                "emails/submission_received.tpl",
-                context, # {}, # {"user": user, "key": key},
-                "info@openeducationweek.org",
-                [resource.email],
-            )
+            try:
+                send_mail(
+                    "emails/submission_received.tpl",
+                    context, # {}, # {"user": user, "key": key},
+                    "info@openeducationweek.org",
+                    [resource.email],
+                    cc=['openeducationweek@oeglobal.org'],
+                )
+            except:
+                print('Failed to send email to ' + resource.email)
 
             return render(request, 'web/thanks.html', context=context)
 
