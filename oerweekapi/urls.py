@@ -68,6 +68,15 @@ urlpatterns = [
     # url(r'^page/materials/$', views.page__materials),
     url(r'^thanks/$', views.thanks),
 
+    url(r'^schedule$', RedirectView.as_view(url='/events/', permanent=False)),
+    url(r'^schedule/$', RedirectView.as_view(url='/events/', permanent=False)),
+    url(r'^events$', RedirectView.as_view(url='/events/', permanent=False)),
+    url(r'^events/$', views.show_events),
+    url(r'^resources$', RedirectView.as_view(url='/resources/', permanent=False)),
+    url(r'^resources/$', views.show_resources),
+    path('events/<int:year>/<str:slug>/', views.show_event_detail),
+    path('resources/<int:year>/<str:slug>/', views.show_resource_detail),
+
     # url(r'^page/home/$', views.index, name='web_index'),
 ] \
 + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT) \

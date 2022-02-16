@@ -1,0 +1,54 @@
+{% extends 'web/base.html' %}
+
+{% block content %}
+
+<h1>{{ obj.title }}</h1>
+
+<a href="/events/">Back to list of events</a>
+<br>
+
+{{ obj.content }}
+<br>
+
+<hr>
+
+<a href="{{ obj.institution_url }}">{{ obj.institution }}</a>
+{% if obj.twitter_institution %}
+    (Twitter: {{ obj.twitter_institution }})
+{% endif %}
+
+{% if obj.institution_is_oeg_member %}
+    (OEG MEMBER)
+{% endif %}
+
+<br>
+({{ obj.country }}, {{ obj.city }})
+<br>
+
+Contributed by: {{ obj.firstname }} {{ obj.lastname }}
+{% if obj.twitter_personal %}
+    (Twitter: {{ obj.twitter_personal }})
+{% endif %}
+<br>
+
+{% if obj.event_time %}
+    Time: {{ obj.event_time|date:'Y-m-d H:i' }} </li>
+{% else %}
+    (no time specified)
+{% endif %}
+<br>
+
+Language: {{ obj.form_language }}
+<br>
+
+Facilitator: {{ obj.event_facilitator }}
+<br>
+
+Link: <a href="{{ obj.link }}">{{ obj.link }}</a>
+<br>
+{% if obj.linkwebroom %}
+    (<a href="{{ obj.linkwebroom }}">Web room</a>)
+    <br>
+{% endif %}
+
+{% endblock %}

@@ -1,0 +1,43 @@
+{% extends 'web/base.html' %}
+
+{% block content %}
+
+<h1>{{ obj.title }}</h1>
+
+<a href="/resources/">Back to list of resources</a>
+<br>
+
+{{ obj.content }}
+<br>
+
+<hr>
+
+<a href="{{ obj.institution_url }}">{{ obj.institution }}</a>
+{% if obj.twitter_institution %}
+    (Twitter: {{ obj.twitter_institution }})
+{% endif %}
+
+{% if obj.institution_is_oeg_member %}
+    (OEG MEMBER)
+{% endif %}
+
+<br>
+({{ obj.country }}, {{ obj.city }})
+<br>
+
+Contributed by: {{ obj.firstname }} {{ obj.lastname }}
+{% if obj.twitter_personal %}
+    (Twitter: {{ obj.twitter_personal }})
+{% endif %}
+<br>
+
+Language: {{ obj.form_language }}
+<br>
+
+Link: <a href="{{ obj.link }}">{{ obj.link }}</a>
+<br>
+
+License: {{ obj.license }}
+<br>
+
+{% endblock %}

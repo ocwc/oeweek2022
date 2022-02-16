@@ -33,7 +33,8 @@ from .serializers import (
 
 from mail_templated import send_mail
 
-from django.shortcuts import render
+from django.contrib.auth.decorators import login_required
+from django.shortcuts import get_object_or_404, render
 
 # def index(request):
 #     return render(request, 'web/home.html', context={})
@@ -145,6 +146,30 @@ def edit_resource(request, identifier):
 
 def thanks(request):
     return render(request, 'web/thanks.html')
+
+@login_required(login_url='/admin/')
+def show_events(request):
+    event_list = Resource.objects.all().filter(post_type='event').order_by('event_time')#.filter(post_status='publish')
+    context = {'event_list': event_list}
+    return render(request, 'web/events.html', context=context)
+
+@login_required(login_url='/admin/')
+def show_event_detail(request, year, slug):
+    event = get_object_or_404(Resource, year=year, slug=slug)
+    context = {'obj': event}
+    return render(request, 'web/event_detail.html', context=context)
+
+@login_required(login_url='/admin/')
+def show_resources(request):
+    resource_list = Resource.objects.all().filter(post_type='resource').order_by('title')#.filter(post_status='publish')
+    context = {'resource_list': resource_list}
+    return render(request, 'web/resources.html', context=context)
+
+@login_required(login_url='/admin/')
+def show_resource_detail(request, year, slug):
+    resource = get_object_or_404(Resource, year=year, slug=slug)
+    context = {'obj': resource}
+    return render(request, 'web/resource_detail.html', context=context)
 
 class LargeResultsSetPagination(PageNumberPagination):
     page_size = 1000

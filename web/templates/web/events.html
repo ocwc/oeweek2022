@@ -1,0 +1,28 @@
+{% extends 'web/base.html' %}
+
+{% block content %}
+
+<h1>OE Week Events</h1>
+
+<ul>
+{% for event in event_list %}
+    {# {{ forloop.counter }} # starting index 1 #}
+    {# {{ forloop.counter0 }} # starting index 0 #}
+    {# {% if forloop.first %} #}
+    {# {% if forloop.last %} #}
+
+    <li>
+        <a href="/events/{{event.year}}/{{event.slug}}/">#{{ forloop.counter }}:
+        {{ event.title }}</a>
+        ({{ event.institution }},
+        {{event.country }}, {{event.city}})
+        {% if event.event_time %}
+            {{ event.event_time|date:'Y-m-d H:i' }} </li>
+        {% else %}
+            (no time specified)
+        {% endif %}
+
+{% endfor %}
+<ul>
+
+{% endblock %}

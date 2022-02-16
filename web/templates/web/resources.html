@@ -1,0 +1,20 @@
+{% extends 'web/base.html' %}
+
+{% block content %}
+
+<h1>OE Week Resources</h1>
+
+<ul>
+{% for resource in resource_list %}
+
+    <li>
+        <a href="/resources/{{resource.year}}/{{resource.slug}}/">#{{ forloop.counter }}:
+        {{ resource.title }}</a>
+        ({{ resource.institution }},
+        {{ resource.country }}, {{ event.city }})
+    </li>
+
+{% endfor %}
+<ul>
+
+{% endblock %}
