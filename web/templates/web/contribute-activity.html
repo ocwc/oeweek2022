@@ -40,7 +40,23 @@
 {#{{ form.uuid }}#} {# FYI: hidden field #}
 {{ form.post_type }} {# FYI: hidden field #}
 
-{{ form.non_field_errors }}
+{% if form.errors %}
+    <div class="alert alert-error">
+        <p style="background-color: red; color: white;"><strong>This form contains errors. Please scroll down to fix them and submit again.</strong></p>
+        <ul>
+            {% for field in form %}
+                {% if field.errors %}
+                    {% for error in field.errors %}
+                        <li><a href="#id_{{ field.name }}" class="error">{{ error|escape }}</a></li>
+                    {% endfor %}
+                {% endif %}
+            {% endfor %}
+        </ul>
+        {% if form.non_field_errors %}
+            {{ form.non_field_errors }}
+        {% endif %}
+    </div>
+{% endif %}
 
 <hr class="my-8">
 <br>
