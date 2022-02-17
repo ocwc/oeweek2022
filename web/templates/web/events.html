@@ -17,7 +17,7 @@
         {{ event.institution }},
         {{event.country }}, {{event.city}}
         {% if event.event_time %}
-            {{ event.event_time|date:'Y-m-d H:i' }} </li>
+            {{ event.event_time|date:'M d, Y H:i' }} </li>
         {% else %}
             (no time specified)
         {% endif %}
