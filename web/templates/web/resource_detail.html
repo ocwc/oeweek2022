@@ -4,13 +4,9 @@
 
 <h1>{{ obj.title }}</h1>
 
-<a href="/resources/">Back to list of resources</a>
-<br>
+<a class="mb-4 block" href="/resources/">&#8592;Back to list of resources</a>
 
-{{ obj.content }}
-<br>
-
-<hr>
+<div class="mb-4 border-b-2 pb-4">{{ obj.content }}</div>
 
 <a href="{{ obj.institution_url }}">{{ obj.institution }}</a>
 {% if obj.twitter_institution %}

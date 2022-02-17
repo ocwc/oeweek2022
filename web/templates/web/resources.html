@@ -7,11 +7,11 @@
 <ul>
 {% for resource in resource_list %}
 
-    <li>
-        <a href="/resources/{{resource.year}}/{{resource.slug}}/">#{{ forloop.counter }}:
-        {{ resource.title }}</a>
-        ({{ resource.institution }},
-        {{ resource.country }}, {{ event.city }})
+    <li class="p-4 mb-2 rounded-lg shadow-sm hover:shadow-lg transition-shadow">
+        <a class="text-lg leading-tight block" href="/resources/{{resource.year}}/{{resource.slug}}/">#{{ forloop.counter }}.
+        <span class="font-bold">{{ resource.title }}</span></a>
+        {{ resource.institution }},
+        {{ resource.country }}, {{ event.city }}
     </li>
 
 {% endfor %}
