@@ -11,9 +11,9 @@
     {# {% if forloop.first %} #}
     {# {% if forloop.last %} #}
 
-    <li class="p-4 my-4 rounded-lg shadow-sm hover:shadow-lg transition-shadow">
-        <a class="text-lg leading-tight" href="/events/{{event.year}}/{{event.slug}}/">#{{ forloop.counter }}:
-        <span class="font-bold">{{ event.title }}</span></a><br>
+    <li class="p-4 mb-2 rounded-lg shadow-sm hover:shadow-lg transition-shadow">
+        <a class="text-lg leading-tight block" href="/events/{{event.year}}/{{event.slug}}/">#{{ forloop.counter }}. 
+        <span class="font-bold">{{ event.title }}</span></a>
         {{ event.institution }},
         {{event.country }}, {{event.city}}
         {% if event.event_time %}

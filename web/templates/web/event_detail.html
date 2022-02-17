@@ -4,13 +4,9 @@
 
 <h1>{{ obj.title }}</h1>
 
-<a href="/events/">Back to list of events</a>
-<br>
+<a class="mb-4 block" href="/events/">&#8592; Back to list of events</a>
 
-{{ obj.content }}
-<br>
-
-<hr>
+<div class="mb-4 border-b-2 pb-4">{{ obj.content }}</div>
 
 <a href="{{ obj.institution_url }}">{{ obj.institution }}</a>
 {% if obj.twitter_institution %}
@@ -32,7 +28,7 @@ Contributed by: {{ obj.firstname }} {{ obj.lastname }}
 <br>
 
 {% if obj.event_time %}
-    Time: {{ obj.event_time|date:'Y-m-d H:i' }} </li>
+    Date and Time: {{ obj.event_time|date:'M d, Y H:i' }} </li>
 {% else %}
     (no time specified)
 {% endif %}
