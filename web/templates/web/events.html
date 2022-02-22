@@ -12,9 +12,14 @@
     {# {% if forloop.last %} #}
 
     <div class="bg-white mb-2 rounded-lg shadow-sm hover:shadow-lg transition-shadow overflow-hidden">
-        <!-- Mario's placeholder image. Load custom image when possible -->
+        <!-- Mario's placeholder image. Load custom image when possible -->        
+
+        {% if obj.image_url %}
+        <img src="{{ image_url }}">
+        {% else %}
         {% load static %}
         <a class="text-lg leading-tight block" href="/events/{{event.year}}/{{event.slug}}/"><img rel="stylesheet" src="{% static 'web/images/placeholder-event-sm.png' %}" class="mb-4 w-full"></a>
+        {% endif %}
 
         <div class="p-4">
             <a class="text-lg leading-tight block mb-2" href="/events/{{event.year}}/{{event.slug}}/"><span class="hidden">#{{ forloop.counter }}.</span> 
