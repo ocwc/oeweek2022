@@ -30,9 +30,10 @@ requests-oauthlib = "*"
 virtualenv = "*"
 xlwt = "*"
 flake8 = "*"
-Django = ">=3.2,<=3.3"
+Django = "<=3.3,>=3.2"
 Markdown = "*"
 Pillow = "*"
+django-import-export = "*"
 
 [dev-packages]
 

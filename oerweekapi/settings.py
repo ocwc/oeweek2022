@@ -30,6 +30,7 @@ INSTALLED_APPS = (
     "model_utils",
     "corsheaders",
     "web",
+    "import_export",
 )
 
 MIDDLEWARE = [

@@ -124,3 +124,6 @@ setuptools
 
 # ??? -- see pytest.ini
 flake8
+
+# 2022-02-22
+django-import-export

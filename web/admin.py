@@ -1,9 +1,11 @@
 from django.contrib import admin
 
+from import_export.admin import ImportExportMixin
+
 from .models import Page, Resource, Category, EmailTemplate, ResourceImage
 
 
-class ResourceAdmin(admin.ModelAdmin):
+class ResourceAdmin(ImportExportMixin, admin.ModelAdmin):
     list_display = ('id', 'title', 'post_status', 'event_type', 'contact', 'institution', 'year')
     readonly_fields = ('uuid', 'created', 'modified',)
     search_fields = ('post_id', 'title', 'country', 'contact', 'firstname', 'lastname', 'email', 'institution', 'link')
