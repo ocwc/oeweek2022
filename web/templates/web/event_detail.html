@@ -5,51 +5,60 @@
 <h1>{{ obj.title }}</h1>
 
 <a class="mb-4 block" href="/events/">&#8592; Back to list of events</a>
+<div class="card bg-white p-4 lg:p-8 rounded grid lg:grid-cols-2">
+    
+    <div class="detail-media">
+        {% if obj.image_url %}
+        <img src="{{ image_url }}">
+        {% else %}
+        {% load static %}
+        <img rel="stylesheet" src="{% static 'web/images/placeholder-event-sm.png' %}" class="mb-4 w-full">
+        {% endif %}
+    </div>
 
-{% if obj.image_url %}
-<img src="{{ image_url }}">
-<br>
-{% endif %}
+    <div class="detail-content mb-4 lg:p-4">
+        
+        <div class="prose mb-8">{{ obj.content }}</div>
 
-<div class="mb-4 border-b-2 pb-4">{{ obj.content }}</div>
+        <a href="{{ obj.institution_url }}">{{ obj.institution }}</a>
+        {% if obj.twitter_institution %}
+            (Twitter: {{ obj.twitter_institution }})
+        {% endif %}
 
-<a href="{{ obj.institution_url }}">{{ obj.institution }}</a>
-{% if obj.twitter_institution %}
-    (Twitter: {{ obj.twitter_institution }})
-{% endif %}
+        <p>
+        {% if obj.institution_is_oeg_member %}
+            (OEG MEMBER)
+        {% endif %}
+        </p>
+        
+        <p>({{ obj.country }}, {{ obj.city }})</p>
+        
+        <p>
+        Contributed by: {{ obj.firstname }} {{ obj.lastname }}
+        {% if obj.twitter_personal %}
+            (Twitter: {{ obj.twitter_personal }})
+        {% endif %}
+        </p>
 
-{% if obj.institution_is_oeg_member %}
-    (OEG MEMBER)
-{% endif %}
+        <p>
+        {% if obj.event_time %}
+            Date and Time: {{ obj.event_time|date:'M d, Y H:i' }} </li>
+        {% else %}
+            (no time specified)
+        {% endif %}
+        </p>
 
-<br>
-({{ obj.country }}, {{ obj.city }})
-<br>
+        <p>Language: {{ obj.form_language }}</p>
 
-Contributed by: {{ obj.firstname }} {{ obj.lastname }}
-{% if obj.twitter_personal %}
-    (Twitter: {{ obj.twitter_personal }})
-{% endif %}
-<br>
+        <p>Facilitator: {{ obj.event_facilitator }}</p>
+        
+        <p class="mt-6">Link: <a href="{{ obj.link }}" class="bg-purple-500 text-white p-2 rounded hover:bg-purple-800 block">{{ obj.link }}</a></p>
+        
+        {% if obj.linkwebroom %}
+            (<a href="{{ obj.linkwebroom }}" class="bg-purple-500 text-white p-2 rounded">Web room</a>)
+            <br>
+        {% endif %}
 
-{% if obj.event_time %}
-    Date and Time: {{ obj.event_time|date:'M d, Y H:i' }} </li>
-{% else %}
-    (no time specified)
-{% endif %}
-<br>
-
-Language: {{ obj.form_language }}
-<br>
-
-Facilitator: {{ obj.event_facilitator }}
-<br>
-
-Link: <a href="{{ obj.link }}">{{ obj.link }}</a>
-<br>
-{% if obj.linkwebroom %}
-    (<a href="{{ obj.linkwebroom }}">Web room</a>)
-    <br>
-{% endif %}
-
+    </div>
+</div>
 {% endblock %}
