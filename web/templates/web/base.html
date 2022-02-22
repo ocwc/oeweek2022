@@ -21,6 +21,9 @@
     <!-- Mario: Using Tailwind via CDN -->
     <!-- Needs to go before custom styles -->
     <link href="https://unpkg.com/tailwindcss@^2/dist/tailwind.min.css" rel="stylesheet">
+    <!-- Mario added fontawesome -->
+    <script src="https://kit.fontawesome.com/99fcecbc40.js" crossorigin="anonymous"></script>
+    
     <style>
         .ember-basic-dropdown {
             position: relative
@@ -854,33 +857,26 @@
     </header>
     <div class="bg-gray-100 py-8 lg:py-20">
         <div class="container">
-            <div class="lg:w-7/12 lg:ml-32 content">
+            <div class="w-full content">
 
 
+                    <!--ADD STYLES HERE IF NEEDED-->
+                    <!--jan 2022-01-20-->
+                    {#<!--xoxox-->#}
+                    {% load static %}
+                    <link rel="stylesheet" href="{% static 'web/css/base.css' %}">
 
-                <div class="card bg-white p-8 lg:p-16 rounded shadow-lg prose">
+                    <style>
+                    /* moved to base.css */
+                    </style>
 
-<!--ADD STYLES HERE IF NEEDED-->
-<!--jan 2022-01-20-->
-{#<!--xoxox-->#}
-{% load static %}
-<link rel="stylesheet" href="{% static 'web/css/base.css' %}">
-
-<style>
-/* moved to base.css */
-</style>
-
-<div id="oegcontent" class="oegcontent">
-<!--BEGIN CONTENT-->
-{% block content %}
- <h1>Open Education Week</h1>
-{% endblock %}
-<!--END CONTENT-->
-</div>
-                </div>
-
-
-
+                    <div id="oegcontent" class="oegcontent">
+                        <!--BEGIN CONTENT-->
+                        {% block content %}
+                        <h1>Open Education Week</h1>
+                        {% endblock %}
+                        <!--END CONTENT-->
+                    </div>                  
 
             </div>
         </div>
