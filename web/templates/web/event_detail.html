@@ -18,44 +18,45 @@
 
     <div class="detail-content mb-4 lg:p-4">
         
-        <div class="prose mb-8">{{ obj.content }}</div>
+        <div class="text-sm mb-8 bg-gray-100 p-4 rounded">{{ obj.content }}</div>
 
-        <a href="{{ obj.institution_url }}">{{ obj.institution }}</a>
+        <p class="mb-2"><i class="fal fa-university"></i> <a href="{{ obj.institution_url }}">{{ obj.institution }}</a></p>
+
+        
         {% if obj.twitter_institution %}
-            (Twitter: {{ obj.twitter_institution }})
+            <p class="mb-2"><i class="fab fa-twitter"></i> Twitter: {{ obj.twitter_institution }}</p>
         {% endif %}
-
-        <p>
+        
         {% if obj.institution_is_oeg_member %}
-            (OEG MEMBER)
+            <p class="mb-2"><i class="fal fa-badge-check"></i> OEGlobal Member</p>
         {% endif %}
-        </p>
         
-        <p>({{ obj.country }}, {{ obj.city }})</p>
         
-        <p>
-        Contributed by: {{ obj.firstname }} {{ obj.lastname }}
+        <p class="mb-2"><i class="fal fa-globe-asia"></i> {{ obj.country }}, {{ obj.city }}</p>
+        
+        <p class="mb-2">
+            <i class="fal fa-user-circle"></i> Contributed by: {{ obj.firstname }} {{ obj.lastname }}
         {% if obj.twitter_personal %}
             (Twitter: {{ obj.twitter_personal }})
         {% endif %}
         </p>
 
-        <p>
-        {% if obj.event_time %}
-            Date and Time: {{ obj.event_time|date:'M d, Y H:i' }} </li>
-        {% else %}
-            (no time specified)
-        {% endif %}
-        </p>
-
-        <p>Language: {{ obj.form_language }}</p>
-
-        <p>Facilitator: {{ obj.event_facilitator }}</p>
         
-        <p class="mt-6">Link: <a href="{{ obj.link }}" class="bg-purple-500 text-white p-2 rounded hover:bg-purple-800 block">{{ obj.link }}</a></p>
+        {% if obj.event_time %}
+            <p class="mb-2"><i class="fal fa-calendar-check"></i> Date and Time: {{ obj.event_time|date:'M d, Y H:i' }} </p>
+        {% else %}
+            <p class="mb-2">(no time specified)</p>
+        {% endif %}
+        
+
+        <p class="mb-2"><i class="fal fa-globe"></i> Language: {{ obj.form_language }}</p>
+
+        <p class="mb-2"><i class="fal fa-user-chart"></i> Facilitator: {{ obj.event_facilitator }}</p>
+        
+        <p class="mt-6"><a href="{{ obj.link }}" class="bg-purple-500 text-white p-2 rounded hover:bg-purple-800 block"><i class="fal fa-external-link-alt"></i> {{ obj.link }}</a></p>
         
         {% if obj.linkwebroom %}
-            (<a href="{{ obj.linkwebroom }}" class="bg-purple-500 text-white p-2 rounded">Web room</a>)
+            <p class="mt-6"><i class="fal fa-video"></i> <a href="{{ obj.linkwebroom }}" class="bg-blue-500 text-white p-2 rounded hover:bg-blue-800 block">Web room</a></p>
             <br>
         {% endif %}
 
