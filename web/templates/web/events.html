@@ -4,25 +4,33 @@
 
 <h1>OE Week Events</h1>
 
-<ul>
+<div class="grid gird-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-2 md:gap-x-8">
 {% for event in event_list %}
     {# {{ forloop.counter }} # starting index 1 #}
     {# {{ forloop.counter0 }} # starting index 0 #}
     {# {% if forloop.first %} #}
     {# {% if forloop.last %} #}
 
-    <li class="p-4 mb-2 rounded-lg shadow-sm hover:shadow-lg transition-shadow">
-        <a class="text-lg leading-tight block" href="/events/{{event.year}}/{{event.slug}}/">#{{ forloop.counter }}. 
-        <span class="font-bold">{{ event.title }}</span></a>
-        {{ event.institution }},
-        {{event.country }}, {{event.city}}
-        {% if event.event_time %}
-            {{ event.event_time|date:'M d, Y H:i' }} </li>
-        {% else %}
-            (no time specified)
-        {% endif %}
+    <div class="bg-white mb-2 rounded-lg shadow-sm hover:shadow-lg transition-shadow overflow-hidden">
+        <!-- Mario's placeholder image. Load custom image when possible -->
+        {% load static %}
+        <a class="text-lg leading-tight block" href="/events/{{event.year}}/{{event.slug}}/"><img rel="stylesheet" src="{% static 'web/images/placeholder-event-sm.png' %}" class="mb-4 w-full"></a>
 
+        <div class="p-4">
+            <a class="text-lg leading-tight block mb-2" href="/events/{{event.year}}/{{event.slug}}/"><span class="hidden">#{{ forloop.counter }}.</span> 
+            <span class="font-bold">{{ event.title }}</span></a>
+
+            <i class="fa-light fa-building-columns"></i> {{ event.institution }}<br>
+            {{event.country }}, {{event.city}}<br>
+            {% if event.event_time %}
+                {{ event.event_time|date:'M d, Y H:i' }} 
+        
+            {% else %}
+                (no time specified)
+            {% endif %}
+        </div>
+    </div>
 {% endfor %}
-<ul>
+    </div>
 
 {% endblock %}

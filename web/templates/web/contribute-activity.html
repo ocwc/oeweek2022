@@ -21,202 +21,202 @@
 -->
 
 <h1>{{ action_verb }} Activity</h1>
+<div class="card bg-white p-8 lg:p-16 rounded shadow-lg prose">
+    <img src="https://conference.oeglobal.org/2021/wp-content/uploads/2022/02/submission-banner.png">
 
-<img src="https://conference.oeglobal.org/2021/wp-content/uploads/2022/02/submission-banner.png">
+    <p><strong>Open Education Week 2022 takes place March 7-11.</strong></p>
 
-<p><strong>Open Education Week 2022 takes place March 7-11.</strong></p>
+    <p>All open educators, students, policymakers, technologists and enthusiasts, wherever you may be, are invited to celebrate their Open Education work by hosting events and activities during OE Week 2022.</p>
 
-<p>All open educators, students, policymakers, technologists and enthusiasts, wherever you may be, are invited to celebrate their Open Education work by hosting events and activities during OE Week 2022.</p>
+    <p><strong>Activities</strong> could be events or sessions related to the intersection of the Open movement with Education that take place during the Open Education Week period. These activities can be live and in-person, online or asynchronous. They can be a series or one, although we encourage you to plan more than webinars and online live presentations. Try something different and creative to drive participation and promote collaboration and networking across OE Week. Use the <a href="https://www.oeglobal.org/activities/open-education-week/open-education-week-kit/">OEWeek Promotional Materials</a> for your activity.</p>
 
-<p><strong>Activities</strong> could be events or sessions related to the intersection of the Open movement with Education that take place during the Open Education Week period. These activities can be live and in-person, online or asynchronous. They can be a series or one, although we encourage you to plan more than webinars and online live presentations. Try something different and creative to drive participation and promote collaboration and networking across OE Week. Use the <a href="https://www.oeglobal.org/activities/open-education-week/open-education-week-kit/">OEWeek Promotional Materials</a> for your activity.</p>
+    <p>Still have questions? <a href="https://www.oeglobal.org/activities/open-education-week/faq/">Read our FAQs</a>.</p>
 
-<p>Still have questions? <a href="https://www.oeglobal.org/activities/open-education-week/faq/">Read our FAQs</a>.</p>
+    <p><strong>Share your activity, sessions or events by filling out the form below.</strong></p>
 
-<p><strong>Share your activity, sessions or events by filling out the form below.</strong></p>
+    <form action="{{ submit_url }}" method="post">
+    {% csrf_token %}
 
-<form action="{{ submit_url }}" method="post">
-{% csrf_token %}
+    {#{{ form.uuid }}#} {# FYI: hidden field #}
+    {{ form.post_type }} {# FYI: hidden field #}
 
-{#{{ form.uuid }}#} {# FYI: hidden field #}
-{{ form.post_type }} {# FYI: hidden field #}
+    {% if form.errors %}
+        <div class="alert alert-error">
+            <p style="background-color: red; color: white;"><strong>This form contains errors. Please scroll down to fix them and submit again.</strong></p>
+            <ul>
+                {% for field in form %}
+                    {% if field.errors %}
+                        {% for error in field.errors %}
+                            <li><a href="#id_{{ field.name }}" class="error">{{ error|escape }}</a></li>
+                        {% endfor %}
+                    {% endif %}
+                {% endfor %}
+            </ul>
+            {% if form.non_field_errors %}
+                {{ form.non_field_errors }}
+            {% endif %}
+        </div>
+    {% endif %}
 
-{% if form.errors %}
-    <div class="alert alert-error">
-        <p style="background-color: red; color: white;"><strong>This form contains errors. Please scroll down to fix them and submit again.</strong></p>
-        <ul>
-            {% for field in form %}
-                {% if field.errors %}
-                    {% for error in field.errors %}
-                        <li><a href="#id_{{ field.name }}" class="error">{{ error|escape }}</a></li>
-                    {% endfor %}
-                {% endif %}
-            {% endfor %}
-        </ul>
-        {% if form.non_field_errors %}
-            {{ form.non_field_errors }}
-        {% endif %}
-    </div>
-{% endif %}
-
-<hr class="my-8">
-<br>
-<h2 style="background-color: #eeeeee"><strong>Details of your OE Week Activity</strong></h2>
-
-<div></div>
-
-<p>
-    {{ form.title.label_tag }}
-    {{ form.title.errors }}
-    {{ form.title }}
-</p>
-
-<p>
-    {{ form.event_facilitator.label_tag }}
-    {{ form.event_facilitator.errors }}
-    {{ form.event_facilitator }}
-</p>
-
-<p>
-    {{ form.content.label_tag }}
-    {{ form.content.errors }}
-    <br>Include a summary of the activity. Who can/will participate? What will a participant need to be part of this? What will be the outcomes of the activity?
-    <br><em>Suggested length: 50-500 words. Feel free to also provide the description in your own language)</em>
-
-    {{ form.content }}
-</p>
-
-<p>
-    <label for="id_event_time">Activity starts at:</label>
-    <br>Choose the time in your local timezone.
+    <hr class="my-8">
     <br>
-    {{ form.event_time.errors }}
-    <input type="datetime-local" name="event_time" id="id_event_time" />
-</p>
+    <h2 style="background-color: #eeeeee"><strong>Details of your OE Week Activity</strong></h2>
 
-{{ form.primarylanguage.errors }}
-{{ form.opentags.errors }}
-<div class="flex-none md:flex justify-between">
-    <p class="w-full mr-2">
-    <label for="id_form_language">Primary language:</label>
-    <select name="form_language" id="id_form_language" class="w-full">
-    {% for id, name in form.fields.form_language.choices %}
-        <option value="{{ id }}">{{ name }}</option>
-    {% endfor %}
-    </select>
+    <div></div>
+
+    <p>
+        {{ form.title.label_tag }}
+        {{ form.title.errors }}
+        {{ form.title }}
     </p>
+
+    <p>
+        {{ form.event_facilitator.label_tag }}
+        {{ form.event_facilitator.errors }}
+        {{ form.event_facilitator }}
+    </p>
+
+    <p>
+        {{ form.content.label_tag }}
+        {{ form.content.errors }}
+        <br>Include a summary of the activity. Who can/will participate? What will a participant need to be part of this? What will be the outcomes of the activity?
+        <br><em>Suggested length: 50-500 words. Feel free to also provide the description in your own language)</em>
+
+        {{ form.content }}
+    </p>
+
+    <p>
+        <label for="id_event_time">Activity starts at:</label>
+        <br>Choose the time in your local timezone.
+        <br>
+        {{ form.event_time.errors }}
+        <input type="datetime-local" name="event_time" id="id_event_time" />
+    </p>
+
+    {{ form.primarylanguage.errors }}
+    {{ form.opentags.errors }}
+    <div class="flex-none md:flex justify-between">
+        <p class="w-full mr-2">
+        <label for="id_form_language">Primary language:</label>
+        <select name="form_language" id="id_form_language" class="w-full">
+        {% for id, name in form.fields.form_language.choices %}
+            <option value="{{ id }}">{{ name }}</option>
+        {% endfor %}
+        </select>
+        </p>
+
+        <!--
+        <p class="w-full ml-2">
+        <label for="id_opentags">Opentags:</label>
+        <input type="text" name="opentags" maxlength="255" id="id_opentags" class="w-full" value="{{ form.opentags.value }}">
+        </p>
+        -->
+    </div>
+
+    {{ form.country.errors }}
+    {{ form.city.errors }}
+    <div class="flex-none md:flex justify-between">
+        <p class="w-full mr-2">
+        {{ form.country.label_tag }}
+        <select name="country" id="id_country" class="w-full">
+        {% for id, name in form.fields.country.choices %}
+            <option value="{{ id }}">{{ name }}</option>
+        {% endfor %}
+        </select>
+        </p>
+
+        <p class="w-full ml-2">
+            {{ form.city.label_tag }}
+            {{ form.city }}
+        </p>
+
+    </div>
+
+    <p>
+        {{ form.link.label_tag }}
+        {{ form.link.errors }}
+        {{ form.link }}
+    </p>
+
+    <p>
+        {{ form.linkwebroom.label_tag }}
+        {{ form.linkwebroom.errors }}
+        {{ form.linkwebroom }}
+    </p>
+
+    <hr class="my-8">
+    <br>
+    <h2 style="background-color: #eeeeee"><strong>Organizational host:</strong></h2>
+
+    <div></div>
+
+    <p>
+        {{ form.institution.label_tag }}
+        {{ form.institution.errors }}
+        {{ form.institution }}
+    </p>
+
+    <p>
+        {{ form.institution_url.label_tag }}
+        {{ form.institution_url.errors }}
+        {{ form.institution_url }}
+    </p>
+
+    <p>
+        {{ form.twitter_institution.label_tag }}
+        {{ form.twitter_institution.errors }}
+        {{ form.twitter_institution }}
+    </p>
+
+    <p>
+        {{ form.institution_is_oeg_member.label_tag }}
+        {{ form.institution_is_oeg_member.errors }}
+        &nbsp;
+        {{ form.institution_is_oeg_member }}
+    </p>
+
+    <hr class="my-8">
+    <br>
+    <h2 style="background-color: #eeeeee"><strong>Contact person:</strong></h2>
+
+    {{ form.firstname.errors }}
+    {{ form.lastname.errors }}
+    <div class="flex-none md:flex justify-between">
+        <p class="w-full mr-2">
+            {#<label for="id_firstname">First Name:</label>#}
+            {#<input type="text" name="firstname" maxlength="255" id="id_firstname" class="w-full" value="{{ form.firstname.value }}">#}
+            {{ form.firstname.label_tag }}
+            {{ form.firstname }}
+        </p>
+
+        <p class="w-full ml-2">
+            {{ form.lastname.label_tag }}
+            {{ form.lastname }}
+            {#<label for="id_lastname">Last Name:</label>#}
+            {#<input type="text" name="lastname" maxlength="255" id="id_lastname" class="w-full" value="{{ form.lastname.value }}">#}
+        </p>
+    </div>
+
+    {{ form.email.errors }}
+    {{ form.twitter_personal.errors }}
+    <div class="flex-none md:flex justify-between">
+        <p class="w-full mr-2">
+            {{ form.email.label_tag }}
+            {{ form.email }}
+        </p>
+        <p class="w-full ml-2">
+            {{ form.twitter_personal.label_tag }}
+            {{ form.twitter_personal }}
+        </p>
+    </div>
 
     <!--
-    <p class="w-full ml-2">
-    <label for="id_opentags">Opentags:</label>
-    <input type="text" name="opentags" maxlength="255" id="id_opentags" class="w-full" value="{{ form.opentags.value }}">
-    </p>
+    <p><label for="id_image">Image:</label> <select name="image" id="id_image">
+    <option value="" selected="selected">---------</option>
+
+    </select></p>
     -->
+    <input type="submit" value="Submit" class="button-outline font-bold my-8">
+    </form>
 </div>
-
-{{ form.country.errors }}
-{{ form.city.errors }}
-<div class="flex-none md:flex justify-between">
-    <p class="w-full mr-2">
-    {{ form.country.label_tag }}
-    <select name="country" id="id_country" class="w-full">
-    {% for id, name in form.fields.country.choices %}
-        <option value="{{ id }}">{{ name }}</option>
-    {% endfor %}
-    </select>
-    </p>
-
-    <p class="w-full ml-2">
-        {{ form.city.label_tag }}
-        {{ form.city }}
-    </p>
-
-</div>
-
-<p>
-    {{ form.link.label_tag }}
-    {{ form.link.errors }}
-    {{ form.link }}
-</p>
-
-<p>
-    {{ form.linkwebroom.label_tag }}
-    {{ form.linkwebroom.errors }}
-    {{ form.linkwebroom }}
-</p>
-
-<hr class="my-8">
-<br>
-<h2 style="background-color: #eeeeee"><strong>Organizational host:</strong></h2>
-
-<div></div>
-
-<p>
-    {{ form.institution.label_tag }}
-    {{ form.institution.errors }}
-    {{ form.institution }}
-</p>
-
-<p>
-    {{ form.institution_url.label_tag }}
-    {{ form.institution_url.errors }}
-    {{ form.institution_url }}
-</p>
-
-<p>
-    {{ form.twitter_institution.label_tag }}
-    {{ form.twitter_institution.errors }}
-    {{ form.twitter_institution }}
-</p>
-
-<p>
-    {{ form.institution_is_oeg_member.label_tag }}
-    {{ form.institution_is_oeg_member.errors }}
-    &nbsp;
-    {{ form.institution_is_oeg_member }}
-</p>
-
-<hr class="my-8">
-<br>
-<h2 style="background-color: #eeeeee"><strong>Contact person:</strong></h2>
-
-{{ form.firstname.errors }}
-{{ form.lastname.errors }}
-<div class="flex-none md:flex justify-between">
-    <p class="w-full mr-2">
-        {#<label for="id_firstname">First Name:</label>#}
-        {#<input type="text" name="firstname" maxlength="255" id="id_firstname" class="w-full" value="{{ form.firstname.value }}">#}
-        {{ form.firstname.label_tag }}
-        {{ form.firstname }}
-    </p>
-
-    <p class="w-full ml-2">
-        {{ form.lastname.label_tag }}
-        {{ form.lastname }}
-        {#<label for="id_lastname">Last Name:</label>#}
-        {#<input type="text" name="lastname" maxlength="255" id="id_lastname" class="w-full" value="{{ form.lastname.value }}">#}
-    </p>
-</div>
-
-{{ form.email.errors }}
-{{ form.twitter_personal.errors }}
-<div class="flex-none md:flex justify-between">
-    <p class="w-full mr-2">
-        {{ form.email.label_tag }}
-        {{ form.email }}
-    </p>
-    <p class="w-full ml-2">
-        {{ form.twitter_personal.label_tag }}
-        {{ form.twitter_personal }}
-    </p>
-</div>
-
-<!--
-<p><label for="id_image">Image:</label> <select name="image" id="id_image">
-<option value="" selected="selected">---------</option>
-
-</select></p>
--->
-<input type="submit" value="Submit" class="button-outline font-bold my-8">
-</form>
-
 {% endblock %}
