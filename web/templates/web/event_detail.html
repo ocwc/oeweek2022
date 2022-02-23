@@ -5,6 +5,7 @@
 <h1>{{ obj.title }}</h1>
 
 <a class="mb-4 block" href="/events/">&#8592; Back to list of events</a>
+
 <div class="card bg-white p-4 lg:p-8 rounded grid lg:grid-cols-2">
     
     <div class="detail-media">
@@ -12,11 +13,11 @@
         <img src="{{ image_url }}">
         {% else %}
         {% load static %}
-        <img rel="stylesheet" src="{% static 'web/images/placeholder-event-sm.png' %}" class="mb-4 w-full">
+        <img rel="stylesheet" src="{% static 'web/images/placeholder-event.png' %}" class="mb-4 w-full">
         {% endif %}
     </div>
 
-    <div class="detail-content mb-4 lg:p-4">
+    <div class="detail-content mb-4 lg:px-4">
         
         <div class="text-sm mb-8 bg-gray-100 p-4 rounded">{{ obj.content }}</div>
 
