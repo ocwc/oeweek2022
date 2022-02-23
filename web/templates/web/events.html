@@ -2,28 +2,29 @@
 
 {% block content %}
 
-<h1>OE Week Events</h1>
+<h1><i class="fad fa-calendar-alt"></i> OE Week Events</h1>
 
-<div class="grid gird-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-2 md:gap-x-8">
+<div class="grid gird-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 md:gap-x-4 gap-y-6">
 {% for event in event_list %}
     {# {{ forloop.counter }} # starting index 1 #}
     {# {{ forloop.counter0 }} # starting index 0 #}
     {# {% if forloop.first %} #}
     {# {% if forloop.last %} #}
 
-    <div class="bg-white mb-2 rounded-lg shadow-sm hover:shadow-lg transition-shadow overflow-hidden">
+    <div class="bg-white mb-2 rounded-lg shadow-sm transition-shadow overflow-hidden hover:shadow-lg border-2 border-gray-200 hover:border-purple-500">
         <!-- Mario's placeholder image. Load custom image when possible -->        
-
-        {% if obj.image_url %}
-        <img src="{{ image_url }}">
-        {% else %}
-        {% load static %}
-        <a class="text-lg leading-tight block" href="/events/{{event.year}}/{{event.slug}}/"><img rel="stylesheet" src="{% static 'web/images/placeholder-event-sm.png' %}" class="mb-4 w-full"></a>
-        {% endif %}
+        <div class="item-media">
+            {% if obj.image_url %}
+            <a href="/events/{{event.year}}/{{event.slug}}/"><img src="{{ image_url }}" class="object-cover h-150px md:h-120px"></a>
+            {% else %}
+                {% load static %}
+                <a href="/events/{{event.year}}/{{event.slug}}/"><img rel="stylesheet" src="{% static 'web/images/placeholder-event-sm.png' %}" class="mb-4 w-full"></a>
+            {% endif %}
+        </div>
 
         <div class="p-4">
-            <h3 class="text-sm">
-                <a class="text-lg leading-tight block mb-2" href="/events/{{event.year}}/{{event.slug}}/"><span class="hidden">#{{ forloop.counter }}.</span>
+            <h3 class="text-base leading-tight mb-2">
+                <a href="/events/{{event.year}}/{{event.slug}}/"><span class="hidden">#{{ forloop.counter }}.</span>
                 <span class="font-bold">{{ event.title }}</span></a>
             </h3>
 
