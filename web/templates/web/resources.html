@@ -2,19 +2,36 @@
 
 {% block content %}
 
-<h1>OE Week Resources</h1>
+<h1><i class="fad fa-box-open"></i> OE Week Resources</h1>
 
-<ul>
-{% for resource in resource_list %}
+<div class="grid gird-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 md:gap-x-4 gap-y-6">
+    
+    {% for resource in resource_list %}
 
-    <li class="p-4 mb-2 rounded-lg shadow-sm hover:shadow-lg transition-shadow">
-        <a class="text-lg leading-tight block" href="/resources/{{resource.year}}/{{resource.slug}}/">#{{ forloop.counter }}.
-        <span class="font-bold">{{ resource.title }}</span></a>
-        {{ resource.institution }},
-        {{ resource.country }}, {{ event.city }}
-    </li>
+        <div class="bg-white mb-2 rounded-lg shadow-sm transition-shadow overflow-hidden hover:shadow-lg border-2 border-gray-200 hover:border-purple-500">
 
-{% endfor %}
-<ul>
+            <div class="item-media">
+                {% if obj.image_url %}
+                <a href="/resources/{{resource.year}}/{{resource.slug}}/"><img src="{{ image_url }}" class="object-cover h-150px md:h-120px"></a>
+                {% else %}
+                    {% load static %}
+                    <a href="/resources/{{resource.year}}/{{resource.slug}}/"><img rel="stylesheet" src="{% static 'web/images/placeholder-asset-sm.png' %}" class="mb-4 w-full"></a>
+                {% endif %}
+            </div>
+            <div class="p-4">
+                <h3 class="text-base leading-tight mb-2">
+                    <a href="/resources/{{resource.year}}/{{resource.slug}}/">
+                        <span class="hidden">#{{ forloop.counter }}.</span>
+                        <span class="font-bold">{{ resource.title }}</span>
+                    </a>
+                </h3>
+                <p class="text-sm"><i class="fal fa-university"></i> {{ resource.institution }}</p>
+                <p class="text-sm mb-1"><i class="fal fa-globe-asia"></i> {{ resource.country }}, {{ event.city }}</p>
+            </div>
+        </div>
+
+    {% endfor %}
+    
+</div>
 
 {% endblock %}
