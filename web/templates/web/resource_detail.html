@@ -6,39 +6,48 @@
 
 <a class="mb-4 block" href="/resources/">&#8592;Back to list of resources</a>
 
-{% if obj.image_url %}
-<img src="{{ image_url }}">
-<br>
-{% endif %}
+<div class="card bg-white p-4 lg:p-8 rounded grid lg:grid-cols-2">
 
-<div class="mb-4 border-b-2 pb-4">{{ obj.content }}</div>
+    <div class="detail-media">
+        {% if obj.image_url %}
+        <img src="{{ image_url }}">
+        {% else %}
+        {% load static %}
+        <img rel="stylesheet" src="{% static 'web/images/placeholder-asset.png' %}" class="mb-4 w-full">
+        {% endif %}
+    </div>
 
-<a href="{{ obj.institution_url }}">{{ obj.institution }}</a>
-{% if obj.twitter_institution %}
-    (Twitter: {{ obj.twitter_institution }})
-{% endif %}
+    <div class="detail-content mb-4 lg:px-4">
 
-{% if obj.institution_is_oeg_member %}
-    (OEG MEMBER)
-{% endif %}
+        <div class="text-sm mb-8 bg-gray-100 p-4 rounded">{{ obj.content }}</div>
 
-<br>
-({{ obj.country }}, {{ obj.city }})
-<br>
+        <p class="mb-2"><i class="fal fa-university"></i> <a href="{{ obj.institution_url }}">{{ obj.institution }}</a></p>
 
-Contributed by: {{ obj.firstname }} {{ obj.lastname }}
-{% if obj.twitter_personal %}
-    (Twitter: {{ obj.twitter_personal }})
-{% endif %}
-<br>
+        {% if obj.twitter_institution %}
+            <p class="mb-2"><i class="fab fa-twitter"></i> Twitter: {{ obj.twitter_institution }}</p>
+        {% endif %}
 
-Language: {{ obj.form_language }}
-<br>
+        {% if obj.institution_is_oeg_member %}
+            <p class="mb-2"><i class="fal fa-badge-check"></i> OEGlobal Member</p>
+        {% endif %}
 
-Link: <a href="{{ obj.link }}">{{ obj.link }}</a>
-<br>
+        <p class="mb-2"><i class="fal fa-globe-asia"></i> {{ obj.country }}, {{ obj.city }}</p>
 
-License: {{ obj.license }}
-<br>
+        <p class="mb-2">
+            <i class="fal fa-user-circle"></i> Contributed by: {{ obj.firstname }} {{ obj.lastname }}
+            {% if obj.twitter_personal %}
+                (Twitter: {{ obj.twitter_personal }})
+            {% endif %}
+        </p>
+
+        <p class="mb-2"><i class="fal fa-globe"></i> Language: {{ obj.form_language }}</p>
+
+        <p class="my-6"><a href="{{ obj.link }}" class="bg-purple-500 text-white p-2 rounded hover:bg-purple-800 block"><i class="fal fa-external-link-alt"></i> {{ obj.link }}</a></p>
+
+        <p><i class="fab fa-creative-commons"></i> License: {{ obj.license }}</p>
+        <br>
+    </div>
+
+</div>
 
 {% endblock %}
