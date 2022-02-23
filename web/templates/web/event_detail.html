@@ -6,7 +6,7 @@
 
 <a class="mb-4 block" href="/events/">&#8592; Back to list of events</a>
 
-<div class="card bg-white p-4 lg:p-8 rounded grid lg:grid-cols-2">
+<div class="card bg-white p-4 lg:p-8 rounded grid lg:grid-cols-2 gap-4">
     
     <div class="detail-media">
         {% if obj.image_url %}
@@ -44,7 +44,7 @@
 
         
         {% if obj.event_time %}
-            <p class="mb-2"><i class="fal fa-calendar-check"></i> Date and Time: {{ obj.event_time|date:'M d, Y H:i' }} </p>
+            <p class="mb-2"><i class="fal fa-calendar-check"></i> Date and Time: {{ obj.event_time|date:'M d, Y | H:i' }} </p>
         {% else %}
             <p class="mb-2">(no time specified)</p>
         {% endif %}
@@ -54,10 +54,10 @@
 
         <p class="mb-2"><i class="fal fa-user-chart"></i> Facilitator: {{ obj.event_facilitator }}</p>
         
-        <p class="mt-6"><a href="{{ obj.link }}" class="bg-purple-500 text-white p-2 rounded hover:bg-purple-800 block"><i class="fal fa-external-link-alt"></i> {{ obj.link }}</a></p>
+        <p class="mt-6"><a href="{{ obj.link }}" class="bg-purple-500 text-white py-2 px-4 rounded hover:bg-purple-800 block"><i class="fal fa-external-link-alt"></i> {{ obj.link }}</a></p>
         
         {% if obj.linkwebroom %}
-            <p class="mt-6"><a href="{{ obj.linkwebroom }}" class="bg-blue-500 text-white p-2 rounded hover:bg-blue-800 block"><i class="fal fa-video"></i> Web room</a></p>
+            <p class="mt-6"><a href="{{ obj.linkwebroom }}" class="bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-800 block"><i class="fal fa-video"></i> Web room</a></p>
             <br>
         {% endif %}
 
