@@ -148,7 +148,7 @@ DJANGO_WYSIWYG_FLAVOR = "ckeditor"
 
 LOGIN_URL = "/api-auth/login/"
 OEW_YEAR = 2022
-OEW_RANGE = ["2022-03-07 00:00:00", "2021-03-11 23:59:59"]
+OEW_RANGE = ["2022-03-07 00:00:00", "2022-03-11 23:59:59"]
 OEW_CFP_OPEN = "2022-01-08"
 CI = os.environ.get("CI")
 if CI:
