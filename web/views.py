@@ -149,7 +149,7 @@ def thanks(request):
 
 @login_required(login_url='/admin/')
 def show_events(request):
-    event_list = Resource.objects.all().filter(post_type='event').order_by('event_time')#.filter(post_status='publish')
+    event_list = Resource.objects.all().filter(post_type='event').order_by('event_time').exclude(post_status='trash')#.filter(post_status='publish')
     context = {'event_list': event_list}
     return render(request, 'web/events.html', context=context)
 
@@ -161,7 +161,7 @@ def show_event_detail(request, year, slug):
 
 @login_required(login_url='/admin/')
 def show_resources(request):
-    resource_list = Resource.objects.all().filter(post_type='resource').order_by('title')#.filter(post_status='publish')
+    resource_list = Resource.objects.all().filter(post_type='resource').order_by('title').exclude(post_status='trash')#.filter(post_status='publish')
     context = {'resource_list': resource_list}
     return render(request, 'web/resources.html', context=context)
 
