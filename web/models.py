@@ -153,8 +153,6 @@ class Resource(TimeStampedModel, ReviewModel):
         if not self.event_time: return 'Other'
         if arrow.get(self.event_time) < arrow.get(settings.OEW_RANGE[0]):#.replace(tzinfo='local'):
             return 'Other'
-        print(arrow.get(self.event_time))
-        print(arrow.get(settings.OEW_RANGE[1]))
         if arrow.get(self.event_time) > arrow.get(settings.OEW_RANGE[1]):
             return 'Other'
         return self.event_time.strftime('%A')
