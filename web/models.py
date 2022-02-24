@@ -201,6 +201,42 @@ class Resource(TimeStampedModel, ReviewModel):
     twitter_personal = models.CharField(blank=True, null=True, max_length=255)
     twitter_institution = models.CharField(blank=True, null=True, max_length=255)
 
+    @property
+    def twitter_personal_url(self):
+        t = self.twitter_personal
+        if t.startswith('https://twitter.com/'):
+            return t
+        elif t.startswith('@'):
+            return 'https://twitter.com/' + t[1:]
+        else: return 'https://twitter.com/' + t
+
+    @property
+    def twitter_personal_username(self):
+        t = self.twitter_personal
+        if t.startswith('https://twitter.com/'):
+            return t[20:]
+        elif t.startswith('@'):
+            return t[1:]
+        else: return t
+
+    @property
+    def twitter_institution_url(self):
+        t = self.twitter_institution
+        if t.startswith('https://twitter.com/'):
+            return t
+        elif t.startswith('@'):
+            return 'https://twitter.com/' + t[1:]
+        else: return 'https://twitter.com/' + t
+
+    @property
+    def twitter_institution_username(self):
+        t = self.twitter_institution
+        if t.startswith('https://twitter.com/'):
+            return t[20:]
+        elif t.startswith('@'):
+            return t[1:]
+        else: return t
+
     def __str__(self):
         return "Resource #{}".format(self.id)
 

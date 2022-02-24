@@ -25,7 +25,7 @@
 
         
         {% if obj.twitter_institution %}
-            <p class="mb-2"><i class="fab fa-twitter"></i> Twitter: {{ obj.twitter_institution }}</p>
+            <p class="mb-2"><i class="fab fa-twitter"></i> Twitter: <a href="{{ obj.twitter_institution_url }}">@{{ obj.twitter_institution_username }}</a></p>
         {% endif %}
         
         {% if obj.institution_is_oeg_member %}
@@ -38,7 +38,7 @@
         <p class="mb-2">
             <i class="fal fa-user-circle"></i> Contributed by: {{ obj.firstname }} {{ obj.lastname }}
         {% if obj.twitter_personal %}
-            (Twitter: {{ obj.twitter_personal }})
+            (Twitter: <a href="{{ obj.twitter_personal_url }}">@{{ obj.twitter_personal_username }}</a>)
         {% endif %}
         </p>
 
