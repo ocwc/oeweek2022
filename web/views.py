@@ -158,8 +158,8 @@ def show_events(request):
         ('Wednesday', 'Wednesday, March 9'),
         ('Thursday', 'Thursday, March 10'),
         ('Friday', 'Friday, March 11'),
-        ('Saturday', 'Saturday, March 12'),
-        ('Sunday', 'Sunday, March 13'),
+        # ('Saturday', 'Saturday, March 12'),
+        # ('Sunday', 'Sunday, March 13'),
         ('Other', 'Other days'),
     ]
 
