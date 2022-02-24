@@ -154,6 +154,12 @@ def show_events(request):
     timezone = request.GET.get('timezone', 'local') # "local" = default
     event_list = Resource.objects.all().filter(post_type='event').order_by('event_time').exclude(post_status='trash')#.filter(post_status='publish')
 
+    for event in event_list:
+        u = event.image_url
+        if u and u.startswith('https://archive.org') and u.endswith('.png'):
+            u = u[:-4] + '-sm.png'
+            event.image_url = u
+
     days = [
         ('Monday', 'Monday, March 7'),
         ('Tuesday', 'Tuesday, March 8'),
@@ -178,6 +184,13 @@ def show_event_detail(request, year, slug):
 @login_required(login_url='/admin/')
 def show_resources(request):
     resource_list = Resource.objects.all().filter(post_type='resource').order_by('title').exclude(post_status='trash')#.filter(post_status='publish')
+
+    for resource in resource_list:
+        u = resource.image_url
+        if u and u.startswith('https://archive.org') and u.endswith('.png'):
+            u = u[:-4] + '-sm.png'
+            resource.image_url = u
+
     context = {'resource_list': resource_list}
     return render(request, 'web/resources.html', context=context)
 
