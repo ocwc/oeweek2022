@@ -169,6 +169,7 @@ def show_events(request):
 @login_required(login_url='/admin/')
 def show_event_detail(request, year, slug):
     event = get_object_or_404(Resource, year=year, slug=slug)
+    event.content = event.content.replace('\n', '<br>')
     context = {'obj': event}
     return render(request, 'web/event_detail.html', context=context)
 
@@ -181,6 +182,7 @@ def show_resources(request):
 @login_required(login_url='/admin/')
 def show_resource_detail(request, year, slug):
     resource = get_object_or_404(Resource, year=year, slug=slug)
+    resource.content = resource.content.replace('\n', '<br>')
     context = {'obj': resource}
     return render(request, 'web/resource_detail.html', context=context)
 
