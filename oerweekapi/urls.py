@@ -45,8 +45,8 @@ urlpatterns = [
     url(r"^api-token-refresh/", rest_framework_jwt.views.refresh_jwt_token),
     url(r"^export/resources/$", ExportResources.as_view(), name="resource_export"),
 
-    # url(r'^$', views.index, name='web_index'),
-    url(r'^$', RedirectView.as_view(url='https://www.oeglobal.org/activities/open-education-week/', permanent=False), name='root_redirect'),
+    url(r'^$', views.index, name='web_index'),
+    # url(r'^$', RedirectView.as_view(url='https://www.oeglobal.org/activities/open-education-week/', permanent=False), name='root_redirect'),
 
     # url(r'^page/what-is-open-education-week/$', views.page__what_is_open_education_week),
     # url(r'^page/faq/$', views.page__faq),

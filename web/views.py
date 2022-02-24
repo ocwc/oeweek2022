@@ -36,8 +36,10 @@ from mail_templated import send_mail
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import get_object_or_404, render
 
-# def index(request):
-#     return render(request, 'web/home.html', context={})
+def index(request):
+    if request.user.is_authenticated:
+        return render(request, 'web/home.html', context={})
+    return HttpResponseRedirect('https://www.oeglobal.org/activities/open-education-week/')
 
 # def page__what_is_open_education_week(request):
 #     return render(request, 'web/page--what-is-open-education-week.html')
