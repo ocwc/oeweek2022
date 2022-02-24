@@ -44,7 +44,7 @@
 
             <p class="text-sm mb-1">
                 {% if event.event_time %}
-                    <i class="fal fa-calendar-star"></i> {{ event.event_time|date:'M d, Y H:i' }} 
+                    <i class="fal fa-calendar-star"></i> {{ event.event_time|date:'M d, Y H:i' }} <span style="background-color: #ffffcc;"><em>(event's timezone)</em><span>
                 {% else %}
                 <i class="fal fa-calendar-exclamation"></i> (no time specified)
                 {% endif %}
