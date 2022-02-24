@@ -7,7 +7,7 @@
 <a class="mb-4 block" href="/events/">&#8592; Back to list of events</a>
 
 <div class="card bg-white p-4 lg:p-8 rounded grid lg:grid-cols-2 gap-4">
-    
+
     <div class="detail-media">
         {% if obj.image_url %}
         <img src="{{ image_url }}">
@@ -18,23 +18,23 @@
     </div>
 
     <div class="detail-content mb-4 lg:px-4">
-        
+
         <div class="text-sm mb-8 bg-gray-100 p-4 rounded">{{ obj.content }}</div>
 
         <p class="mb-2"><i class="fal fa-university"></i> <a href="{{ obj.institution_url }}">{{ obj.institution }}</a></p>
 
-        
+
         {% if obj.twitter_institution %}
             <p class="mb-2"><i class="fab fa-twitter"></i> Twitter: <a href="{{ obj.twitter_institution_url }}">@{{ obj.twitter_institution_username }}</a></p>
         {% endif %}
-        
+
         {% if obj.institution_is_oeg_member %}
             <p class="mb-2"><i class="fal fa-badge-check"></i> OEGlobal Member</p>
         {% endif %}
-        
-        
+
+
         <p class="mb-2"><i class="fal fa-globe-asia"></i> {{ obj.country }}, {{ obj.city }}</p>
-        
+
         <p class="mb-2">
             <i class="fal fa-user-circle"></i> Contributed by: {{ obj.firstname }} {{ obj.lastname }}
         {% if obj.twitter_personal %}
@@ -42,20 +42,20 @@
         {% endif %}
         </p>
 
-        
+
         {% if obj.event_time %}
             <p class="mb-2"><i class="fal fa-calendar-check"></i> Date and Time: {{ obj.event_time|date:'M d, Y | H:i' }} </p>
         {% else %}
             <p class="mb-2">(no time specified)</p>
         {% endif %}
-        
+
 
         <p class="mb-2"><i class="fal fa-globe"></i> Language: {{ obj.form_language }}</p>
 
         <p class="mb-2"><i class="fal fa-user-chart"></i> Facilitator: {{ obj.event_facilitator }}</p>
-        
+
         <p class="mt-6"><a href="{{ obj.link }}" class="bg-purple-500 text-white py-2 px-4 rounded hover:bg-purple-800 block"><i class="fal fa-external-link-alt"></i> {{ obj.link }}</a></p>
-        
+
         {% if obj.linkwebroom %}
             <p class="mt-6"><a href="{{ obj.linkwebroom }}" class="bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-800 block"><i class="fal fa-video"></i> Web room</a></p>
             <br>
