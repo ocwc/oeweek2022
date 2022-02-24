@@ -10,7 +10,7 @@
 
     <div class="detail-media">
         {% if obj.image_url %}
-        <img src="{{ image_url }}">
+        <img src="{{ obj.image_url }}">
         {% else %}
         {% load static %}
         <img rel="stylesheet" src="{% static 'web/images/placeholder-asset.png' %}" class="mb-4 w-full">
