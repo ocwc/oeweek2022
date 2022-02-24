@@ -149,8 +149,21 @@ def thanks(request):
 
 @login_required(login_url='/admin/')
 def show_events(request):
+    timezone = request.GET.get('timezone', 'local') # "local" = default
     event_list = Resource.objects.all().filter(post_type='event').order_by('event_time').exclude(post_status='trash')#.filter(post_status='publish')
-    context = {'event_list': event_list}
+
+    days = [
+        ('Monday', 'Monday, March 7'),
+        ('Tuesday', 'Tuesday, March 8'),
+        ('Wednesday', 'Wednesday, March 9'),
+        ('Thursday', 'Thursday, March 10'),
+        ('Friday', 'Friday, March 11'),
+        ('Saturday', 'Saturday, March 12'),
+        ('Sunday', 'Sunday, March 13'),
+        ('Other', 'Other days'),
+    ]
+
+    context = { 'days': days, 'event_list': event_list}
     return render(request, 'web/events.html', context=context)
 
 @login_required(login_url='/admin/')
