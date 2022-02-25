@@ -61,6 +61,11 @@
             <br>
         {% endif %}
 
+        {% if user.is_authenticated %}
+            <br>
+            <div style="color: white; background-color:red; font-weight: bold;">Hello {{ user.get_username }}! <a href="/admin/web/resource/{{ obj.id }}/change/">Click to edit this resource.</a></div>
+        {% endif %}
+
     </div>
 </div>
 {% endblock %}
