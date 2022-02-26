@@ -4,13 +4,15 @@
 
 <h1><i class="fad fa-calendar-alt"></i> OE Week Events</h1>
 
-<p><strong>Please click on a date to expand the details.</strong></p>
-<br/>
+<p><i class="fal fa-hand-pointer"></i> <strong>Please click on a date to expand the details.</strong></p>
+
+
+<div class="bg-white border-gray-300 rounded-lg p-2 md:p-4 my-8">
 
 {% for day in days %}
 <details>
 
-<summary><span style="color: #666666; font-size: 20pt; font-weight: bold; cursor: pointer;">{{ day.1 }}</span></summary>
+<summary class="text-2xl font-bold cursor-pointer mb-4">{{ day.1 }}</summary>
 
 <div class="grid gird-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 md:gap-x-4 gap-y-6">
 {% for event in event_list %}
@@ -58,4 +60,5 @@
 </details>
 {% endfor %}
 
+</div>
 {% endblock %}
