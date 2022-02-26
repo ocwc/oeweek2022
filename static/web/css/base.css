@@ -2,3 +2,21 @@
 .oegcontent input { box-sizing: border-box; border-style: solid; border-width: 1px; border-color: #cccccc; }
 .oegcontent textarea { box-sizing: border-box; border-style: solid; border-width: 1px; border-color: #cccccc; }
 .errorlist { color: red; }
+
+/* Mario home page */
+.button-main {
+    --tw-bg-opacity: 1;
+    background-color: rgba(255,85,71,var(--tw-bg-opacity));
+    --tw-border-opacity: 1;
+    border-color: rgba(206,18,34,var(--tw-border-opacity));
+    border-radius: .25rem;
+    border-width: 1px;
+    display: inline-block;
+    font-weight: 700;
+    --tw-text-opacity: 1;
+    color: rgba(245,245,245,var(--tw-text-opacity));
+    padding: .75rem 1rem;
+  }
+  .button-main:hover {
+      opacity: 0.8;
+  }
