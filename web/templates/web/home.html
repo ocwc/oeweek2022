@@ -2,8 +2,65 @@
 
 {% block content %}
 
-<h1>Home page...</h1>
+<h1 class="hidden">Welcome to Open Education Week</h1>
+{% load static %}
+<video autoplay loop poster="{% static 'web/images/web-banner.png'%}" class="rounded-lg">
+    <source src="{% static 'web/images/oeweek22-web-banner.mp4' %}" type="video/mp4">
 
-<p>...</p>
+    <source src="{% static 'web/images/oeweek22-web-banner.ogg' %}" type="video/ogg">
+    Your browser does not support embedded video, but no problem: Welcome to Open Education Week 2022 on March 7-11.
+</video>
+
+<div>
+    <ul class="list-none my-8 flex justify-end gap-4 text-4xl items-center text-purple-500">
+        <li><a href="https://twitter.com/OEWeek"><i class="fab fa-twitter-square"></i><span class="hidden">Twitter</span></a></li>
+        <li><a href="https://www.facebook.com/OpenEducationGlobal"><i class="fab fa-facebook-square"></i><span class="hidden">Facebook</span></a></li>
+        <li><a href="https://connect.oeglobal.org/c/oeweek/33"><i class="fak fa-connect-icon"></i><span class="hidden">Connect</span></a></li>
+        <!-- <li><a href="https://twitter.com/intent/tweet?button_hashtag=OEWeek&ref_src=twsrc%5Etfw" class="twitter-hashtag-button" data-show-count="false">Tweet #OEWeek</a><script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script></li> -->
+    </ul>
+</div>
+
+<section class="my-16">
+    
+    <h2 class="text-4xl font-bold mb-8 mt-0"><i class="fak fa-oeweek-light"></i> Participate in OEWeek</h2>
+    
+    <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6 auto-rows-max">
+        
+        <a href="/events/" class="bg-green-600 p-8 text-white flex flex-col justify-center md:rounded-md border-2 border-green-600 hover:border-green-800 hover:shadow-lg">
+            <i class="fad fa-calendar-week fa-5x mx-auto mb-4"></i>
+            <h3 class="font-bold text-xl text-center mb-4">2022 Schedule</h3>
+            <p class="text-base leading-snug">Participate of the events and activities that take place during the week.</p>
+        </a>
+        
+        <a href="/resources/" class="bg-red-400 p-8 text-white flex flex-col justify-center md:rounded-md border-2 border-red-400 hover:border-red-800 hover:shadow-lg">
+            <i class="fad fa-box-full fa-5x mx-auto mb-6"></i>
+            <h3 class="font-bold text-xl text-center mb-4">2022 Assets</h3>
+            <p class="text-base leading-snug">Explore the collection of <strong>resources</strong> shared by the community.</p>
+        </a>
+        
+        <a href="https://connect.oeglobal.org/c/oeweek/33" class="bg-white p-8 md:rounded-md flex flex-col justify-center border-2 border-gray-200 hover:border-purple-500 hover:shadow-lg text-gray-700">
+            <i class="fak fa-connect-name fa-5x mx-auto mb-6"></i>
+            <h2 class="font-bold text-xl text-purple-500 text-center mb-4">OEG Connect</h2>
+            <p class="text-base leading-snug">Come in and <strong>say hello!</strong> Join the conversation, share your ideas and highlight
+                your favorite topics of the week. </p>
+        </a>
+    </div>
+    
+    <div class="grid md:grid-cols-2 gap-6 my-16 items-start">
+        <div class="promo-kit bg-purple-300 p-8 md:rounded-md flex flex-col justify-center border-2 border-gray-200 hover:border-purple-800 hover:shadow-lg">
+            <i class="fad fa-pencil-paintbrush fa-5x mx-auto mb-6"></i>
+            <h3 class="font-bold text-xl text-center mb-4">Promotional Kit</h3>
+            <p class="text-base leading-snug">You can use the promotional kit to help customize your event.</p>
+            <p class="text-center my-8"><a href="https://www.oeglobal.org/activities/open-education-week/open-education-week-kit/" class="button-main">Get the kit</a></p>
+        </div>
+
+        <div>
+            <a class="twitter-timeline" data-height="800" data-theme="dark" href="https://twitter.com/OEWeek?ref_src=twsrc%5Etfw">Tweets by OEWeek</a> <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script> 
+        </div>
+    </div>
+</section>
+
+
+
 
 {% endblock %}
