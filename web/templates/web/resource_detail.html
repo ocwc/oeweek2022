@@ -23,29 +23,28 @@
 
         <p class="mb-2"><i class="fal fa-university"></i> <a href="{{ obj.institution_url }}">{{ obj.institution }}</a></p>
 
-        {% if obj.twitter_institution %}
-            <p class="mb-2"><i class="fab fa-twitter"></i> Twitter: {{ obj.twitter_institution }}</p>
-        {% endif %}
-
         {% if obj.institution_is_oeg_member %}
             <p class="mb-2"><i class="fal fa-badge-check"></i> <span style="background-color: #ffffcc;">OEGlobal member<span></p>
         {% endif %}
 
         <p class="mb-2"><i class="fal fa-globe-asia"></i> {{ obj.country }}, {{ obj.city }}</p>
 
+        {% if obj.twitter_institution %}
+            <p class="mb-2"><i class="fab fa-twitter"></i> <strong>Twitter</strong>: <a href="{{ obj.twitter_institution_url }}">@{{ obj.twitter_institution_username }}</a></p>
+        {% endif %}
+
         <p class="mb-2">
-            <i class="fal fa-user-circle"></i> Contributed by: {{ obj.firstname }} {{ obj.lastname }}
-            {% if obj.twitter_personal %}
-                (Twitter: {{ obj.twitter_personal }})
-            {% endif %}
+            <i class="fal fa-user-circle"></i> <strong>Contributed by</strong>: {{ obj.firstname }} {{ obj.lastname }}
+        {% if obj.twitter_personal %}
+            (Twitter: <a href="{{ obj.twitter_personal_url }}">@{{ obj.twitter_personal_username }}</a>)
+        {% endif %}
         </p>
 
-        <p class="mb-2"><i class="fal fa-globe"></i> Language: {{ obj.form_language }}</p>
+        <p class="mb-2"><i class="fal fa-globe"></i> <strong>Language</strong>: {{ obj.form_language }}</p>
+
+        <p><i class="fab fa-creative-commons"></i> <strong>License</strong>: {{ obj.license }}</p>
 
         <p class="my-6"><a href="{{ obj.link }}" class="bg-purple-500 text-white p-2 rounded hover:bg-purple-800 block"><i class="fal fa-external-link-alt"></i> {{ obj.link }}</a></p>
-
-        <p><i class="fab fa-creative-commons"></i> License: {{ obj.license }}</p>
-        <br>
 
         {% if user.is_authenticated %}
             <div style="color: white; background-color:red; font-weight: bold;">Hello {{ user.get_username }}! <a href="/admin/web/resource/{{ obj.id }}/change/">Click to edit this resource.</a></div>
