@@ -25,7 +25,7 @@
 
 
         {% if obj.institution_is_oeg_member %}
-            <p class="mb-2"><i class="fal fa-badge-check"></i> OEGlobal Member</p>
+            <p class="mb-2"><i class="fal fa-badge-check"></i><span style="background-color: #ffffcc;"> OEGlobal member<span></p>
         {% endif %}
 
 
@@ -42,9 +42,8 @@
         {% endif %}
         </p>
 
-
         {% if obj.event_time %}
-            <p class="mb-2"><i class="fal fa-calendar-check"></i> <strong>Date and Time</strong>: {{ obj.event_time|date:'M d, Y | H:i' }} <span style="background-color: #ffffcc;"><em>(in event's local timezone)</em><span></p>
+            <p class="mb-2"><i class="fal fa-calendar-check"></i> <strong>Date and Time</strong>: {{ obj.event_time|date:'M d, Y | H:i' }} <em>({{ obj.event_source_timezone }})</em></p>
         {% else %}
             <p class="mb-2">(no time specified)</p>
         {% endif %}
