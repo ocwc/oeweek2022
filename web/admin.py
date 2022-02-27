@@ -6,7 +6,7 @@ from .models import Page, Resource, Category, EmailTemplate, ResourceImage
 
 
 class ResourceAdmin(ImportExportMixin, admin.ModelAdmin):
-    list_display = ('id', 'title', 'post_status', 'event_type', 'contact', 'institution', 'year')
+    list_display = ('id', 'title', 'post_status', 'event_source_timezone', 'contact', 'institution', 'year')
     readonly_fields = ('uuid', 'created', 'modified',)
     search_fields = ('post_id', 'title', 'country', 'contact', 'firstname', 'lastname', 'email', 'institution', 'link')
     list_filter = ('post_status', 'post_type', 'event_type', 'notified')
