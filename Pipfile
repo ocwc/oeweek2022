@@ -34,6 +34,7 @@ Django = "<=3.3,>=3.2"
 Markdown = "*"
 Pillow = "*"
 django-import-export = "*"
+django-timezone-field = "*"
 
 [dev-packages]
 

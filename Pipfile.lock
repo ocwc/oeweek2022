@@ -1,7 +1,7 @@
 {
     "_meta": {
         "hash": {
-            "sha256": "6dad6e8c68e3517eead4dd8c80fd6de0283f31d2077445afd66241b4864ced5c"
+            "sha256": "95abc7c1a457574e7ce7c73de0e4080f7369c30d1c99e8f38998923e87b56f50"
         },
         "pipfile-spec": 6,
         "requires": {
@@ -163,6 +163,14 @@
             ],
             "index": "pypi",
             "version": "==2.1.0"
+        },
+        "django-timezone-field": {
+            "hashes": [
+                "sha256:15746ed367a5a32eda76cfa2886eeec1de8cda79f519b7c5e12f87ed7cdbd663",
+                "sha256:199f211082eeac7e83563929b8ce41399c1c0f00dfc2f36bc00bea381027eaaa"
+            ],
+            "index": "pypi",
+            "version": "==5.0"
         },
         "django-wysiwyg": {
             "hashes": [
@@ -628,7 +636,7 @@
                 "sha256:000ca7f471a233c2251c6c7023ee85305721bfdf18621ebff4fd17a8653427ed",
                 "sha256:0e7c33d9a63e7ddfcb86780aac87befc2fbddf46c58dbb487e0855f7ceec283c"
             ],
-            "markers": "python_version >= '2.7' and python_version not in '3.0, 3.1, 3.2, 3.3, 3.4' and python_version < '4'",
+            "markers": "python_version >= '2.7' and python_version not in '3.0, 3.1, 3.2, 3.3, 3.4' and python_version < '4.0'",
             "version": "==1.26.8"
         },
         "virtualenv": {
