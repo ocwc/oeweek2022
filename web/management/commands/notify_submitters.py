@@ -22,10 +22,16 @@ class Command(BaseCommand):
                 print(f'Skipping {resource.email} about #{resource.id} (already notified)')
                 continue
 
+            if resource.post_type == 'event':
+                slug1 = 'events'
+            elif resource.post_type == 'resource':
+                slug1 = 'resources'
+
             print('sending to:', resource.email )
             context = {
+                'slug1': slug1,
                 'year': resource.year,
-                'slug': resource.slug,
+                'slug2': resource.slug,
                 'title': resource.title,
                 'firstname': resource.firstname,
             }

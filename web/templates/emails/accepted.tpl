@@ -9,7 +9,7 @@ Dear {{ firstname }},
 
 We appreciate your support and contribution to the Open Education Week.  Your entry "{{ title }}" has been approved and will be featured on the OE Week website ( https://oeweek.oeglobal.org ).
 
-You may find it here:  https://oeweek.oeglobal.org/{{ year }}/{{ slug }}/
+You may find it here:  https://oeweek.oeglobal.org/{{ slug1 }}/{{ year }}/{{ slug2 }}/
 
 Please take a minute to review the information. If you have any questions or need to make changes or updates to your contribution, please notify us at info@openeducationweek.org
 
