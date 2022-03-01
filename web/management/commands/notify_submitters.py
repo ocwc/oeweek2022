@@ -18,7 +18,7 @@ class Command(BaseCommand):
                 post_status='publish',
                 # notified=False,
                 # email='example@example.org',
-        ):[:1]:#.exclude(email='')
+        ):#.exclude(email='')[:10]:
             print(resource)
             if resource.notified==True:
                 print(f'Skipping {resource.email} about #{resource.id} (already notified)')
