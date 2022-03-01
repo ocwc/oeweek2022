@@ -37,9 +37,10 @@ from django.contrib.auth.decorators import login_required
 from django.shortcuts import get_object_or_404, render
 
 def index(request):
-    if request.user.is_authenticated:
-        return render(request, 'web/home.html', context={})
-    return HttpResponseRedirect('https://www.oeglobal.org/activities/open-education-week/')
+    # if request.user.is_authenticated:
+    #     return render(request, 'web/home.html', context={})
+    # return HttpResponseRedirect('https://www.oeglobal.org/activities/open-education-week/')
+    return render(request, 'web/home.html', context={})
 
 # def page__what_is_open_education_week(request):
 #     return render(request, 'web/page--what-is-open-education-week.html')
@@ -149,7 +150,7 @@ def edit_resource(request, identifier):
 def thanks(request):
     return render(request, 'web/thanks.html')
 
-@login_required(login_url='/admin/')
+#@login_required(login_url='/admin/')
 def show_events(request):
     timezone = request.GET.get('timezone', 'local') # "local" = default
     event_list = Resource.objects.all().filter(post_type='event').order_by('event_time').exclude(post_status='trash')#.filter(post_status='publish')
@@ -174,14 +175,14 @@ def show_events(request):
     context = { 'days': days, 'event_list': event_list}
     return render(request, 'web/events.html', context=context)
 
-@login_required(login_url='/admin/')
+#@login_required(login_url='/admin/')
 def show_event_detail(request, year, slug):
     event = get_object_or_404(Resource, year=year, slug=slug)
     event.content = event.content.replace('\n', '<br>')
     context = {'obj': event}
     return render(request, 'web/event_detail.html', context=context)
 
-@login_required(login_url='/admin/')
+#@login_required(login_url='/admin/')
 def show_resources(request):
     resource_list = Resource.objects.all().filter(post_type='resource').order_by('title').exclude(post_status='trash')#.filter(post_status='publish')
 
@@ -194,7 +195,7 @@ def show_resources(request):
     context = {'resource_list': resource_list}
     return render(request, 'web/resources.html', context=context)
 
-@login_required(login_url='/admin/')
+#@login_required(login_url='/admin/')
 def show_resource_detail(request, year, slug):
     resource = get_object_or_404(Resource, year=year, slug=slug)
     resource.content = resource.content.replace('\n', '<br>')
