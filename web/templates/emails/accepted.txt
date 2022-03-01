@@ -1,11 +1,1 @@
-Dear OEW Collaborator,
-
-We appreciate your support and contribution to the Open Education Week.  Your event has been approved and will be featured in the Open Education Week schedule, on the world map of events, and will be promoted through Open Education social media channels.  You may download the official Open Education Week badge to display on your webpage or any other promotional materials.
-
-Large badge: http://www.openeducationweek.org/assets/badges/oew2016-badge.png
-Smaller badge: http://www.openeducationweek.org/assets/badges/oew2016-badge-small.png
-
-Once again thank you for helping us make this event a global celebration of the Open Education Movement. We look forward to seeing you around through out the week.
-
-Many thanks,
-OEW Planning Committee
+(deprecated: see accepted.tpl)
