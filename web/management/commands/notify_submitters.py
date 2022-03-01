@@ -1,3 +1,5 @@
+import time
+
 from django.core.management.base import BaseCommand
 from mail_templated import send_mail
 from django.template.loader import get_template
@@ -47,5 +49,6 @@ class Command(BaseCommand):
                 resource.notified = True
                 resource.save()
                 print(f'Emailed {resource.email} about #{resource.id}')
+                time.sleep(2)
             except:
                 print(f'Failed to email {resource.email} about #{resource.id}')
