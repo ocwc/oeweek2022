@@ -48,11 +48,16 @@
 
             <p class="text-sm mb-1"><i class="fal fa-globe-asia"></i> {{event.country }}, {{event.city}}</p>
 
-            <p class="text-sm mb-1">
+            <p class="text-sm mb-1" style="color: #999999;">
                 {% if event.event_time %}
                     <i class="fal fa-calendar-star"></i> {{ event.event_time|date:'M d, Y H:i' }} <em>({{ event.event_source_timezone }})</em>
                 {% else %}
                 <i class="fal fa-calendar-exclamation"></i> (no time specified)
+                {% endif %}
+            </p>
+            <p class="text-sm mb-1">
+                {% if event.convertedtime %}
+                    <i class="fal fa-calendar-star"></i> {{ event.convertedtime|date:'M d, Y H:i' }} <em>({{ event.convertedtimezone }})</em>
                 {% endif %}
             </p>
         </div>

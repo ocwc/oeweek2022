@@ -36,6 +36,8 @@ from mail_templated import send_mail
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import get_object_or_404, render
 
+from pytz import timezone
+
 def index(request):
     # if request.user.is_authenticated:
     #     return render(request, 'web/home.html', context={})
@@ -152,7 +154,7 @@ def thanks(request):
 
 #@login_required(login_url='/admin/')
 def show_events(request):
-    timezone = request.GET.get('timezone', 'local') # "local" = default
+    request_timezone = request.GET.get('timezone', 'local') # "local" = default
     event_list = Resource.objects.all().filter(post_type='event').order_by('event_time').filter(post_status='publish') # .exclude(post_status='trash')
 
     for event in event_list:
@@ -160,6 +162,19 @@ def show_events(request):
         if u and u.startswith('https://archive.org') and u.endswith('.png'):
             u = u[:-4] + '-sm.png'
             event.image_url = u
+        try:
+            event_tzinfo = timezone(event.event_source_timezone)
+            event_localtime = event.event_time
+
+            if event_localtime and event_tzinfo:
+                dt = arrow.get(event_localtime, tzinfo=event_tzinfo)
+                utc = dt.to('UTC') #.replace(tzinfo=timezone('UTC'))
+                event.convertedtime = utc
+                event.convertedtimezone = 'UTC'
+        except:
+            # if this crashes, use original times
+            event.convertedtime = event.event_time
+            event.convertedtimezone = event.event_source_timezone
 
     days = [
         ('Monday', 'Monday, March 7'),
