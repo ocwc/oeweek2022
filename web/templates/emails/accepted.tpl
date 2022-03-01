@@ -17,7 +17,7 @@ As you get ready for OEWeek …
 
 Don’t forget to take advantage of the promotional kit available for download, reuse, remix, and redistribution here (  https://bit.ly/OEW22_materials ). These OEWeek-branded materials can help you to promote your own event. You’ll also find the official OEWeek Badge for your website.
 
-Discuss all things Open Education and #oeweek highlights in OEG Connect at ( https://connect.oeglobal.org/c/oeweek/33 ). )! If you don’t have an account yet, join here: https://connect.oeglobal.org/invites/jTtdVe5Qsx .
+Discuss all things Open Education and #oeweek highlights in OEG Connect at ( https://connect.oeglobal.org/c/oeweek/33 ). If you don’t have an account yet, join here: ( https://connect.oeglobal.org/invites/jTtdVe5Qsx ).
 
 Get social … Open Education Week is a global effort built on everyone’s contributions. Follow #OEWeek on social media to get updates!
 
