@@ -16,10 +16,11 @@ class Command(BaseCommand):
                 year=2022,
                 # created__year=2022,
                 post_status='publish',
-                # notified=False,
+                notified=False,
                 # email='example@example.org',
         ):#.exclude(email='')[:10]:
-            print(resource)
+
+            # an extra check, just in case...
             if resource.notified==True:
                 print(f'Skipping {resource.email} about #{resource.id} (already notified)')
                 continue
@@ -29,7 +30,6 @@ class Command(BaseCommand):
             elif resource.post_type == 'resource':
                 slug1 = 'resources'
 
-            print('sending to:', resource.email )
             context = {
                 'slug1': slug1,
                 'year': resource.year,
