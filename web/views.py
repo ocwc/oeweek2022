@@ -153,7 +153,7 @@ def thanks(request):
 #@login_required(login_url='/admin/')
 def show_events(request):
     timezone = request.GET.get('timezone', 'local') # "local" = default
-    event_list = Resource.objects.all().filter(post_type='event').order_by('event_time').exclude(post_status='trash')#.filter(post_status='publish')
+    event_list = Resource.objects.all().filter(post_type='event').order_by('event_time').filter(post_status='publish') # .exclude(post_status='trash')
 
     for event in event_list:
         u = event.image_url
@@ -184,7 +184,7 @@ def show_event_detail(request, year, slug):
 
 #@login_required(login_url='/admin/')
 def show_resources(request):
-    resource_list = Resource.objects.all().filter(post_type='resource').order_by('title').exclude(post_status='trash')#.filter(post_status='publish')
+    resource_list = Resource.objects.all().filter(post_type='resource').order_by('title').filter(post_status='publish') # .exclude(post_status='trash')
 
     for resource in resource_list:
         u = resource.image_url
