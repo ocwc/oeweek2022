@@ -22,6 +22,9 @@ from .data import COUNTRY_CHOICES, LANGUAGE_CHOICES
 
 import arrow
 
+from pytz import timezone
+
+
 User = get_user_model()
 
 
@@ -139,6 +142,20 @@ class Resource(TimeStampedModel, ReviewModel):
         max_length=255, blank=True, null=True, choices=COUNTRY_CHOICES
     )
     event_time = models.DateTimeField(blank=True, null=True)
+
+    @property
+    def event_time_utc(self):
+        try:
+            event_tzinfo = timezone(self.event_source_timezone)
+            event_localtime = self.event_time
+
+            if event_localtime and event_tzinfo:
+                dt = arrow.get(event_localtime, tzinfo=event_tzinfo)
+                utc = dt.to('UTC') #.replace(tzinfo=timezone('UTC'))
+                return utc
+        except:
+            return ''
+            # return self.event_time
 
     @property
     def event_day(self):

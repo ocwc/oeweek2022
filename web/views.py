@@ -155,26 +155,18 @@ def thanks(request):
 #@login_required(login_url='/admin/')
 def show_events(request):
     request_timezone = request.GET.get('timezone', 'local') # "local" = default
-    event_list = Resource.objects.all().filter(post_type='event').order_by('event_time').filter(post_status='publish') # .exclude(post_status='trash')
+    event_list = Resource.objects.all().filter(post_type='event').filter(post_status='publish').exclude(event_source_timezone__exact='').exclude(event_source_timezone__isnull=True).exclude(event_time__isnull=True) # .exclude(post_status='trash')
 
     for event in event_list:
         u = event.image_url
         if u and u.startswith('https://archive.org') and u.endswith('.png'):
             u = u[:-4] + '-sm.png'
             event.image_url = u
-        try:
-            event_tzinfo = timezone(event.event_source_timezone)
-            event_localtime = event.event_time
+            event.convertedtime = event.event_time_utc
+            event.convertedtimezone = 'UTC'
 
-            if event_localtime and event_tzinfo:
-                dt = arrow.get(event_localtime, tzinfo=event_tzinfo)
-                utc = dt.to('UTC') #.replace(tzinfo=timezone('UTC'))
-                event.convertedtime = utc
-                event.convertedtimezone = 'UTC'
-        except:
-            # if this crashes, use original times
-            event.convertedtime = event.event_time
-            event.convertedtimezone = event.event_source_timezone
+    # sort django queryset by UTC (property) values, not by local timezone
+    event_list = sorted(event_list, key=lambda item: item.event_time_utc)
 
     days = [
         ('Monday', 'Monday, March 7'),
