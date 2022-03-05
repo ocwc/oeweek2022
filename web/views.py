@@ -38,6 +38,8 @@ from django.shortcuts import get_object_or_404, render
 
 from pytz import timezone
 
+import django.utils.timezone as djtz
+
 def index(request):
     # if request.user.is_authenticated:
     #     return render(request, 'web/home.html', context={})
@@ -168,6 +170,10 @@ def show_events(request):
     # sort django queryset by UTC (property) values, not by local timezone
     event_list = sorted(event_list, key=lambda item: item.event_time_utc)
 
+    # now = djtz.make_aware(djtz.now(), djtz.get_default_timezone())
+    now = djtz.now()
+    current_time_utc = now.astimezone(djtz.utc)
+
     days = [
         ('Monday', 'Monday, March 7'),
         ('Tuesday', 'Tuesday, March 8'),
@@ -179,7 +185,7 @@ def show_events(request):
         ('Other', 'Other days'),
     ]
 
-    context = { 'days': days, 'event_list': event_list}
+    context = { 'days': days, 'event_list': event_list, 'current_time_utc': current_time_utc }
     return render(request, 'web/events.html', context=context)
 
 #@login_required(login_url='/admin/')
