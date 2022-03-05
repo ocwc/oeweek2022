@@ -48,10 +48,11 @@
             <p class="mb-2">(no time specified)</p>
         {% endif %}
 
-
         <p class="mb-2"><i class="fal fa-globe"></i> <strong>Language</strong>: {{ obj.form_language }}</p>
 
-        <p class="mb-2"><i class="fal fa-user-chart"></i> <strong>Facilitator</strong>: {{ obj.event_facilitator }}</p>
+        {% if obj.facilitator %}
+            <p class="mb-2"><i class="fal fa-user-chart"></i> <strong>Facilitator</strong>: {{ obj.event_facilitator }}</p>
+        {% endif %}
 
         <p class="mt-6"><a href="{{ obj.link }}" class="bg-purple-500 text-white py-2 px-4 rounded hover:bg-purple-800 block"><i class="fal fa-external-link-alt"></i> {{ obj.link }}</a></p>
 
