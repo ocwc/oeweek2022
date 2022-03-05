@@ -24,6 +24,7 @@ import arrow
 
 from pytz import timezone
 
+import django.utils.timezone as djtz
 
 User = get_user_model()
 
@@ -156,6 +157,20 @@ class Resource(TimeStampedModel, ReviewModel):
         except:
             return ''
             # return self.event_time
+
+    @property
+    def event_offset_in_hours(self):
+        then = self.event_time_utc
+        now = djtz.now()
+
+        duration = then - now
+        duration_in_s = duration.total_seconds()
+        hours = int(divmod(duration_in_s, 3600)[0])
+        if hours >= 1 and hours <= 50:
+            return 'in ' + str(hours) +  ' hours'
+        else:
+            return ''
+        # FYI: https://stackoverflow.com/questions/1345827/how-do-i-find-the-time-difference-between-two-datetime-objects-in-python
 
     @property
     def event_day(self):
