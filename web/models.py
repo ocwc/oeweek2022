@@ -166,7 +166,9 @@ class Resource(TimeStampedModel, ReviewModel):
         duration = then - now
         duration_in_s = duration.total_seconds()
         hours = int(divmod(duration_in_s, 3600)[0])
-        if hours >= 1 and hours <= 50:
+        if hours == 1:
+            return 'in 1 hour'
+        elif hours > 1 and hours <= 48:
             return 'in ' + str(hours) +  ' hours'
         else:
             return ''
