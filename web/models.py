@@ -159,6 +159,13 @@ class Resource(TimeStampedModel, ReviewModel):
             # return self.event_time
 
     @property
+    def event_time_link_to_everytimezone(self):
+        ts = self.event_time_utc
+        noon_utc = ts.replace(hour=12, minute=0, second=0)
+        offset = int((ts - noon_utc).total_seconds() / 60)
+        return f'https://everytimezone.com/#{ts.year}-{ts.month}-{ts.day},{offset},6bj'
+
+    @property
     def event_offset_in_hours(self):
         then = self.event_time_utc
         now = djtz.now()
