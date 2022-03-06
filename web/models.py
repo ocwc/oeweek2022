@@ -183,20 +183,20 @@ class Resource(TimeStampedModel, ReviewModel):
 
     @property
     def event_day(self):
-        return self.event_time.strftime('%Y-%m-%d') if self.event_time else ''
+        return self.event_time_utc.strftime('%Y-%m-%d') if self.event_time_utc else ''
 
     @property
     def event_weekday(self):
-        return self.event_time.strftime('%A') if self.event_time else ''
+        return self.event_time_utc.strftime('%A') if self.event_time_utc else ''
 
     @property
     def event_oeweekday(self):
-        if not self.event_time: return 'Other'
-        if arrow.get(self.event_time) < arrow.get(settings.OEW_RANGE[0]):#.replace(tzinfo='local'):
+        if not self.event_time_utc: return 'Other'
+        if arrow.get(self.event_time_utc) < arrow.get(settings.OEW_RANGE[0]):#.replace(tzinfo='local'):
             return 'Other'
-        if arrow.get(self.event_time) > arrow.get(settings.OEW_RANGE[1]):
+        if arrow.get(self.event_time_utc) > arrow.get(settings.OEW_RANGE[1]):
             return 'Other'
-        return self.event_time.strftime('%A')
+        return self.event_time_utc.strftime('%A')
 
     event_type = models.CharField(
         max_length=255, blank=True, null=True, choices=EVENT_TYPES
