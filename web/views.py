@@ -10,6 +10,7 @@ from datetime import datetime
 from django.views.generic import View
 from django.http import HttpResponse, HttpResponseRedirect
 from django.db.models import Q
+from django.db.models.functions import Lower
 from django.conf import settings
 from django.core.cache import cache
 
@@ -201,7 +202,8 @@ def show_event_detail(request, year, slug):
 
 #@login_required(login_url='/admin/')
 def show_resources(request):
-    resource_list = Resource.objects.all().filter(post_type='resource').order_by('title').filter(post_status='publish') # .exclude(post_status='trash')
+    resource_list = Resource.objects.all().filter(post_type='resource').order_by(Lower('title')).filter(post_status='publish') # .exclude(post_status='trash')
+    # "Lower" = for case-insensitive sorting
     resource_count = len(resource_list)
 
     for resource in resource_list:
