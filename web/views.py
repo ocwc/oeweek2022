@@ -193,6 +193,8 @@ def show_event_detail(request, year, slug):
     event = get_object_or_404(Resource, year=year, slug=slug)
     # #todo -- check if event is "published" (throw 404 for drafts / trash)
     event.content = event.content.replace('\n', '<br>')
+    event.convertedtime = event.event_time_utc
+    event.convertedtimezone = 'UTC'
     context = {'obj': event}
     return render(request, 'web/event_detail.html', context=context)
 
