@@ -159,6 +159,7 @@ def show_events(request):
     request_timezone = request.GET.get('timezone', 'local') # "local" = default
     event_list = Resource.objects.all().filter(post_type='event').filter(post_status='publish').exclude(event_source_timezone__exact='').exclude(event_source_timezone__isnull=True).exclude(event_time__isnull=True) # .exclude(post_status='trash')
 
+    event_count = len(event_list)
     for event in event_list:
         u = event.image_url
         if u and u.startswith('https://archive.org') and u.endswith('.png'):
@@ -185,7 +186,7 @@ def show_events(request):
         ('Other', 'Other days'),
     ]
 
-    context = { 'days': days, 'event_list': event_list, 'current_time_utc': current_time_utc }
+    context = { 'days': days, 'event_list': event_list, 'current_time_utc': current_time_utc, 'event_count': event_count }
     return render(request, 'web/events.html', context=context)
 
 #@login_required(login_url='/admin/')
@@ -201,6 +202,7 @@ def show_event_detail(request, year, slug):
 #@login_required(login_url='/admin/')
 def show_resources(request):
     resource_list = Resource.objects.all().filter(post_type='resource').order_by('title').filter(post_status='publish') # .exclude(post_status='trash')
+    resource_count = len(resource_list)
 
     for resource in resource_list:
         u = resource.image_url
@@ -208,7 +210,7 @@ def show_resources(request):
             u = u[:-4] + '-sm.png'
             resource.image_url = u
 
-    context = {'resource_list': resource_list}
+    context = {'resource_list': resource_list, 'resource_count': resource_count}
     return render(request, 'web/resources.html', context=context)
 
 #@login_required(login_url='/admin/')

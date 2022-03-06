@@ -8,6 +8,10 @@
 
 <p><i class="fal fa-clock"></i> <strong>current time in UTC: <span style='background-color: #ffffcc;'>{{ current_time_utc | date:'M d, Y H:i' }}</span></strong></p>
 
+{% if event_count %}
+    <p><i class="fal fa-calculator"></i> <strong>Showing {{ event_count }} events</strong></p>
+{% endif %}
+
 <div class="bg-white border-gray-300 rounded-lg p-2 md:p-4 my-8">
 
 {% for day in days %}
