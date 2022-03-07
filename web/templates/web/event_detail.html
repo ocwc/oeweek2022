@@ -10,7 +10,7 @@
 
     <div class="detail-media">
         {% if obj.image_url %}
-        <img src="{{ obj.image_url }}">
+        <img src="{{ obj.image_url }}" class="mb-4 w-full">
         {% else %}
         {% load static %}
         <img rel="stylesheet" src="{% static 'web/images/placeholder-event.png' %}" class="mb-4 w-full">
@@ -19,7 +19,7 @@
 
     <div class="detail-content mb-4 lg:px-4">
 
-        <div class="text-sm mb-8 bg-gray-100 p-4 rounded">{{ obj.content | safe }}</div>
+        <div class="description text-sm mb-8 bg-gray-100 p-4 rounded">{{ obj.content | safe }}</div>
 
         <p class="mb-2"><i class="fal fa-university"></i> <a href="{{ obj.institution_url }}">{{ obj.institution }}</a></p>
 
