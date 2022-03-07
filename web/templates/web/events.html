@@ -15,7 +15,7 @@
 <div class="bg-white border-gray-300 rounded-lg p-2 md:p-4 my-8">
 
 {% for day in days %}
-<details>
+<details {% if day.2 == today %}open{% endif %}>
 
 <summary class="text-2xl font-bold cursor-pointer mb-4">{{ day.1 }}</summary>
 

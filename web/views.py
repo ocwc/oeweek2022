@@ -175,19 +175,26 @@ def show_events(request):
     # now = djtz.make_aware(djtz.now(), djtz.get_default_timezone())
     now = djtz.now()
     current_time_utc = now.astimezone(djtz.utc)
+    today = current_time_utc.strftime('%Y-%m-%d')
 
     days = [
-        ('Monday', 'Monday, March 7'),
-        ('Tuesday', 'Tuesday, March 8'),
-        ('Wednesday', 'Wednesday, March 9'),
-        ('Thursday', 'Thursday, March 10'),
-        ('Friday', 'Friday, March 11'),
-        # ('Saturday', 'Saturday, March 12'),
-        # ('Sunday', 'Sunday, March 13'),
-        ('Other', 'Other days'),
+        ('Monday', 'Monday, March 7', '2022-03-07'),
+        ('Tuesday', 'Tuesday, March 8', '2022-03-08'),
+        ('Wednesday', 'Wednesday, March 9', '2022-03-09'),
+        ('Thursday', 'Thursday, March 10', '2022-03-10'),
+        ('Friday', 'Friday, March 11', '2022-03-11'),
+        # ('Saturday', 'Saturday, March 12', '2022-03-12'),
+        # ('Sunday', 'Sunday, March 13', '2022-03-13'),
+        ('Other', 'Other days', ''),
     ]
 
-    context = { 'days': days, 'event_list': event_list, 'current_time_utc': current_time_utc, 'event_count': event_count }
+    context = {
+        'days': days,
+        'event_list': event_list,
+        'current_time_utc': current_time_utc,
+        'event_count': event_count,
+        'today': today,
+    }
     return render(request, 'web/events.html', context=context)
 
 #@login_required(login_url='/admin/')
