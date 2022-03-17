@@ -4,12 +4,9 @@
 
 <h1 class="hidden">Welcome to Open Education Week</h1>
 {% load static %}
-<video autoplay loop poster="{% static 'web/images/web-banner.png'%}" class="rounded-lg">
-    <source src="{% static 'web/images/oeweek22-web-banner.mp4' %}" type="video/mp4">
-
-    <source src="{% static 'web/images/oeweek22-web-banner.ogg' %}" type="video/ogg">
-    Your browser does not support embedded video, but no problem: Welcome to Open Education Week 2022 on March 7-11.
-</video>
+<img srcset= "{% static 'web/images/banner-next-sm.svg' %} 600w,
+                {% static 'web/images/banner-next-lg.svg' %}" 
+                alt="Mark your calendars for next OEWeek March 6-10, 2023" class="w-full mx-auto rounded-md">
 
 <div>
     <ul class="list-none my-8 flex justify-end gap-4 text-4xl items-center text-purple-500">
@@ -22,14 +19,14 @@
 </div>
 
 <section class="md:my-8">
-    <h2 class="text-4xl font-bold mb-8 mt-0"><i class="fak fa-oeweek-light"></i> Participate in OEWeek</h2>
+    <h2 class="text-4xl font-bold mb-8 mt-0"><i class="fak fa-oeweek"></i> Stay Connected</h2>
 
     <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6 auto-rows-max">
         
         <a href="/events/" class="bg-green-600 p-8 text-white flex flex-col justify-center md:rounded-md border-2 border-green-600 hover:border-green-800 hover:shadow-lg">
             <i class="fad fa-calendar-week fa-5x mx-auto mb-4"></i>
             <h3 class="font-bold text-xl text-center mb-4">2022 Activity Schedule</h3>
-            <p class="text-base leading-snug">Participate in the events and activities that take place during #OEWeek.</p>
+            <p class="text-base leading-snug">Browse the events and activities that took place during #OEWeek.</p>
         </a>
         
         <a href="/resources/" class="bg-red-400 p-8 text-white flex flex-col justify-center md:rounded-md border-2 border-red-400 hover:border-red-800 hover:shadow-lg">
