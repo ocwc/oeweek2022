@@ -5,7 +5,7 @@ import twitter
 import uuid
 
 from itertools import groupby
-from datetime import datetime
+from datetime import date, datetime
 
 from django.views.generic import View
 from django.http import HttpResponse, HttpResponseRedirect
@@ -45,7 +45,18 @@ def index(request):
     # if request.user.is_authenticated:
     #     return render(request, 'web/home.html', context={})
     # return HttpResponseRedirect('https://www.oeglobal.org/activities/open-education-week/')
-    return render(request, 'web/home.html', context={})
+
+    now_utc = djtz.now().astimezone(djtz.utc)
+    today = date(now_utc.year, now_utc.month, now_utc.day)
+    future = date(2023, 3, 6)
+    delta_days = (future - today).days
+    if delta_days < 7:
+        days_to_go = delta_days
+    else:
+        days_to_go = None
+    days_to_go = delta_days
+
+    return render(request, 'web/home.html', context={'days_to_go': days_to_go})
 
 # def page__what_is_open_education_week(request):
 #     return render(request, 'web/page--what-is-open-education-week.html')

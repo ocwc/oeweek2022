@@ -2,6 +2,13 @@
 
 {% block content %}
 
+{% if days_to_go %}
+    <div style="background-color: #ccccff;" align="center">
+        <h1><i class="fad fa-calendar-alt"></i> {{days_to_go}} days until Open Education Week 2023</h1>
+        <p><strong><a href="http://eepurl.com/gQfIHr">Sign up for updates</a></strong></p>
+    </div>
+{% endif %}
+
 <h1 class="hidden">Welcome to Open Education Week</h1>
 {% load static %}
 <img srcset= "{% static 'web/images/banner-next-sm.svg' %} 600w,
