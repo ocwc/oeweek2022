@@ -2,7 +2,10 @@
 
 {% block content %}
 
-<h1><i class="fad fa-box-open"></i> OE Week Resources</h1>
+{% include 'web/snippet-days_to_go.html' %}
+<br>
+
+<h1><!--<i class="fad fa-box-open"></i>--> OE Week 2022 Resources</h1>
 
 {% if resource_count %}
     <p><i class="fal fa-calculator"></i> <strong>Showing {{ resource_count }} resources</strong></p>

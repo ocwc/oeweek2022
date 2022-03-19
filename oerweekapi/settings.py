@@ -150,6 +150,10 @@ LOGIN_URL = "/api-auth/login/"
 OEW_YEAR = 2022
 OEW_RANGE = ["2022-03-07 00:00:00", "2022-03-11 23:59:59"]
 OEW_CFP_OPEN = "2022-01-08"
+
+# next year's OE week starting date
+FUTURE_OEWEEK=datetime.date(2023, 3, 6)
+
 CI = os.environ.get("CI")
 if CI:
     from .testsettings import *  # noqa: F401, F403

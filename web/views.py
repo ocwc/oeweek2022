@@ -5,7 +5,7 @@ import twitter
 import uuid
 
 from itertools import groupby
-from datetime import date, datetime
+from datetime import datetime
 
 from django.views.generic import View
 from django.http import HttpResponse, HttpResponseRedirect
@@ -31,6 +31,7 @@ from .serializers import (
     EmailTemplateSerializer,
     ResourceImageSerializer,
 )
+from .utils import days_to_go
 
 from mail_templated import send_mail
 
@@ -45,17 +46,6 @@ def index(request):
     # if request.user.is_authenticated:
     #     return render(request, 'web/home.html', context={})
     # return HttpResponseRedirect('https://www.oeglobal.org/activities/open-education-week/')
-
-    now_utc = djtz.now().astimezone(djtz.utc)
-    today = date(now_utc.year, now_utc.month, now_utc.day)
-    future = date(2023, 3, 6)
-    delta_days = (future - today).days
-    if delta_days < 7:
-        days_to_go = delta_days
-    else:
-        days_to_go = None
-    days_to_go = delta_days
-
     return render(request, 'web/home.html', context={'days_to_go': days_to_go})
 
 # def page__what_is_open_education_week(request):
@@ -205,6 +195,7 @@ def show_events(request):
         'current_time_utc': current_time_utc,
         'event_count': event_count,
         'today': today,
+        'days_to_go': days_to_go,
     }
     return render(request, 'web/events.html', context=context)
 
@@ -230,7 +221,11 @@ def show_resources(request):
             u = u[:-4] + '-sm.png'
             resource.image_url = u
 
-    context = {'resource_list': resource_list, 'resource_count': resource_count}
+    context = {
+        'resource_list': resource_list,
+        'resource_count': resource_count,
+        'days_to_go': days_to_go,
+    }
     return render(request, 'web/resources.html', context=context)
 
 #@login_required(login_url='/admin/')
