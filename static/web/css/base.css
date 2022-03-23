@@ -22,7 +22,6 @@
 
 .detail-content a,
 .detail-content .description {
-
   /* These are technically the same, but use both */
   overflow-wrap: break-word;
   word-wrap: break-word;
@@ -38,7 +37,6 @@
   -moz-hyphens: auto;
   -webkit-hyphens: auto;
   hyphens: auto;
-
 }
 
 /* Mario - Mobile menu */
@@ -870,4 +868,13 @@ svg {
 }
 .button-main:hover {
   opacity: 0.8;
+}
+
+/* Banner after party */
+
+.days-to-go {
+  position: absolute;
+  bottom: 1em;
+  left: 50%;
+  transform: translateX(-50%);
 }
