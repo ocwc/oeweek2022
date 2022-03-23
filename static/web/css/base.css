@@ -875,6 +875,12 @@ svg {
 .days-to-go {
   position: absolute;
   bottom: 1em;
-  left: 50%;
-  transform: translateX(-50%);
+  left: 1em;
+  right: 1em;
+  text-align: center;
+}
+.days-to-go .inner-days {
+  margin: 0 auto;
+  width: auto;
+  display: inline-block;
 }
