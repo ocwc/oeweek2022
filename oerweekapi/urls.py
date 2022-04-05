@@ -57,12 +57,18 @@ urlpatterns = [
     url(r'^submit-activity/$', RedirectView.as_view(url='/contribute-activity/', permanent=False)),
     url(r'^submit-asset$', RedirectView.as_view(url='/contribute-asset/', permanent=False)),
     url(r'^submit-asset/$', RedirectView.as_view(url='/contribute-asset/', permanent=False)),
+
     url(r'^contribute$', RedirectView.as_view(url='/contribute/', permanent=False)),
-    url(r'^contribute/$', views.contribute),
     url(r'^contribute-activity$', RedirectView.as_view(url='/contribute-activity/', permanent=False)),
-    url(r'^contribute-activity/$', views.contribute_activity),
     url(r'^contribute-asset$', RedirectView.as_view(url='/contribute-asset/', permanent=False)),
-    url(r'^contribute-asset/$', views.contribute_asset),
+    # 2022-04-05 -- replaced contribute links with redirects
+    # url(r'^contribute/$', views.contribute),
+    # url(r'^contribute-activity/$', views.contribute_activity),
+    # url(r'^contribute-asset/$', views.contribute_asset),
+    url(r'^contribute/$', RedirectView.as_view(url='/', permanent=False)),
+    url(r'^contribute-activity/$', RedirectView.as_view(url='/', permanent=False)),
+    url(r'^contribute-asset/$', RedirectView.as_view(url='/', permanent=False)),
+
     path('edit/<uuid:identifier>/', views.edit_resource),
     # OLD: url(r'^edit/$', views.edit_resource),
     # url(r'^page/materials/$', views.page__materials),
