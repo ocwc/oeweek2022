@@ -8,6 +8,12 @@ Notes:
 
 * no debug with local server: ```python manage.py runserver 4201 --insecure```
 
+
 ## Development
 
 Branches, pull-requests, releases, etc.: according to [git-flow](http://danielkummer.github.io/git-flow-cheatsheet/)
+
+
+## Deployment
+
+see [README in ansible subdirectory](ansible/README.md)
