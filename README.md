@@ -7,3 +7,7 @@ Notes:
 * debug with local server ```DEBUG=True python manage.py runserver 4201 --insecure```
 
 * no debug with local server: ```python manage.py runserver 4201 --insecure```
+
+## Development
+
+Branches, pull-requests, releases, etc.: according to [git-flow](http://danielkummer.github.io/git-flow-cheatsheet/)
