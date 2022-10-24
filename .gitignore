@@ -71,3 +71,5 @@ localsettings.py
 .idea/
 .pytest_cache/
 upload.sh
+ansible/inventory/dev
+ansible/inventory/prod

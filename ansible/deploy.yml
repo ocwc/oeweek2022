@@ -1,0 +1,34 @@
+---
+
+- name: Update current deployment to latest release
+  hosts: oeg_servers
+  vars:
+    app_git_repo: git@github.com:ocwc/oeweek2022.git
+
+  tasks:
+  - name: Just ensuring the repo checkout exists
+    ansible.builtin.git:
+      repo: '{{ app_git_repo }}'
+      dest: '{{ app_deploy_root }}'
+      update: no
+
+  - name: Stop the service
+    shell: sudo supervisorctl stop oerweekapi
+
+  - name: Update master branch
+    ansible.builtin.git:
+      repo: '{{ app_git_repo }}'
+      dest: '{{ app_deploy_root }}'
+      single_branch: yes
+      version: '{{ app_deploy_root }}'
+
+  - name: Perform migrations
+    shell: |
+      source '{{ venv_activate }}'
+      ./manage.py migrate
+    args:
+      chdir: '{{ app_deploy_root }}'
+      executable: /usr/bin/bash
+
+  - name: Start the service
+    shell: sudo supervisorctl start oerweekapi

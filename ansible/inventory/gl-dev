@@ -1,0 +1,13 @@
+[oeg_servers]
+'{{ lookup("env", "DEPLOY_DEV_HOST") }}'
+
+[oeg_servers:vars]
+app_deploy_root='{{ lookup("env", "DEPLOY_DEV_ROOT") }}'
+app_deploy_branch=develop
+venv_activate='{{ lookup("env", "DEPLOY_DEV_VENV") }}'
+
+[all:vars]
+ansible_user='{{ lookup("env", "DEPLOY_DEV_USER") }}'
+ansible_password='{{ lookup("env", "DEPLOY_DEV_PASSWORD") }}'
+
+# ref: https://medium.com/opsops/how-to-pass-password-to-ansible-from-environment-variable-bd5c566bc8a1
