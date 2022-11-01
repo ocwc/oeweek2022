@@ -17,6 +17,7 @@ class HomePage(Page):
     - "ways to contribute" section (TODO later, probably hardcoded)
     - "activities" section (TODO later, probably hardcoded)
     """
+
     main_image = models.ForeignKey(
         "wagtailimages.Image",
         null=True,
@@ -38,10 +39,11 @@ class HomePage(Page):
         blank=True,
         on_delete=models.SET_NULL,
         related_name="+",
-        help_text="Main image",
+        help_text='"Call to action" image',
     )
+    cta_title = models.CharField('"Call to action" title', null=True, max_length=254)
     cta_body = RichTextField(
-        null=True, blank=True, max_length=1000, help_text="\"Call to action\" body"
+        null=True, blank=True, max_length=1000, help_text='"Call to action" body'
     )
     cta_faq = models.CharField(
         default="FAQ",
@@ -68,10 +70,7 @@ class HomePage(Page):
         help_text="Anniversary image",
     )
 
-    md_body = RichTextField(
-        null=True, blank=True, help_text="\"More details\" body"
-    )
-
+    md_body = RichTextField(null=True, blank=True, help_text='"More details" body')
 
     content_panels = Page.content_panels + [
         MultiFieldPanel(
@@ -85,6 +84,7 @@ class HomePage(Page):
         MultiFieldPanel(
             [
                 FieldPanel("cta_image"),
+                FieldPanel("cta_title"),
                 FieldPanel("cta_body"),
                 MultiFieldPanel(
                     [
@@ -93,7 +93,7 @@ class HomePage(Page):
                     ]
                 ),
             ],
-            heading="\"Call to action\" section",
+            heading='"Call to action" section',
         ),
         MultiFieldPanel(
             [
@@ -105,6 +105,6 @@ class HomePage(Page):
             [
                 FieldPanel("md_body"),
             ],
-            heading="\"More details\" section",
+            heading='"More details" section',
         ),
     ]
