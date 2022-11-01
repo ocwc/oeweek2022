@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+
+{% load wagtailcore_tags %}
+
+{# TODO: remove if we do not need class=template-faqindex on body tag #}
+{% block body_class %}template-faqindex{% endblock %}
+
+{% block content %}
+<div class="container">
+
+    <div class="intro">
+        <h1>{{ page.title }}</h1>
+        <div>{{ page.intro|richtext }}</div>
+    </div>
+
+    {% for post in page.get_children %}
+        <h2 id="TODO">Q. <!-- a href="{% pageurl post %}" -->{{ post.title }}<!-- /a --></h2>
+        <p>A. {{ post.specific.answer|richtext }}</p>
+    {% endfor %}
+
+</div>
+{% endblock content %}

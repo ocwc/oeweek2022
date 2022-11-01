@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+
+{% load wagtailcore_tags %}
+
+{# TODO: remove if we do not need class=template-faq on body tag #}
+{% block body_class %}template-faq{% endblock %}
+
+{% block content %}
+<div class="container">
+
+    <h1>{{ page.get_parent.title }}</h1>
+    <h2>Q. {{ page.title }}</h2>
+    <p>A. {{ page.answer|richtext }}</p>
+
+</div>
+{% endblock content %}
