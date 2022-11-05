@@ -40,7 +40,7 @@ Let's call it `machine-b`.
    
    * exact steps, changes, etc. - see bellow
 
-5. have the ability to run `supervisorctl restart oerweekapi` without the need to supply password
+5. have the ability to run `supervisorctl restart oerweek-django` without the need to supply password
 
 Some more details, aimed at DEV setup on Ubuntu (PROD setup may be different due to security requirements):
 

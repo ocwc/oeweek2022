@@ -13,7 +13,7 @@
       update: no
 
   - name: Stop the service
-    shell: sudo supervisorctl stop oerweekapi
+    shell: sudo supervisorctl stop oerweek-django
 
   - name: Update master branch
     ansible.builtin.git:
@@ -31,4 +31,4 @@
       executable: /usr/bin/bash
 
   - name: Start the service
-    shell: sudo supervisorctl start oerweekapi
+    shell: sudo supervisorctl start oerweek-django
