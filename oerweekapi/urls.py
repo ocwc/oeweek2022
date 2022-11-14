@@ -5,6 +5,13 @@ from django.contrib import admin
 
 from django.urls import path
 
+from wagtail.admin import urls as wagtailadmin_urls
+from wagtail import urls as wagtail_urls
+from wagtail.documents import urls as wagtaildocs_urls
+
+# TODO: not sure about this one
+#from search import views as search_views
+
 from web import views
 
 from django.views.generic.base import RedirectView
@@ -84,6 +91,11 @@ urlpatterns = [
     path('resources/<int:year>/<str:slug>/', views.show_resource_detail),
 
     # url(r'^page/home/$', views.index, name='web_index'),
+
+    path("cms/", include(wagtailadmin_urls)),
+    path("documents/", include(wagtaildocs_urls)),
+    path('pages/', include(wagtail_urls)),
+    #path("search/", search_views.search, name="search"),
 ] \
 + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT) \
 + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)

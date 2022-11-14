@@ -47,6 +47,8 @@ djangorestframework-jsonapi
 # DONOTDELETE -- used in code
 djangorestframework-jwt
 
+wagtail>=4.0,<4.1
+
 # ???
 future
 

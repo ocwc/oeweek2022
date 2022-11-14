@@ -31,6 +31,25 @@ INSTALLED_APPS = (
     "corsheaders",
     "web",
     "import_export",
+    # our WagTail-based apps
+    "home",
+    "faq",
+    "search",	# TODO: not sure about this one
+    # WagTail stuff
+    "wagtail.contrib.forms",
+    "wagtail.contrib.redirects",
+    "wagtail.embeds",
+    "wagtail.sites",
+    "wagtail.users",
+    "wagtail.snippets",
+    "wagtail.documents",
+    "wagtail.images",
+    "wagtail.search",
+    "wagtail.admin",
+    "wagtail",
+    # required by WagTail stuff
+    "modelcluster",
+    "taggit",
 )
 
 MIDDLEWARE = [
@@ -43,6 +62,7 @@ MIDDLEWARE = [
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
     "django.middleware.security.SecurityMiddleware",
+    "wagtail.contrib.redirects.middleware.RedirectMiddleware",
 ]
 
 ROOT_URLCONF = "oerweekapi.urls"
@@ -92,6 +112,9 @@ STATIC_URL = "/static/"
 STATICFILES_DIRS = [
     os.path.join(BASE_DIR, "static"),
 ]
+# TODO: not sure about those
+#STATIC_ROOT = os.path.join(BASE_DIR, "static")
+#STATIC_URL = "/static/"
 
 MEDIA_ROOT = os.path.join(BASE_DIR, "media")
 MEDIA_URL = "https://api.openeducationweek.org/media/"
@@ -153,6 +176,23 @@ OEW_CFP_OPEN = "2022-01-08"
 
 # next year's OE week starting date
 FUTURE_OEWEEK=datetime.date(2023, 3, 6)
+
+# Wagtail settings
+
+WAGTAIL_SITE_NAME = "OE Week CMS"
+
+# Search
+# https://docs.wagtail.org/en/stable/topics/search/backends.html
+WAGTAILSEARCH_BACKENDS = {
+    "default": {
+        "BACKEND": "wagtail.search.backends.database",
+    }
+}
+
+# Base URL to use when referring to full URLs within the Wagtail admin backend -
+# e.g. in notification emails. Don't include '/admin' or a trailing slash
+# TODO: not sure about this one
+#WAGTAILADMIN_BASE_URL = "http://example.com"
 
 CI = os.environ.get("CI")
 if CI:
