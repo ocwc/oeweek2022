@@ -36,7 +36,7 @@
     <!-- Mario added google fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,400;0,700;1,400;1,700&display=swap" rel="stylesheet"> 
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,400;0,700;1,400;1,700&display=swap" rel="stylesheet">
     <!-- Mario added base.css in head -->
     {% load static %}
     <link rel="stylesheet" href="{%static 'web/css/base.css'%}">
@@ -100,7 +100,7 @@
                         </svg></a>
                     <nav id="mainMenu" role="navigation" class="nav-primary lg:block flex hidden">
                         <ul class="nav nav-dropdown flex gap-4 flex-col lg:flex-row lg:items-center">
-                            
+
 
                             <div class="ember-basic-dropdown">
                                 <div id="ember6"
@@ -137,7 +137,7 @@
                                     aria-owns="ember-basic-dropdown-content-ember5" aria-expanded="false">
 
                                     <li class="menu-item">
-                                        <a href="https://www.oeglobal.org/activities/about-oe-week/"
+                                        <a href="/about/"
                                             id="ember5" class="ember-view"><i class="fal fa-info-circle"></i> About</a>
                                     </li>
 
@@ -166,10 +166,10 @@
 
                                 </div>
                             </div>
-                            
+
                         </ul>
                     </nav>
-                    
+
                     <button class="toggle-menu flex items-center justify-center lg:hidden text-purple-500"
                         type="button" onclick="toggleMenu()">
                         <svg width="64" height="64" viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg" class="menu">
@@ -196,7 +196,7 @@
                         <h1>Open Education Week</h1>
                         {% endblock %}
                         <!--END CONTENT-->
-                    </div>                  
+                    </div>
 
             </div>
         </div>
@@ -322,7 +322,7 @@
         var menu = document.getElementById("mainMenu");
         header.classList.toggle("menu-open");
         menu.classList.toggle("hidden");
-    } 
+    }
 </script>
 
 </body>
