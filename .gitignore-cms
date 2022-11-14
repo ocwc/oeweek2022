@@ -1,3 +1,5 @@
+# TODO: merge into Django-based parent's .gitignore
+
 .venv
 
 db.sqlite3
