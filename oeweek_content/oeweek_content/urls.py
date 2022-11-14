@@ -1,3 +1,5 @@
+# TODO: merge into Django-based parent's URLs as per https://docs.wagtail.org/en/stable/getting_started/integrating_into_django.html
+
 from django.conf import settings
 from django.urls import include, path
 from django.contrib import admin

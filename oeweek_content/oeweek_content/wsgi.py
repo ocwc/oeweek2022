@@ -1,3 +1,5 @@
+# TODO: remove, keep only the Django-based parent's
+
 """
 WSGI config for oeweek_content project.
 

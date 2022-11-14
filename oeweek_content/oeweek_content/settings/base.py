@@ -10,6 +10,8 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/3.2/ref/settings/
 """
 
+# TODO: merge into Django-based parent's URLs as per https://docs.wagtail.org/en/stable/getting_started/integrating_into_django.html
+
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 import os
 

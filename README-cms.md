@@ -1,4 +1,4 @@
-# OE Week - WagTail bnased CMS part
+# OE Week - WagTail based CMS part
 
 TODO
 
