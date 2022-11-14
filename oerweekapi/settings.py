@@ -49,7 +49,6 @@ INSTALLED_APPS = (
     "wagtail",
     # required by WagTail stuff
     "modelcluster",
-    "taggit",
 )
 
 MIDDLEWARE = [
@@ -191,8 +190,8 @@ WAGTAILSEARCH_BACKENDS = {
 
 # Base URL to use when referring to full URLs within the Wagtail admin backend -
 # e.g. in notification emails. Don't include '/admin' or a trailing slash
-# TODO: not sure about this one
-#WAGTAILADMIN_BASE_URL = "http://example.com"
+# TODO: we'd like to NOT have it hardcoded here => find some better/nicer way
+WAGTAILADMIN_BASE_URL = "https://example.com"
 
 CI = os.environ.get("CI")
 if CI:
