@@ -7,7 +7,13 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/1.8/howto/deployment/checklist/
 
-ALLOWED_HOSTS = ["api.openeducationweek.org", 'oeweek.oeglobal.org', 'oeweektest.oeglobal.org', 'localhost', '.lhr.life']
+ALLOWED_HOSTS = [
+    "api.openeducationweek.org",
+    "oeweek.oeglobal.org",
+    "oeweektest.oeglobal.org",
+    "localhost",
+    ".lhr.life",
+]
 
 # Application definition
 
@@ -34,7 +40,7 @@ INSTALLED_APPS = (
     # our WagTail-based apps
     "home",
     "faq",
-    "search",	# TODO: not sure about this one
+    "search",  # TODO: not sure about this one
     # WagTail stuff
     "wagtail.contrib.forms",
     "wagtail.contrib.redirects",
@@ -57,7 +63,7 @@ MIDDLEWARE = [
     "django.middleware.common.CommonMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
     "django.contrib.auth.middleware.AuthenticationMiddleware",
-    #"django.contrib.auth.middleware.SessionAuthenticationMiddleware", # (...) The SessionAuthenticationMiddleware class is removed. It provided no functionality since session authentication is unconditionally enabled in Django 1.10.
+    # "django.contrib.auth.middleware.SessionAuthenticationMiddleware", # (...) The SessionAuthenticationMiddleware class is removed. It provided no functionality since session authentication is unconditionally enabled in Django 1.10.
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
     "django.middleware.security.SecurityMiddleware",
@@ -69,7 +75,9 @@ ROOT_URLCONF = "oerweekapi.urls"
 TEMPLATES = [
     {
         "BACKEND": "django.template.backends.django.DjangoTemplates",
-        "DIRS": [],
+        "DIRS": [
+            os.path.join(BASE_DIR, "templates"),
+        ],
         "APP_DIRS": True,
         "OPTIONS": {
             "context_processors": [
@@ -112,8 +120,8 @@ STATICFILES_DIRS = [
     os.path.join(BASE_DIR, "static"),
 ]
 # TODO: not sure about those
-#STATIC_ROOT = os.path.join(BASE_DIR, "static")
-#STATIC_URL = "/static/"
+# STATIC_ROOT = os.path.join(BASE_DIR, "static")
+# STATIC_URL = "/static/"
 
 MEDIA_ROOT = os.path.join(BASE_DIR, "media")
 MEDIA_URL = "https://api.openeducationweek.org/media/"
@@ -149,10 +157,10 @@ REST_FRAMEWORK = {
 # OLD: CORS_ORIGIN_ALLOW_ALL = True
 CORS_ALLOW_ALL_ORIGINS = True
 CORS_ALLOWED_ORIGINS = [
-    'https://oeweek.oeglobal.org',
-    'https://oeweektest.oeglobal.org',
-    'https://api.openeducationweek.org',
-    'http://localhost:4200',
+    "https://oeweek.oeglobal.org",
+    "https://oeweektest.oeglobal.org",
+    "https://api.openeducationweek.org",
+    "http://localhost:4200",
 ]
 
 REST_USE_JWT = True
@@ -174,7 +182,7 @@ OEW_RANGE = ["2022-03-07 00:00:00", "2022-03-11 23:59:59"]
 OEW_CFP_OPEN = "2022-01-08"
 
 # next year's OE week starting date
-FUTURE_OEWEEK=datetime.date(2023, 3, 6)
+FUTURE_OEWEEK = datetime.date(2023, 3, 6)
 
 # Wagtail settings
 
@@ -199,4 +207,4 @@ if CI:
 else:
     from .localsettings import *  # noqa: F401, F403
 
-DEFAULT_AUTO_FIELD='django.db.models.AutoField'
+DEFAULT_AUTO_FIELD = "django.db.models.AutoField"
