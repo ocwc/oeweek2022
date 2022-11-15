@@ -22,7 +22,7 @@
       single_branch: yes
       version: '{{ app_deploy_branch }}'
 
-  - name: Perform migrations
+  - name: Perform updates, migrations and other maintenance
     shell: |
       source '{{ venv_activate }}'
       pip install -U -r requirements.txt
