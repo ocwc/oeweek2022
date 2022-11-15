@@ -15,12 +15,12 @@
   - name: Stop the service
     shell: sudo supervisorctl stop oerweek-django
 
-  - name: Update master branch
+  - name: Update the branch
     ansible.builtin.git:
       repo: '{{ app_git_repo }}'
       dest: '{{ app_deploy_root }}'
       single_branch: yes
-      version: '{{ app_deploy_root }}'
+      version: '{{ app_deploy_branch }}'
 
   - name: Perform migrations
     shell: |
