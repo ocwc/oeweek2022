@@ -1,0 +1,42 @@
+{% extends "base-cms.html" %}
+
+{% load wagtailcore_tags %}
+
+{# TODO: remove if we do not need class=template-faqindex on body tag #}
+{% block body_class %}template-faqindex{% endblock %}
+
+{% block extra_css %}
+<style id='coblocks-frontend-inline-css' type='text/css'>
+.coblocks-hero-02116528426 > div {padding-top:30px;padding-right:30px;padding-bottom:30px;padding-left:30px;}@media only screen and (max-width: 514px) {.coblocks-hero-02116528426 > div {padding-top:10px;padding-right:30px;padding-bottom:30px;padding-left:30px;}}@media only screen and (max-width: 768px) {}@media only screen and (max-width: 514px) {}
+</style>
+{% endblock extra_css %}
+
+{% block content %}
+<!-- hard-coded proof-of-concept HTML from WordPress based content: -->
+<div class="container breadcrumbs">
+    <!-- Breadcrumb NavXT 7.1.0 -->
+    <span property="itemListElement" typeof="ListItem"><a property="item" typeof="WebPage" title="Go to OEGlobal." href="https://www.oeglobal.org" class="home" ><span property="name">Home</span></a><meta property="position" content="1"></span> − <span property="itemListElement" typeof="ListItem"><a property="item" typeof="WebPage" title="Go to Activities." href="https://www.oeglobal.org/activities/" class="post post-page" ><span property="name">Activities</span></a><meta property="position" content="2"></span> − <span property="itemListElement" typeof="ListItem"><a property="item" typeof="WebPage" title="Go to Open Education Week." href="https://www.oeglobal.org/activities/open-education-week/" class="post post-page" ><span property="name">Open Education Week</span></a><meta property="position" content="3"></span> − <span class="post post-page current-item">OEWeek 2022 : Frequently Asked Questions</span>
+</div>
+<!-- /hard-coded ... -->
+
+<div class="contentheader-strip text-light mb-12 " style="background-image: url(/static/img/doodle-1024x524.png)"><div class="container flex flex-col justify-center"><div class="content lg:px-6 py-12 lg:py-0 w-full lg:w-2/3 lg:ml-1/12 flex-inline"><div class="contentheader-strip__content w-full md:w-auto">
+	<h1 class="contentheader-strip__h1 z-20 relative">{{ page.title }}</h1>
+	<div class="leading-relaxed z-20 relative">{{ page.intro|richtext }}</div>
+	</div></div></div></div>
+
+<article class="container post-11356 page type-page status-publish has-post-thumbnail hentry">
+  <div class="content lg:mb-6 lg:p-6 w-full
+     lg:w-2/3 lg:ml-1/12     ">
+
+<div style="height:40px" aria-hidden="true" class="wp-block-spacer"></div>
+
+<p><a href="https://www.oeglobal.org/activities/open-education-week/" data-type="page" data-id="11191"><svg class="svg-inline--fa fa-arrow-left" aria-hidden="true" focusable="false" data-prefix="fal" data-icon="arrow-left" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512" data-fa-i2svg=""><path fill="currentColor" d="M448 256C448 264.8 440.6 272 431.4 272H54.11l140.7 149.3c6.157 6.531 5.655 16.66-1.118 22.59C190.5 446.6 186.5 448 182.5 448c-4.505 0-9.009-1.75-12.28-5.25l-165.9-176c-5.752-6.094-5.752-15.41 0-21.5l165.9-176c6.19-6.562 16.69-7 23.45-1.094c6.773 5.938 7.275 16.06 1.118 22.59L54.11 240h377.3C440.6 240 448 247.2 448 256z"></path></svg><!-- <i class="fal fa-arrow-left"></i> --> Open Education Week</a></p>
+
+{% for post in page.get_children %}
+<h2 id="{{ post.title|slugify }}" style="font-size:18px">Q. {{ post.title }}</h2>
+<p>{{ post.specific.answer|richtext }}</p>
+{% endfor %}
+
+  </div>
+</article>
+{% endblock content %}

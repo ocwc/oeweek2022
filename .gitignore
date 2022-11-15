@@ -62,6 +62,12 @@ target/
 #Ipython Notebook
 .ipynb_checkpoints
 
+# IDEs
+
+.project
+.pydevproject
+.settings/
+
 # Custom
 db.sqlite3
 localsettings.py
@@ -71,5 +77,6 @@ localsettings.py
 .idea/
 .pytest_cache/
 upload.sh
+
 ansible/inventory/dev
 ansible/inventory/prod

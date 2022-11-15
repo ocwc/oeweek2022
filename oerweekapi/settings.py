@@ -7,7 +7,13 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/1.8/howto/deployment/checklist/
 
-ALLOWED_HOSTS = ["api.openeducationweek.org", 'oeweek.oeglobal.org', 'oeweektest.oeglobal.org', 'localhost', '.lhr.life']
+ALLOWED_HOSTS = [
+    "api.openeducationweek.org",
+    "oeweek.oeglobal.org",
+    "oeweektest.oeglobal.org",
+    "localhost",
+    ".lhr.life",
+]
 
 # Application definition
 
@@ -31,6 +37,24 @@ INSTALLED_APPS = (
     "corsheaders",
     "web",
     "import_export",
+    # our WagTail-based apps
+    "home",
+    "faq",
+    "search",  # TODO: not sure about this one
+    # WagTail stuff
+    "wagtail.contrib.forms",
+    "wagtail.contrib.redirects",
+    "wagtail.embeds",
+    "wagtail.sites",
+    "wagtail.users",
+    "wagtail.snippets",
+    "wagtail.documents",
+    "wagtail.images",
+    "wagtail.search",
+    "wagtail.admin",
+    "wagtail",
+    # required by WagTail stuff
+    "modelcluster",
 )
 
 MIDDLEWARE = [
@@ -39,10 +63,11 @@ MIDDLEWARE = [
     "django.middleware.common.CommonMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
     "django.contrib.auth.middleware.AuthenticationMiddleware",
-    #"django.contrib.auth.middleware.SessionAuthenticationMiddleware", # (...) The SessionAuthenticationMiddleware class is removed. It provided no functionality since session authentication is unconditionally enabled in Django 1.10.
+    # "django.contrib.auth.middleware.SessionAuthenticationMiddleware", # (...) The SessionAuthenticationMiddleware class is removed. It provided no functionality since session authentication is unconditionally enabled in Django 1.10.
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
     "django.middleware.security.SecurityMiddleware",
+    "wagtail.contrib.redirects.middleware.RedirectMiddleware",
 ]
 
 ROOT_URLCONF = "oerweekapi.urls"
@@ -50,7 +75,9 @@ ROOT_URLCONF = "oerweekapi.urls"
 TEMPLATES = [
     {
         "BACKEND": "django.template.backends.django.DjangoTemplates",
-        "DIRS": [],
+        "DIRS": [
+            os.path.join(BASE_DIR, "templates"),
+        ],
         "APP_DIRS": True,
         "OPTIONS": {
             "context_processors": [
@@ -127,10 +154,10 @@ REST_FRAMEWORK = {
 # OLD: CORS_ORIGIN_ALLOW_ALL = True
 CORS_ALLOW_ALL_ORIGINS = True
 CORS_ALLOWED_ORIGINS = [
-    'https://oeweek.oeglobal.org',
-    'https://oeweektest.oeglobal.org',
-    'https://api.openeducationweek.org',
-    'http://localhost:4200',
+    "https://oeweek.oeglobal.org",
+    "https://oeweektest.oeglobal.org",
+    "https://api.openeducationweek.org",
+    "http://localhost:4200",
 ]
 
 REST_USE_JWT = True
@@ -152,7 +179,24 @@ OEW_RANGE = ["2022-03-07 00:00:00", "2022-03-11 23:59:59"]
 OEW_CFP_OPEN = "2022-01-08"
 
 # next year's OE week starting date
-FUTURE_OEWEEK=datetime.date(2023, 3, 6)
+FUTURE_OEWEEK = datetime.date(2023, 3, 6)
+
+# Wagtail settings
+
+WAGTAIL_SITE_NAME = "OE Week CMS"
+
+# Search
+# https://docs.wagtail.org/en/stable/topics/search/backends.html
+WAGTAILSEARCH_BACKENDS = {
+    "default": {
+        "BACKEND": "wagtail.search.backends.database",
+    }
+}
+
+# Base URL to use when referring to full URLs within the Wagtail admin backend -
+# e.g. in notification emails. Don't include '/admin' or a trailing slash
+# TODO: we'd like to NOT have it hardcoded here => find some better/nicer way
+WAGTAILADMIN_BASE_URL = "https://example.com"
 
 CI = os.environ.get("CI")
 if CI:
@@ -160,4 +204,4 @@ if CI:
 else:
     from .localsettings import *  # noqa: F401, F403
 
-DEFAULT_AUTO_FIELD='django.db.models.AutoField'
+DEFAULT_AUTO_FIELD = "django.db.models.AutoField"
