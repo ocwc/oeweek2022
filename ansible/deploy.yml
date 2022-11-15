@@ -26,6 +26,7 @@
     shell: |
       source '{{ venv_activate }}'
       ./manage.py migrate
+      ./manage.py collectstatic --noinput
     args:
       chdir: '{{ app_deploy_root }}'
       executable: /usr/bin/bash
