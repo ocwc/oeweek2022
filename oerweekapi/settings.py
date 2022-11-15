@@ -113,15 +113,12 @@ APPEND_SLASH = False
 # https://docs.djangoproject.com/en/1.8/howto/static-files/
 
 STATIC_URL = "/static/"
-# STATIC_ROOT = os.path.join(BASE_DIR, "static")
+STATIC_ROOT = os.path.join(BASE_DIR, "static")
 # # STATIC_ROOT (...) The absolute path to the directory where collectstatic will collect static files for deployment.
 # # STATICFILES_DIRS (...) Your project will probably also have static assets that aren’t tied to a particular app. In addition to using a static/ directory inside your apps, you can define a list of directories (STATICFILES_DIRS) in your settings file where Django will also look for static files.
-STATICFILES_DIRS = [
-    os.path.join(BASE_DIR, "static"),
-]
-# TODO: not sure about those
-# STATIC_ROOT = os.path.join(BASE_DIR, "static")
-# STATIC_URL = "/static/"
+# STATICFILES_DIRS = [
+#     os.path.join(BASE_DIR, "static"),
+# ]
 
 MEDIA_ROOT = os.path.join(BASE_DIR, "media")
 MEDIA_URL = "https://api.openeducationweek.org/media/"
