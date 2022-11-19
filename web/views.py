@@ -159,7 +159,7 @@ def thanks(request):
 #@login_required(login_url='/admin/')
 def show_events(request):
     request_timezone = request.GET.get('timezone', 'local') # "local" = default
-    event_list = Resource.objects.all().filter(post_type='event').filter(post_status='publish').exclude(event_source_timezone__exact='').exclude(event_source_timezone__isnull=True).exclude(event_time__isnull=True) # .exclude(post_status='trash')
+    event_list = Resource.objects.all().filter(post_type='event', post_status='publish', year=settings.OEW_YEAR).exclude(event_source_timezone__exact='').exclude(event_source_timezone__isnull=True).exclude(event_time__isnull=True) # .exclude(post_status='trash')
 
     event_count = len(event_list)
     for event in event_list:
