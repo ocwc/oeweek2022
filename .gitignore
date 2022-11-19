@@ -71,7 +71,7 @@ target/
 # Custom
 db.sqlite3
 localsettings.py
-# /static/
+/static/
 /media/
 .DS_Store
 .idea/
