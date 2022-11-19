@@ -194,13 +194,13 @@ def show_events(request):
     today = current_time_utc.strftime("%Y-%m-%d")
 
     days = [
-        ("Monday", "Monday, March 7", "2022-03-07"),
-        ("Tuesday", "Tuesday, March 8", "2022-03-08"),
-        ("Wednesday", "Wednesday, March 9", "2022-03-09"),
-        ("Thursday", "Thursday, March 10", "2022-03-10"),
-        ("Friday", "Friday, March 11", "2022-03-11"),
-        # ('Saturday', 'Saturday, March 12', '2022-03-12'),
-        # ('Sunday', 'Sunday, March 13', '2022-03-13'),
+        ("Monday", "Monday, March 6", "2023-03-06"),
+        ("Tuesday", "Tuesday, March 7", "2023-03-07"),
+        ("Wednesday", "Wednesday, March 8", "2023-03-08"),
+        ("Thursday", "Thursday, March 9", "2023-03-09"),
+        ("Friday", "Friday, March 10", "2023-03-10"),
+        # ('Saturday', 'Saturday, March 11', '2023-03-11'),
+        # ('Sunday', 'Sunday, March 12', '2023-03-12'),
         ("Other", "Other days", ""),
     ]
 
