@@ -230,7 +230,7 @@ def show_event_detail(request, year, slug):
 def show_resources(request):
     resource_list = (
         Resource.objects.all()
-        .filter(post_type="resource")
+        .filter(post_type="resource", year=settings.OEW_YEAR)
         .order_by(Lower("title"))
         .filter(post_status="publish")
     )  # .exclude(post_status='trash')
