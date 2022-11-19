@@ -121,7 +121,9 @@ STATIC_ROOT = os.path.join(BASE_DIR, "static")
 # ]
 
 MEDIA_ROOT = os.path.join(BASE_DIR, "media")
-MEDIA_URL = "https://api.openeducationweek.org/media/"
+#MEDIA_URL = "https://api.openeducationweek.org/media/"
+# TODO: later we need to resolve the concundrum with oeweek2022 being fork of oerweekapi, while both are run at PROD (oeweek2022 as oeweek.oeglobal.org and oerweekapi api.openeducationweek.org, with oeweek.oeglobal.org still using api.openeducationweek.org) for example via MEDIA_URL (not sure how else)
+MEDIA_URL = "/media/"
 
 REST_FRAMEWORK = {
     "DEFAULT_PERMISSION_CLASSES": (
