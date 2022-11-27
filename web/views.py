@@ -72,12 +72,12 @@ def contribute(request):
     if contribution_period_is_now():
         return render(request, "web/contribute.html")
     else:
-        return HttpResponseRedirect(reverse('web_index'))
+        return HttpResponseRedirect(reverse("web_index"))
 
 
 def contribute_activity(request):
     if not contribution_period_is_now():
-        return HttpResponseRedirect(reverse('web_index'))
+        return HttpResponseRedirect(reverse("web_index"))
     form = ActivityForm()
     if request.method == "POST":
         # create a form instance & populate with request data
@@ -118,7 +118,7 @@ def contribute_activity(request):
 
 def contribute_asset(request):
     if not contribution_period_is_now():
-        return HttpResponseRedirect(reverse('web_index'))
+        return HttpResponseRedirect(reverse("web_index"))
     form = AssetForm()
     if request.method == "POST":
         # create a form instance & populate with request data
