@@ -13,6 +13,7 @@ from django.db.models import Q
 from django.db.models.functions import Lower
 from django.conf import settings
 from django.core.cache import cache
+from django.urls import reverse
 
 from braces.views import LoginRequiredMixin
 
@@ -60,11 +61,23 @@ def index(request):
 #     return render(request, 'web/page--contribute.html')
 
 
+def contribution_period_is_now():
+    now = arrow.utcnow()
+    start = arrow.get(settings.OEW_CFP_OPEN).datetime
+    end = arrow.get(settings.OEW_RANGE[1])
+    return now >= start and now <= end
+
+
 def contribute(request):
-    return render(request, "web/contribute.html")
+    if contribution_period_is_now():
+        return render(request, "web/contribute.html")
+    else:
+        return HttpResponseRedirect(reverse('web_index'))
 
 
 def contribute_activity(request):
+    if not contribution_period_is_now():
+        return HttpResponseRedirect(reverse('web_index'))
     form = ActivityForm()
     if request.method == "POST":
         # create a form instance & populate with request data
@@ -104,6 +117,8 @@ def contribute_activity(request):
 
 
 def contribute_asset(request):
+    if not contribution_period_is_now():
+        return HttpResponseRedirect(reverse('web_index'))
     form = AssetForm()
     if request.method == "POST":
         # create a form instance & populate with request data
