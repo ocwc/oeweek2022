@@ -121,7 +121,9 @@ STATIC_ROOT = os.path.join(BASE_DIR, "static")
 # ]
 
 MEDIA_ROOT = os.path.join(BASE_DIR, "media")
-MEDIA_URL = "https://api.openeducationweek.org/media/"
+# MEDIA_URL = "https://api.openeducationweek.org/media/"
+# TODO: later we need to resolve the concundrum with oeweek2022 being fork of oerweekapi, while both are run at PROD (oeweek2022 as oeweek.oeglobal.org and oerweekapi api.openeducationweek.org, with oeweek.oeglobal.org still using api.openeducationweek.org) for example via MEDIA_URL (not sure how else)
+MEDIA_URL = "/media/"
 
 REST_FRAMEWORK = {
     "DEFAULT_PERMISSION_CLASSES": (
@@ -174,12 +176,12 @@ JWT_AUTH = {
 DJANGO_WYSIWYG_FLAVOR = "ckeditor"
 
 LOGIN_URL = "/api-auth/login/"
-OEW_YEAR = 2022
-OEW_RANGE = ["2022-03-07 00:00:00", "2022-03-11 23:59:59"]
-OEW_CFP_OPEN = "2022-01-08"
+OEW_YEAR = 2023
+OEW_RANGE = ["2023-03-06 00:00:00", "2023-03-10 23:59:59"]
+OEW_CFP_OPEN = "2023-01-16"
 
 # next year's OE week starting date
-FUTURE_OEWEEK = datetime.date(2023, 3, 6)
+FUTURE_OEWEEK = datetime.date(2024, 3, 4)
 
 # Wagtail settings
 

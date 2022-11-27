@@ -13,6 +13,7 @@ from django.db.models import Q
 from django.db.models.functions import Lower
 from django.conf import settings
 from django.core.cache import cache
+from django.urls import reverse
 
 from braces.views import LoginRequiredMixin
 
@@ -42,11 +43,13 @@ from pytz import timezone
 
 import django.utils.timezone as djtz
 
+
 def index(request):
     # if request.user.is_authenticated:
     #     return render(request, 'web/home.html', context={})
     # return HttpResponseRedirect('https://www.oeglobal.org/activities/open-education-week/')
-    return render(request, 'web/home.html', context={'days_to_go': days_to_go})
+    return render(request, "web/home.html", context={"days_to_go": days_to_go})
+
 
 # def page__what_is_open_education_week(request):
 #     return render(request, 'web/page--what-is-open-education-week.html')
@@ -57,12 +60,26 @@ def index(request):
 # def page__contribute(request):
 #     return render(request, 'web/page--contribute.html')
 
+
+def contribution_period_is_now():
+    now = arrow.utcnow()
+    start = arrow.get(settings.OEW_CFP_OPEN).datetime
+    end = arrow.get(settings.OEW_RANGE[1])
+    return now >= start and now <= end
+
+
 def contribute(request):
-    return render(request, 'web/contribute.html')
+    if contribution_period_is_now():
+        return render(request, "web/contribute.html")
+    else:
+        return HttpResponseRedirect(reverse("web_index"))
+
 
 def contribute_activity(request):
+    if not contribution_period_is_now():
+        return HttpResponseRedirect(reverse("web_index"))
     form = ActivityForm()
-    if request.method == 'POST':
+    if request.method == "POST":
         # create a form instance & populate with request data
         form = ActivityForm(request.POST)
         if form.is_valid():
@@ -74,101 +91,114 @@ def contribute_activity(request):
             #     form.cleaned_data['full_name'],
             # )
             context = {
-                'uuid': resource.uuid,
-                'title': resource.title,
+                "uuid": resource.uuid,
+                "title": resource.title,
             }
 
             try:
                 send_mail(
                     "emails/submission_received.tpl",
-                    context, # {}, # {"user": user, "key": key},
+                    context,  # {}, # {"user": user, "key": key},
                     "info@openeducationweek.org",
                     [resource.email],
-                    cc=['openeducationweek@oeglobal.org'],
+                    cc=["openeducationweek@oeglobal.org"],
                 )
             except:
-                print('Failed to send email to ' + resource.email)
+                print("Failed to send email to " + resource.email)
 
-            return render(request, 'web/thanks.html', context=context)
+            return render(request, "web/thanks.html", context=context)
 
     context = {
-        'form': form,
-        'action_verb': 'Contribute',
-        'submit_url': '/contribute-activity/',
+        "form": form,
+        "action_verb": "Contribute",
+        "submit_url": "/contribute-activity/",
     }
-    return render(request, 'web/contribute-activity.html', context)
+    return render(request, "web/contribute-activity.html", context)
+
 
 def contribute_asset(request):
+    if not contribution_period_is_now():
+        return HttpResponseRedirect(reverse("web_index"))
     form = AssetForm()
-    if request.method == 'POST':
+    if request.method == "POST":
         # create a form instance & populate with request data
         form = AssetForm(request.POST)
         if form.is_valid():
             print(form.cleaned_data)
             resource = form.save()
             context = {
-                'uuid': resource.uuid,
-                'title': resource.title,
+                "uuid": resource.uuid,
+                "title": resource.title,
             }
-            return render(request, 'web/thanks.html', context=context)
+            return render(request, "web/thanks.html", context=context)
 
     context = {
-        'form': form,
-        'action_verb': 'Contribute',
-        'submit_url': '/contribute-asset/',
+        "form": form,
+        "action_verb": "Contribute",
+        "submit_url": "/contribute-asset/",
     }
-    return render(request, 'web/contribute-asset.html', context)
+    return render(request, "web/contribute-asset.html", context)
+
 
 # def page__materials(request):
 #     return render(request, 'web/page--materials.html')
+
 
 def edit_resource(request, identifier):
     uuid = identifier
     resource = Resource.objects.get(uuid=uuid)
     # form = ResourceForm(initial={'headline': 'Initial headline'}, instance=resource)
-    if resource.post_type == 'event':
+    if resource.post_type == "event":
         form = ActivityForm(instance=resource)
-        template_url = 'web/contribute-activity.html'
-    elif resource.post_type == 'resource':
+        template_url = "web/contribute-activity.html"
+    elif resource.post_type == "resource":
         form = AssetForm(instance=resource)
-        template_url = 'web/contribute-asset.html'
+        template_url = "web/contribute-asset.html"
 
-    if request.method == 'POST':
-        if resource.post_type == 'event':
+    if request.method == "POST":
+        if resource.post_type == "event":
             form = ActivityForm(request.POST or None, instance=resource)
-        elif resource.post_type == 'resource':
+        elif resource.post_type == "resource":
             form = AssetForm(request.POST or None, instance=resource)
 
         if form.is_valid():
             resource = Resource.objects.get(uuid=uuid)
             form.save()
-            return render(request, 'web/updated.html')
+            return render(request, "web/updated.html")
         else:
             print(form.errors)
 
     context = {
-        'form': form,
-        'action_verb': 'Edit',
-        'submit_url': '/edit/' + str(uuid) + '/',
+        "form": form,
+        "action_verb": "Edit",
+        "submit_url": "/edit/" + str(uuid) + "/",
     }
     return render(request, template_url, context)
 
-def thanks(request):
-    return render(request, 'web/thanks.html')
 
-#@login_required(login_url='/admin/')
+def thanks(request):
+    return render(request, "web/thanks.html")
+
+
+# @login_required(login_url='/admin/')
 def show_events(request):
-    request_timezone = request.GET.get('timezone', 'local') # "local" = default
-    event_list = Resource.objects.all().filter(post_type='event').filter(post_status='publish').exclude(event_source_timezone__exact='').exclude(event_source_timezone__isnull=True).exclude(event_time__isnull=True) # .exclude(post_status='trash')
+    request_timezone = request.GET.get("timezone", "local")  # "local" = default
+    event_list = (
+        Resource.objects.all()
+        .filter(post_type="event", post_status="publish", year=settings.OEW_YEAR)
+        .exclude(event_source_timezone__exact="")
+        .exclude(event_source_timezone__isnull=True)
+        .exclude(event_time__isnull=True)
+    )  # .exclude(post_status='trash')
 
     event_count = len(event_list)
     for event in event_list:
         u = event.image_url
-        if u and u.startswith('https://archive.org') and u.endswith('.png'):
-            u = u[:-4] + '-sm.png'
+        if u and u.startswith("https://archive.org") and u.endswith(".png"):
+            u = u[:-4] + "-sm.png"
             event.image_url = u
             event.convertedtime = event.event_time_utc
-            event.convertedtimezone = 'UTC'
+            event.convertedtimezone = "UTC"
 
     # sort django queryset by UTC (property) values, not by local timezone
     event_list = sorted(event_list, key=lambda item: item.event_time_utc)
@@ -176,64 +206,73 @@ def show_events(request):
     # now = djtz.make_aware(djtz.now(), djtz.get_default_timezone())
     now = djtz.now()
     current_time_utc = now.astimezone(djtz.utc)
-    today = current_time_utc.strftime('%Y-%m-%d')
+    today = current_time_utc.strftime("%Y-%m-%d")
 
     days = [
-        ('Monday', 'Monday, March 7', '2022-03-07'),
-        ('Tuesday', 'Tuesday, March 8', '2022-03-08'),
-        ('Wednesday', 'Wednesday, March 9', '2022-03-09'),
-        ('Thursday', 'Thursday, March 10', '2022-03-10'),
-        ('Friday', 'Friday, March 11', '2022-03-11'),
-        # ('Saturday', 'Saturday, March 12', '2022-03-12'),
-        # ('Sunday', 'Sunday, March 13', '2022-03-13'),
-        ('Other', 'Other days', ''),
+        ("Monday", "Monday, March 6", "2023-03-06"),
+        ("Tuesday", "Tuesday, March 7", "2023-03-07"),
+        ("Wednesday", "Wednesday, March 8", "2023-03-08"),
+        ("Thursday", "Thursday, March 9", "2023-03-09"),
+        ("Friday", "Friday, March 10", "2023-03-10"),
+        # ('Saturday', 'Saturday, March 11', '2023-03-11'),
+        # ('Sunday', 'Sunday, March 12', '2023-03-12'),
+        ("Other", "Other days", ""),
     ]
 
     context = {
-        'days': days,
-        'event_list': event_list,
-        'current_time_utc': current_time_utc,
-        'event_count': event_count,
-        'today': today,
-        'days_to_go': days_to_go,
+        "days": days,
+        "event_list": event_list,
+        "current_time_utc": current_time_utc,
+        "event_count": event_count,
+        "today": today,
+        "days_to_go": days_to_go,
     }
-    return render(request, 'web/events.html', context=context)
+    return render(request, "web/events.html", context=context)
 
-#@login_required(login_url='/admin/')
+
+# @login_required(login_url='/admin/')
 def show_event_detail(request, year, slug):
     event = get_object_or_404(Resource, year=year, slug=slug)
     # #todo -- check if event is "published" (throw 404 for drafts / trash)
-    event.content = event.content.replace('\n', '<br>')
+    event.content = event.content.replace("\n", "<br>")
     event.convertedtime = event.event_time_utc
-    event.convertedtimezone = 'UTC'
-    context = {'obj': event}
-    return render(request, 'web/event_detail.html', context=context)
+    event.convertedtimezone = "UTC"
+    context = {"obj": event}
+    return render(request, "web/event_detail.html", context=context)
 
-#@login_required(login_url='/admin/')
+
+# @login_required(login_url='/admin/')
 def show_resources(request):
-    resource_list = Resource.objects.all().filter(post_type='resource').order_by(Lower('title')).filter(post_status='publish') # .exclude(post_status='trash')
+    resource_list = (
+        Resource.objects.all()
+        .filter(post_type="resource", year=settings.OEW_YEAR)
+        .order_by(Lower("title"))
+        .filter(post_status="publish")
+    )  # .exclude(post_status='trash')
     # "Lower" = for case-insensitive sorting
     resource_count = len(resource_list)
 
     for resource in resource_list:
         u = resource.image_url
-        if u and u.startswith('https://archive.org') and u.endswith('.png'):
-            u = u[:-4] + '-sm.png'
+        if u and u.startswith("https://archive.org") and u.endswith(".png"):
+            u = u[:-4] + "-sm.png"
             resource.image_url = u
 
     context = {
-        'resource_list': resource_list,
-        'resource_count': resource_count,
-        'days_to_go': days_to_go,
+        "resource_list": resource_list,
+        "resource_count": resource_count,
+        "days_to_go": days_to_go,
     }
-    return render(request, 'web/resources.html', context=context)
+    return render(request, "web/resources.html", context=context)
 
-#@login_required(login_url='/admin/')
+
+# @login_required(login_url='/admin/')
 def show_resource_detail(request, year, slug):
     resource = get_object_or_404(Resource, year=year, slug=slug)
-    resource.content = resource.content.replace('\n', '<br>')
-    context = {'obj': resource}
-    return render(request, 'web/resource_detail.html', context=context)
+    resource.content = resource.content.replace("\n", "<br>")
+    context = {"obj": resource}
+    return render(request, "web/resource_detail.html", context=context)
+
 
 class LargeResultsSetPagination(PageNumberPagination):
     page_size = 1000
@@ -419,21 +458,21 @@ class ExportResources(LoginRequiredMixin, View):
         row_num = 0
 
         columns = [
-            (u"ID", 2000),
-            (u"Resource Type", 6000),
-            (u"Title", 6000),
-            (u"Organization", 8000),
-            (u"Contact name", 8000),
-            (u"Email", 8000),
-            (u"OEW URL", 8000),
-            (u"Resources URL", 8000),
-            (u"Event Type", 8000),
-            (u"Date and Time", 8000),
-            (u"Country", 8000),
-            (u"City", 8000),
-            (u"Language", 8000),
-            (u"Twitter", 8000),
-            (u"Tags", 8000),
+            ("ID", 2000),
+            ("Resource Type", 6000),
+            ("Title", 6000),
+            ("Organization", 8000),
+            ("Contact name", 8000),
+            ("Email", 8000),
+            ("OEW URL", 8000),
+            ("Resources URL", 8000),
+            ("Event Type", 8000),
+            ("Date and Time", 8000),
+            ("Country", 8000),
+            ("City", 8000),
+            ("Language", 8000),
+            ("Twitter", 8000),
+            ("Tags", 8000),
         ]
 
         for col_num in range(len(columns)):
