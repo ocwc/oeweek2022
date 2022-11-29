@@ -6,7 +6,9 @@ from base64 import urlsafe_b64encode
 
 from django.db import models
 from django.conf import settings
+from django.core.exceptions import ValidationError
 from django.core.files.base import ContentFile
+from django.utils.deconstruct import deconstructible
 from django.utils.text import slugify
 from django.contrib.postgres.fields import ArrayField
 from django.contrib.auth import get_user_model
@@ -60,6 +62,28 @@ class Category(TimeStampedModel):
     wp_id = models.IntegerField()
     name = models.CharField(max_length=255)
     slug = models.CharField(max_length=255)
+
+
+def validate_image(image_obj):
+    if image_obj.width > settings.RESOURCE_IMAGE_MAX_WIDTH or image_obj.height > settings.RESOURCE_IMAGE_MAX_HEIGHT:
+        raise ValidationError("Max image size size is %dx%d pixels" % (settings.RESOURCE_IMAGE_MAX_WIDTH, settings.RESOURCE_IMAGE_MAX_HEIGHT))
+    if image_obj.file.size > settings.RESOURCE_IMAGE_MAX_SIZE:
+        raise ValidationError("Max file size is %d MB" % (settings.RESOURCE_IMAGE_MAX_SIZE / (1024 * 1024)))
+
+
+@deconstructible
+class UploadToResourceImageDir(object):
+
+    def __init__(self, sub_path):
+        self.sub_path = sub_path
+
+    def __call__(self, instance, filename):
+        ext = filename.split('.')[-1]
+        if instance.pk:
+            new_name = '{}.{}'.format(instance.pk, ext)
+        else:
+            new_name = '{}.{}'.format(uuid.uuid4().hex, ext)
+        return "{}/{}".format(self.sub_path, new_name)
 
 
 class Resource(TimeStampedModel, ReviewModel):
@@ -238,9 +262,16 @@ class Resource(TimeStampedModel, ReviewModel):
     year = models.IntegerField(blank=True, null=True, default=settings.OEW_YEAR)
     oeaward = models.BooleanField(default=False)
 
+    # supplied by site admins (e.g. OEG staff)
     image = models.ForeignKey(
         "ResourceImage", null=True, default=None, blank=True, on_delete=models.CASCADE
     )
+    # supplied by contributors, unauthenticated
+    user_image = models.ImageField(
+        upload_to=UploadToResourceImageDir("images/resource/"),
+        blank=True,
+        validators=[validate_image])
+
     twitter = models.CharField(blank=True, null=True, max_length=255)
     twitter_personal = models.CharField(blank=True, null=True, max_length=255)
     twitter_institution = models.CharField(blank=True, null=True, max_length=255)
@@ -297,13 +328,19 @@ class Resource(TimeStampedModel, ReviewModel):
     def get_image_url_for_detail(self):
         """We have (or can have) several images available for each resource. Hence
         this is the order of preference for actual use:
+
         1) image_url: supplied by OE Week admin(s), used in current OE Week Django implementation (2022)
-        2) image: supplied by OE Week admin(s), used in old OE Week Django implementation (2016)"""
+        2) image: supplied by OE Week admin(s), used in old OE Week Django implementation (2016)
+        3) user_image: user supplied (unauthenticated => untrusted), new for 2023
+
+        TL;DR: Images supplied by untrusted anonymous users takes least precedence.
+        """
 
         u = self.image_url
-        if u is None:
-            # if no URL given, use image which is part of submitted form
+        if u is None and self.image:
             u = self.image.image.url
+        if u is None:
+            u = self.user_image.url
         return u
 
     def get_image_url_for_list(self):

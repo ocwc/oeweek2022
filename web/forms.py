@@ -36,6 +36,7 @@ class ActivityForm(ModelForm):
             'form_language', # 'language',
             # 'opentags',
             # 'image',
+            'user_image',
         ]
 
     # uuid = forms.UUIDField(
@@ -188,6 +189,11 @@ class ActivityForm(ModelForm):
     #     )
     # )
 
+    user_image = forms.ImageField(
+        required=False,
+        label="Screenshot of the activity website",
+    )
+
 class AssetForm(ModelForm):
     class Meta:
         model = Resource
@@ -213,6 +219,7 @@ class AssetForm(ModelForm):
             'form_language', # 'language',
             # 'opentags',
             # 'image',
+            'user_image',
         ]
 
     # uuid = forms.UUIDField(
@@ -335,3 +342,8 @@ class AssetForm(ModelForm):
     # License (license)
 
     # Primary language (form_language)
+
+    user_image = forms.ImageField(
+        required=False,
+        label="Screenshot of the activity website",
+    )

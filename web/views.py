@@ -81,7 +81,7 @@ def contribute_activity(request):
     form = ActivityForm()
     if request.method == "POST":
         # create a form instance & populate with request data
-        form = ActivityForm(request.POST)
+        form = ActivityForm(request.POST, request.FILES)
         if form.is_valid():
             print(form.cleaned_data)
             resource = form.save()
@@ -122,7 +122,7 @@ def contribute_asset(request):
     form = AssetForm()
     if request.method == "POST":
         # create a form instance & populate with request data
-        form = AssetForm(request.POST)
+        form = AssetForm(request.POST, request.FILES)
         if form.is_valid():
             print(form.cleaned_data)
             resource = form.save()
@@ -157,9 +157,9 @@ def edit_resource(request, identifier):
 
     if request.method == "POST":
         if resource.post_type == "event":
-            form = ActivityForm(request.POST or None, instance=resource)
+            form = ActivityForm(request.POST or None, request.FILES, instance=resource)
         elif resource.post_type == "resource":
-            form = AssetForm(request.POST or None, instance=resource)
+            form = AssetForm(request.POST or None, request.FILES, instance=resource)
 
         if form.is_valid():
             resource = Resource.objects.get(uuid=uuid)
