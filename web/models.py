@@ -65,24 +65,32 @@ class Category(TimeStampedModel):
 
 
 def validate_image(image_obj):
-    if image_obj.width > settings.RESOURCE_IMAGE_MAX_WIDTH or image_obj.height > settings.RESOURCE_IMAGE_MAX_HEIGHT:
-        raise ValidationError("Max image size size is %dx%d pixels" % (settings.RESOURCE_IMAGE_MAX_WIDTH, settings.RESOURCE_IMAGE_MAX_HEIGHT))
+    if (
+        image_obj.width > settings.RESOURCE_IMAGE_MAX_WIDTH
+        or image_obj.height > settings.RESOURCE_IMAGE_MAX_HEIGHT
+    ):
+        raise ValidationError(
+            "Max image size size is %dx%d pixels"
+            % (settings.RESOURCE_IMAGE_MAX_WIDTH, settings.RESOURCE_IMAGE_MAX_HEIGHT)
+        )
     if image_obj.file.size > settings.RESOURCE_IMAGE_MAX_SIZE:
-        raise ValidationError("Max file size is %d MB" % (settings.RESOURCE_IMAGE_MAX_SIZE / (1024 * 1024)))
+        raise ValidationError(
+            "Max file size is %d MB"
+            % (settings.RESOURCE_IMAGE_MAX_SIZE / (1024 * 1024))
+        )
 
 
 @deconstructible
 class UploadToResourceImageDir(object):
-
     def __init__(self, sub_path):
         self.sub_path = sub_path
 
     def __call__(self, instance, filename):
-        ext = filename.split('.')[-1]
+        ext = filename.split(".")[-1]
         if instance.pk:
-            new_name = '{}.{}'.format(instance.pk, ext)
+            new_name = "{}.{}".format(instance.pk, ext)
         else:
-            new_name = '{}.{}'.format(uuid.uuid4().hex, ext)
+            new_name = "{}.{}".format(uuid.uuid4().hex, ext)
         return "{}/{}".format(self.sub_path, new_name)
 
 
@@ -270,7 +278,8 @@ class Resource(TimeStampedModel, ReviewModel):
     user_image = models.ImageField(
         upload_to=UploadToResourceImageDir("images/resource/"),
         blank=True,
-        validators=[validate_image])
+        validators=[validate_image],
+    )
 
     twitter = models.CharField(blank=True, null=True, max_length=255)
     twitter_personal = models.CharField(blank=True, null=True, max_length=255)

@@ -7,13 +7,17 @@ import web.models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('web', '0007_alter_resource_year'),
+        ("web", "0007_alter_resource_year"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='resource',
-            name='user_image',
-            field=models.ImageField(blank=True, upload_to=web.models.UploadToResourceImageDir('images/resource/'), validators=[web.models.validate_image]),
+            model_name="resource",
+            name="user_image",
+            field=models.ImageField(
+                blank=True,
+                upload_to=web.models.UploadToResourceImageDir("images/resource/"),
+                validators=[web.models.validate_image],
+            ),
         ),
     ]
