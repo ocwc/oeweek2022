@@ -95,9 +95,9 @@ class Resource(TimeStampedModel, ReviewModel):
     # JG: there is a #supercool table in #twoscoopsofdjango -- see screenshot in https://web.archive.org/web/20211112230210/https://stackoverflow.com/questions/4384098/in-django-models-py-whats-the-difference-between-default-null-and-blank
 
     uuid = models.UUIDField(
-         blank = True,
-         default = uuid.uuid4,
-         # editable = False, # DO NOT USE -- non-editable fields cannot be used with forms
+        blank=True,
+        default=uuid.uuid4,
+        # editable = False, # DO NOT USE -- non-editable fields cannot be used with forms
     )
 
     post_type = models.CharField(choices=RESOURCE_TYPES, max_length=25)
@@ -122,13 +122,13 @@ class Resource(TimeStampedModel, ReviewModel):
     )
 
     LICENSE_CHOICES = Choices(
-        ('Public domain', 'Public domain'),
-        ('CC-0', 'CC Zero (CC 0)'),
-        ('CC-BY', 'CC Attribution (CC BY)'),
-        ('CC-BY-SA', 'CC Attribution — Share-Alike (CC BY-SA)'),
-        ('CC-BY-NC', 'CC Attribution — Non-Commercial (CC BY-NC)'),
-        ('CC-NC-SA', 'CC Attribution — Non-Commercial — Share-Alike (CC BY-NC-SA)'),
-        ('Other', 'Other open license'),
+        ("Public domain", "Public domain"),
+        ("CC-0", "CC Zero (CC 0)"),
+        ("CC-BY", "CC Attribution (CC BY)"),
+        ("CC-BY-SA", "CC Attribution — Share-Alike (CC BY-SA)"),
+        ("CC-BY-NC", "CC Attribution — Non-Commercial (CC BY-NC)"),
+        ("CC-NC-SA", "CC Attribution — Non-Commercial — Share-Alike (CC BY-NC-SA)"),
+        ("Other", "Other open license"),
     )
     license = models.CharField(
         max_length=255, blank=True, null=True, choices=LICENSE_CHOICES
@@ -152,10 +152,10 @@ class Resource(TimeStampedModel, ReviewModel):
 
             if event_localtime and event_tzinfo:
                 dt = arrow.get(event_localtime, tzinfo=event_tzinfo)
-                utc = dt.to('UTC') #.replace(tzinfo=timezone('UTC'))
+                utc = dt.to("UTC")  # .replace(tzinfo=timezone('UTC'))
                 return utc
         except:
-            return ''
+            return ""
             # return self.event_time
 
     @property
@@ -163,7 +163,7 @@ class Resource(TimeStampedModel, ReviewModel):
         ts = self.event_time_utc
         noon_utc = ts.replace(hour=12, minute=0, second=0)
         offset = int((ts - noon_utc).total_seconds() / 60)
-        return f'https://everytimezone.com/#{ts.year}-{ts.month}-{ts.day},{offset},6bj'
+        return f"https://everytimezone.com/#{ts.year}-{ts.month}-{ts.day},{offset},6bj"
 
     @property
     def event_offset_in_hours(self):
@@ -174,29 +174,32 @@ class Resource(TimeStampedModel, ReviewModel):
         duration_in_s = duration.total_seconds()
         hours = int(divmod(duration_in_s, 3600)[0])
         if hours == 1:
-            return 'in 1 hour'
+            return "in 1 hour"
         elif hours > 1 and hours <= 48:
-            return 'in ' + str(hours) +  ' hours'
+            return "in " + str(hours) + " hours"
         else:
-            return ''
+            return ""
         # FYI: https://stackoverflow.com/questions/1345827/how-do-i-find-the-time-difference-between-two-datetime-objects-in-python
 
     @property
     def event_day(self):
-        return self.event_time_utc.strftime('%Y-%m-%d') if self.event_time_utc else ''
+        return self.event_time_utc.strftime("%Y-%m-%d") if self.event_time_utc else ""
 
     @property
     def event_weekday(self):
-        return self.event_time_utc.strftime('%A') if self.event_time_utc else ''
+        return self.event_time_utc.strftime("%A") if self.event_time_utc else ""
 
     @property
     def event_oeweekday(self):
-        if not self.event_time_utc: return 'Other'
-        if arrow.get(self.event_time_utc) < arrow.get(settings.OEW_RANGE[0]):#.replace(tzinfo='local'):
-            return 'Other'
+        if not self.event_time_utc:
+            return "Other"
+        if arrow.get(self.event_time_utc) < arrow.get(
+            settings.OEW_RANGE[0]
+        ):  # .replace(tzinfo='local'):
+            return "Other"
         if arrow.get(self.event_time_utc) > arrow.get(settings.OEW_RANGE[1]):
-            return 'Other'
-        return self.event_time_utc.strftime('%A')
+            return "Other"
+        return self.event_time_utc.strftime("%A")
 
     event_type = models.CharField(
         max_length=255, blank=True, null=True, choices=EVENT_TYPES
@@ -245,38 +248,42 @@ class Resource(TimeStampedModel, ReviewModel):
     @property
     def twitter_personal_url(self):
         t = self.twitter_personal
-        if t.startswith('https://twitter.com/'):
+        if t.startswith("https://twitter.com/"):
             return t
-        elif t.startswith('@'):
-            return 'https://twitter.com/' + t[1:]
-        else: return 'https://twitter.com/' + t
+        elif t.startswith("@"):
+            return "https://twitter.com/" + t[1:]
+        else:
+            return "https://twitter.com/" + t
 
     @property
     def twitter_personal_username(self):
         t = self.twitter_personal
-        if t.startswith('https://twitter.com/'):
+        if t.startswith("https://twitter.com/"):
             return t[20:]
-        elif t.startswith('@'):
+        elif t.startswith("@"):
             return t[1:]
-        else: return t
+        else:
+            return t
 
     @property
     def twitter_institution_url(self):
         t = self.twitter_institution
-        if t.startswith('https://twitter.com/'):
+        if t.startswith("https://twitter.com/"):
             return t
-        elif t.startswith('@'):
-            return 'https://twitter.com/' + t[1:]
-        else: return 'https://twitter.com/' + t
+        elif t.startswith("@"):
+            return "https://twitter.com/" + t[1:]
+        else:
+            return "https://twitter.com/" + t
 
     @property
     def twitter_institution_username(self):
         t = self.twitter_institution
-        if t.startswith('https://twitter.com/'):
+        if t.startswith("https://twitter.com/"):
             return t[20:]
-        elif t.startswith('@'):
+        elif t.startswith("@"):
             return t[1:]
-        else: return t
+        else:
+            return t
 
     def __str__(self):
         return "Resource #{}".format(self.id)
