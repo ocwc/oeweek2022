@@ -287,18 +287,38 @@ class Resource(TimeStampedModel, ReviewModel):
 
         return "http://www.openeducationweek.org/resources/{}".format(self.slug)
 
-    def get_image_url(self, request=None):
-        if self.image_url:
-            return self.image_url
+    def get_image_url_for_detail(self):
+        """We have (or can have) several images available for each resource. Hence
+        this is the order of preference for actual use:
+        1) image_url: supplied by OE Week admin(s), used in current OE Week Django implementation (2022)
+        2) image: supplied by OE Week admin(s), used in old OE Week Django implementation (2016)"""
 
-        if self.image:
-            if request:
-                try:
-                    return request.build_absolute_uri(self.image.image.url)
-                except ValueError:
-                    return None
-            else:
-                return self.image.image.url
+        u = self.image_url
+        if u is None:
+            # if no URL given, use image which is part of submitted form
+            u = self.image.image.url
+        return u
+
+    def get_image_url_for_list(self):
+        """Same as get_image_url_for_detail() but on-top of that does some "image size magic"
+        for images hosted on archive.org ."""
+
+        u = self.get_image_url_for_detail()
+        if u and u.startswith("https://archive.org") and u.endswith(".png"):
+            u = u[:-4] + "-sm.png"
+
+        return u
+
+    def get_image_url(self, request=None):
+        u = self.get_image_url_for_detail()
+
+        if request:
+            try:
+                return request.build_absolute_uri(self.image.image.url)
+            except ValueError:
+                return None
+        else:
+            return u
 
     def save(self, *args, **kwargs):
         if not self.slug:

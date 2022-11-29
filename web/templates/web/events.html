@@ -33,8 +33,8 @@
     <div class="bg-white mb-2 rounded-lg shadow-sm transition-shadow overflow-hidden hover:shadow-lg border-2 border-gray-200 hover:border-purple-500">
         <!-- Mario's placeholder image. Load custom image when possible -->
         <div class="item-media">
-            {% if event.image_url %}
-            <a href="/events/{{event.year}}/{{event.slug}}/"><img src="{{ event.image_url }}" class="object-cover h-150px md:h-120px"></a>
+            {% if event.consolidated_image_url %}
+            <a href="/events/{{event.year}}/{{event.slug}}/"><img src="{{ event.consolidated_image_url }}" class="object-cover h-150px md:h-120px"></a>
             {% else %}
                 {% load static %}
                 <a href="/events/{{event.year}}/{{event.slug}}/"><img rel="stylesheet" src="{% static 'web/images/placeholder-event-sm.png' %}" class="mb-4 w-full"></a>

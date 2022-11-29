@@ -193,12 +193,9 @@ def show_events(request):
 
     event_count = len(event_list)
     for event in event_list:
-        u = event.image_url
-        if u and u.startswith("https://archive.org") and u.endswith(".png"):
-            u = u[:-4] + "-sm.png"
-            event.image_url = u
-            event.convertedtime = event.event_time_utc
-            event.convertedtimezone = "UTC"
+        event.consolidated_image_url = event.get_image_url_for_list()
+        event.convertedtime = event.event_time_utc
+        event.convertedtimezone = "UTC"
 
     # sort django queryset by UTC (property) values, not by local timezone
     event_list = sorted(event_list, key=lambda item: item.event_time_utc)
@@ -237,6 +234,7 @@ def show_event_detail(request, year, slug):
     event.content = event.content.replace("\n", "<br>")
     event.convertedtime = event.event_time_utc
     event.convertedtimezone = "UTC"
+    event.consolidated_image_url = event.get_image_url_for_detail()
     context = {"obj": event}
     return render(request, "web/event_detail.html", context=context)
 
@@ -253,10 +251,7 @@ def show_resources(request):
     resource_count = len(resource_list)
 
     for resource in resource_list:
-        u = resource.image_url
-        if u and u.startswith("https://archive.org") and u.endswith(".png"):
-            u = u[:-4] + "-sm.png"
-            resource.image_url = u
+        resource.consolidated_image_url = resource.get_image_url_for_list()
 
     context = {
         "resource_list": resource_list,
@@ -270,6 +265,7 @@ def show_resources(request):
 def show_resource_detail(request, year, slug):
     resource = get_object_or_404(Resource, year=year, slug=slug)
     resource.content = resource.content.replace("\n", "<br>")
+    resource.consolidated_image_url = resource.get_image_url_for_detail()
     context = {"obj": resource}
     return render(request, "web/resource_detail.html", context=context)
 
