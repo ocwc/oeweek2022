@@ -25,6 +25,7 @@ from .data import COUNTRY_CHOICES, LANGUAGE_CHOICES
 import arrow
 
 from pytz import timezone
+from pytz.exceptions import UnknownTimeZoneError
 
 import django.utils.timezone as djtz
 
@@ -78,6 +79,15 @@ def validate_image(image_obj):
             "Max file size is %d MB"
             % (settings.RESOURCE_IMAGE_MAX_SIZE / (1024 * 1024))
         )
+
+
+def validate_timezone(timezone_str):
+    if not timezone:
+        return
+    try:
+        timezone(timezone_str)
+    except UnknownTimeZoneError:
+        raise ValidationError("Unknown timezone")
 
 
 @deconstructible
@@ -238,7 +248,9 @@ class Resource(TimeStampedModel, ReviewModel):
     )
     event_online = models.BooleanField(default=False)
     event_source_datetime = models.CharField(max_length=255, blank=True)
-    event_source_timezone = models.CharField(max_length=255, blank=True)
+    event_source_timezone = models.CharField(
+        max_length=255, blank=True, validators=[validate_timezone]
+    )
     event_directions = models.CharField(max_length=255, blank=True, null=True)
     event_other_text = models.CharField(max_length=255, blank=True, null=True)
     event_facilitator = models.CharField(max_length=255, blank=True, null=True)
@@ -348,7 +360,7 @@ class Resource(TimeStampedModel, ReviewModel):
         u = self.image_url
         if u is None and self.image:
             u = self.image.image.url
-        if u is None:
+        if u is None and self.user_image:
             u = self.user_image.url
         return u
 

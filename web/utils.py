@@ -1,3 +1,4 @@
+import arrow
 import django.utils.timezone as djtz
 
 from datetime import date
@@ -6,7 +7,7 @@ from rest_framework_jwt.utils import jwt_payload_handler
 from rest_framework_json_api.exceptions import exception_handler
 from sentry_sdk import capture_message, set_context
 
-
+from .data import GC
 from web.serializers import SubmissionResourceSerializer
 
 
@@ -50,3 +51,62 @@ def days_to_go():
         return delta_days
 
     return None
+
+
+def contribution_period_is_now():
+    now = arrow.utcnow()
+    start = arrow.get(settings.OEW_CFP_OPEN).datetime
+    end = arrow.get(settings.OEW_RANGE[1])
+    return now >= start and now <= end
+
+
+def __noneOrEmpty(str):
+    if str is None:
+        return True
+    if len(str.strip()) <= 0:
+        return True
+    return False
+
+
+def _guess_missing_timezone(resource):
+    if resource.event_source_timezone != "" or (
+        __noneOrEmpty(resource.city) and __noneOrEmpty(resource.country)
+    ):
+        return
+
+    # try fast(-er) matching ...
+    cities = []
+    if not __noneOrEmpty(resource.city):
+        cities = GC.search_cities(resource.city)
+        if len(cities) == 0:
+            # ... and if fails, try slower matching
+            cities = GC.search_cities(resource.city, case_sensitive=False)
+
+    # easy case: we find just one city
+    if len(cities) == 1:
+        resource.event_source_timezone = cities[0]["timezone"]
+        return
+
+    # complicated case: we find more cities or no city given => we try to figure it out via country
+    if resource.country is not None:
+        countries = GC.get_countries_by_names()
+        if resource.country in countries:
+            country = countries[resource.country]
+            if len(cities) > 0:
+                for city in cities:
+                    if city["countrycode"] == country["iso"]:
+                        resource.event_source_timezone = city["timezone"]
+                        return
+            else:
+                cities = GC.get_cities_by_name(country["capital"])
+                if len(cities) == 1:
+                    city_dict = cities[0]
+                    city_key = next(iter(city_dict))
+                    resource.event_source_timezone = city_dict[city_key]["timezone"]
+                    return
+
+    print("failed to guess timezone for %s" % resource.city)
+
+
+def guess_missing_activity_fields(resource):
+    _guess_missing_timezone(resource)

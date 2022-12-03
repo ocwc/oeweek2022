@@ -32,7 +32,7 @@ from .serializers import (
     EmailTemplateSerializer,
     ResourceImageSerializer,
 )
-from .utils import days_to_go
+from .utils import contribution_period_is_now, days_to_go, guess_missing_activity_fields
 
 from mail_templated import send_mail
 
@@ -61,13 +61,6 @@ def index(request):
 #     return render(request, 'web/page--contribute.html')
 
 
-def contribution_period_is_now():
-    now = arrow.utcnow()
-    start = arrow.get(settings.OEW_CFP_OPEN).datetime
-    end = arrow.get(settings.OEW_RANGE[1])
-    return now >= start and now <= end
-
-
 def contribute(request):
     if contribution_period_is_now():
         return render(request, "web/contribute.html")
@@ -84,7 +77,9 @@ def contribute_activity(request):
         form = ActivityForm(request.POST, request.FILES)
         if form.is_valid():
             print(form.cleaned_data)
-            resource = form.save()
+            resource = form.save(commit=False)
+            guess_missing_activity_fields(resource)
+            resource.save()
             # process the data in form.cleaned_data as required
             # user = CustomUser.objects.create_user(
             #     form.cleaned_data['email'],
