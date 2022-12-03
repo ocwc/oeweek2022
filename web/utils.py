@@ -1,3 +1,4 @@
+import arrow
 import django.utils.timezone as djtz
 import geonamescache
 
@@ -53,6 +54,13 @@ def days_to_go():
         return delta_days
 
     return None
+
+
+def contribution_period_is_now():
+    now = arrow.utcnow()
+    start = arrow.get(settings.OEW_CFP_OPEN).datetime
+    end = arrow.get(settings.OEW_RANGE[1])
+    return now >= start and now <= end
 
 
 def __noneOrEmpty(str):

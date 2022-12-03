@@ -32,7 +32,7 @@ from .serializers import (
     EmailTemplateSerializer,
     ResourceImageSerializer,
 )
-from .utils import days_to_go, guess_missing_activity_fields
+from .utils import contribution_period_is_now, days_to_go, guess_missing_activity_fields
 
 from mail_templated import send_mail
 
@@ -59,13 +59,6 @@ def index(request):
 
 # def page__contribute(request):
 #     return render(request, 'web/page--contribute.html')
-
-
-def contribution_period_is_now():
-    now = arrow.utcnow()
-    start = arrow.get(settings.OEW_CFP_OPEN).datetime
-    end = arrow.get(settings.OEW_RANGE[1])
-    return now >= start and now <= end
 
 
 def contribute(request):
