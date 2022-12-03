@@ -32,7 +32,7 @@ from .serializers import (
     EmailTemplateSerializer,
     ResourceImageSerializer,
 )
-from .utils import days_to_go
+from .utils import days_to_go, guess_missing_activity_fields
 
 from mail_templated import send_mail
 
@@ -84,7 +84,9 @@ def contribute_activity(request):
         form = ActivityForm(request.POST, request.FILES)
         if form.is_valid():
             print(form.cleaned_data)
-            resource = form.save()
+            resource = form.save(commit=False)
+            guess_missing_activity_fields(resource)
+            resource.save()
             # process the data in form.cleaned_data as required
             # user = CustomUser.objects.create_user(
             #     form.cleaned_data['email'],

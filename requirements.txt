@@ -132,3 +132,5 @@ django-import-export
 
 # 2022-02-23
 django-timezone-field
+
+geonamescache>=1.5.0,==1.5.*
