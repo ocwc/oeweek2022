@@ -348,7 +348,7 @@ class Resource(TimeStampedModel, ReviewModel):
         u = self.image_url
         if u is None and self.image:
             u = self.image.image.url
-        if u is None:
+        if u is None and self.user_image:
             u = self.user_image.url
         return u
 
