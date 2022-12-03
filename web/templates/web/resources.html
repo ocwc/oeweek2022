@@ -18,8 +18,8 @@
         <div class="bg-white mb-2 rounded-lg shadow-sm transition-shadow overflow-hidden hover:shadow-lg border-2 border-gray-200 hover:border-purple-500">
 
             <div class="item-media">
-                {% if resource.image_url %}
-                <a href="/resources/{{resource.year}}/{{resource.slug}}/"><img src="{{ resource.image_url }}" class="object-cover h-150px md:h-120px"></a>
+                {% if resource.consolidated_image_url %}
+                <a href="/resources/{{resource.year}}/{{resource.slug}}/"><img src="{{ resource.consolidated_image_url }}" class="object-cover h-150px md:h-120px"></a>
                 {% else %}
                     {% load static %}
                     <a href="/resources/{{resource.year}}/{{resource.slug}}/"><img rel="stylesheet" src="{% static 'web/images/placeholder-asset-sm.png' %}" class="mb-4 w-full"></a>

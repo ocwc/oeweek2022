@@ -34,7 +34,7 @@
 
     <p><strong>Share your activity, sessions or events by filling out the form below.</strong></p>
 
-    <form action="{{ submit_url }}" method="post">
+    <form action="{{ submit_url }}" method="post" enctype="multipart/form-data">
     {% csrf_token %}
 
     {#{{ form.uuid }}#} {# FYI: hidden field #}
@@ -84,6 +84,13 @@
 
         {{ form.content }}
     </p>
+
+    <p>
+    	{{ form.user_image.label_tag }}
+    	{{ form.user_image.errors }}
+    	<br><em>Recommended size: 584x232 pixels</em>
+    	{{ form.user_image }}
+   	</p>
 
     <p>
         <label for="id_event_time">Activity starts at:</label>

@@ -125,6 +125,10 @@ MEDIA_ROOT = os.path.join(BASE_DIR, "media")
 # TODO: later we need to resolve the concundrum with oeweek2022 being fork of oerweekapi, while both are run at PROD (oeweek2022 as oeweek.oeglobal.org and oerweekapi api.openeducationweek.org, with oeweek.oeglobal.org still using api.openeducationweek.org) for example via MEDIA_URL (not sure how else)
 MEDIA_URL = "/media/"
 
+RESOURCE_IMAGE_MAX_SIZE = 4 * 1024 * 1024  # for non-admin users
+RESOURCE_IMAGE_MAX_WIDTH = 4096
+RESOURCE_IMAGE_MAX_HEIGHT = 2048
+
 REST_FRAMEWORK = {
     "DEFAULT_PERMISSION_CLASSES": (
         "rest_framework.permissions.IsAuthenticatedOrReadOnly",
@@ -176,6 +180,8 @@ JWT_AUTH = {
 DJANGO_WYSIWYG_FLAVOR = "ckeditor"
 
 LOGIN_URL = "/api-auth/login/"
+
+# all in UTC, see TIME_ZONE above
 OEW_YEAR = 2023
 OEW_RANGE = ["2023-03-06 00:00:00", "2023-03-10 23:59:59"]
 OEW_CFP_OPEN = "2023-01-16"
@@ -198,7 +204,7 @@ WAGTAILSEARCH_BACKENDS = {
 # Base URL to use when referring to full URLs within the Wagtail admin backend -
 # e.g. in notification emails. Don't include '/admin' or a trailing slash
 # TODO: we'd like to NOT have it hardcoded here => find some better/nicer way
-WAGTAILADMIN_BASE_URL = "https://example.com"
+WAGTAILADMIN_BASE_URL = "https://oeweek.oeglobal.org"
 
 CI = os.environ.get("CI")
 if CI:
