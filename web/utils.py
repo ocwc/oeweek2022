@@ -68,7 +68,13 @@ def __noneOrEmpty(str):
     return False
 
 
-def _guess_missing_timezone(resource):
+def _set_timezone_and_location(resource, city):
+    resource.event_source_timezone = city["timezone"]
+    resource.lat = city["latitude"]
+    resource.lng = city["longitude"]
+
+
+def _guess_missing_timezone_and_location(resource):
     if resource.event_source_timezone != "" or (
         __noneOrEmpty(resource.city) and __noneOrEmpty(resource.country)
     ):
@@ -84,7 +90,7 @@ def _guess_missing_timezone(resource):
 
     # easy case: we find just one city
     if len(cities) == 1:
-        resource.event_source_timezone = cities[0]["timezone"]
+        _set_timezone_and_location(resource, cities[0])
         return
 
     # complicated case: we find more cities or no city given => we try to figure it out via country
@@ -95,18 +101,18 @@ def _guess_missing_timezone(resource):
             if len(cities) > 0:
                 for city in cities:
                     if city["countrycode"] == country["iso"]:
-                        resource.event_source_timezone = city["timezone"]
+                        _set_timezone_and_location(resource, city)
                         return
             else:
                 cities = GC.get_cities_by_name(country["capital"])
                 if len(cities) == 1:
                     city_dict = cities[0]
                     city_key = next(iter(city_dict))
-                    resource.event_source_timezone = city_dict[city_key]["timezone"]
+                    _set_timezone_and_location(resource, city_dict[city_key])
                     return
 
     print("failed to guess timezone for %s" % resource.city)
 
 
 def guess_missing_activity_fields(resource):
-    _guess_missing_timezone(resource)
+    _guess_missing_timezone_and_location(resource)
