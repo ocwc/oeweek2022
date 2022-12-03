@@ -100,6 +100,15 @@
         <input type="datetime-local" name="event_time" id="id_event_time" />
     </p>
 
+    {% if action_verb == "Edit" %}
+    <p>
+        {{ form.event_source_timezone.label_tag }}
+        {{ form.event_source_timezone.errors }}
+        <br><em>E.g.: US/Eastern, Europe/Paris, etc.</em>
+        {{ form.event_source_timezone }}
+    </p>
+    {% endif %}
+
     {{ form.primarylanguage.errors }}
     {{ form.opentags.errors }}
     <div class="flex-none md:flex justify-between">

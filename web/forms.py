@@ -35,6 +35,7 @@ class ActivityForm(ModelForm):
             # 'opentags',
             # 'image',
             "user_image",
+            "event_source_timezone",
         ]
 
     # uuid = forms.UUIDField(
@@ -162,6 +163,12 @@ class ActivityForm(ModelForm):
         label="Screenshot of the activity website",
     )
 
+    event_source_timezone = forms.CharField(
+        required=False,
+        label="Event time zone",
+        widget=forms.TextInput(attrs={"class": "w-full"}),
+    )
+
 
 class AssetForm(ModelForm):
     class Meta:
@@ -187,6 +194,7 @@ class AssetForm(ModelForm):
             # 'opentags',
             # 'image',
             "user_image",
+            "event_source_timezone",
         ]
 
     # uuid = forms.UUIDField(
@@ -287,4 +295,10 @@ class AssetForm(ModelForm):
     user_image = forms.ImageField(
         required=False,
         label="Screenshot of the activity website",
+    )
+
+    event_source_timezone = forms.CharField(
+        required=False,
+        label="Event time zone",
+        widget=forms.TextInput(attrs={"class": "w-full"}),
     )
