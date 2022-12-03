@@ -64,7 +64,9 @@ def __noneOrEmpty(str):
 
 
 def _guess_missing_timezone(resource):
-    if resource.event_source_timezone != "" or (__noneOrEmpty(resource.city) and __noneOrEmpty(resource.country)):
+    if resource.event_source_timezone != "" or (
+        __noneOrEmpty(resource.city) and __noneOrEmpty(resource.country)
+    ):
         return
 
     # try fast(-er) matching ...
@@ -77,7 +79,7 @@ def _guess_missing_timezone(resource):
 
     # easy case: we find just one city
     if len(cities) == 1:
-        resource.event_source_timezone = cities[0]['timezone']
+        resource.event_source_timezone = cities[0]["timezone"]
         return
 
     # complicated case: we find more cities or no city given => we try to figure it out via country
@@ -87,15 +89,15 @@ def _guess_missing_timezone(resource):
             country = countries[resource.country]
             if len(cities) > 0:
                 for city in cities:
-                    if city['countrycode'] == country['iso']:
-                        resource.event_source_timezone = city['timezone']
+                    if city["countrycode"] == country["iso"]:
+                        resource.event_source_timezone = city["timezone"]
                         return
             else:
-                cities = GC.get_cities_by_name(country['capital'])
+                cities = GC.get_cities_by_name(country["capital"])
                 if len(cities) == 1:
                     city_dict = cities[0]
                     city_key = next(iter(city_dict))
-                    resource.event_source_timezone = city_dict[city_key]['timezone']
+                    resource.event_source_timezone = city_dict[city_key]["timezone"]
                     return
 
     print("failed to guess timezone for %s" % resource.city)
