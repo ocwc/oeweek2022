@@ -1,6 +1,5 @@
 import arrow
 import django.utils.timezone as djtz
-import geonamescache
 
 from datetime import date
 from django.conf import settings
@@ -8,10 +7,8 @@ from rest_framework_jwt.utils import jwt_payload_handler
 from rest_framework_json_api.exceptions import exception_handler
 from sentry_sdk import capture_message, set_context
 
+from .data import GC
 from web.serializers import SubmissionResourceSerializer
-
-
-GC = gc = geonamescache.GeonamesCache()
 
 
 def custom_jwt_payload_handler(user):
@@ -92,7 +89,7 @@ def _guess_missing_timezone(resource):
 
     # complicated case: we find more cities or no city given => we try to figure it out via country
     if resource.country is not None:
-        countries = gc.get_countries_by_names()
+        countries = GC.get_countries_by_names()
         if resource.country in countries:
             country = countries[resource.country]
             if len(cities) > 0:
