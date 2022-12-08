@@ -122,7 +122,7 @@ def contribute_activity(request, identifier=None):
             "title": "Copy of: " + resource.title,
             "event_facilitator": resource.event_facilitator,
             "content": "Copy of: " + resource.content,
-            "event_time": resource.event_time,
+            # "event_time": resource.event_time,
             "link": resource.link,
             "linkwebroom": resource.linkwebroom,
             "form_language": resource.form_language,
