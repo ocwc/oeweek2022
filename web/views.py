@@ -68,10 +68,9 @@ def contribute(request):
         return HttpResponseRedirect(reverse("web_index"))
 
 
-def contribute_activity(request):
+def contribute_activity(request, identifier=None):
     if not contribution_period_is_now():
         return HttpResponseRedirect(reverse("web_index"))
-    form = ActivityForm()
     if request.method == "POST":
         # create a form instance & populate with request data
         form = ActivityForm(request.POST, request.FILES)
@@ -89,6 +88,9 @@ def contribute_activity(request):
             context = {
                 "uuid": resource.uuid,
                 "title": resource.title,
+                "contribute_similar": reverse(
+                    "contribute-activity", args=[resource.uuid]
+                ),
             }
 
             try:
@@ -103,6 +105,31 @@ def contribute_activity(request):
                 print("Failed to send email to " + resource.email)
 
             return render(request, "web/thanks.html", context=context)
+    elif identifier is not None:  # => GET ...
+        resource = get_object_or_404(Resource, uuid=identifier)
+        initial = {
+            "post_type": resource.post_type,
+            "firstname": resource.firstname,
+            "lastname": resource.lastname,
+            "email": resource.email,
+            "twitter_personal": resource.twitter_personal,
+            "twitter_institution": resource.twitter_institution,
+            "institution": resource.institution,
+            "institution_url": resource.institution_url,
+            "institution_is_oeg_member": resource.institution_is_oeg_member,
+            "country": resource.country,
+            "city": resource.city,
+            "title": "Copy of: " + resource.title,
+            "event_facilitator": resource.event_facilitator,
+            "content": "Copy of: " + resource.content,
+            # "event_time": resource.event_time,
+            "link": resource.link,
+            "linkwebroom": resource.linkwebroom,
+            "form_language": resource.form_language,
+        }
+        form = ActivityForm(initial=initial)
+    else:
+        form = ActivityForm()
 
     context = {
         "form": form,
@@ -112,10 +139,9 @@ def contribute_activity(request):
     return render(request, "web/contribute-activity.html", context)
 
 
-def contribute_asset(request):
+def contribute_asset(request, identifier=None):
     if not contribution_period_is_now():
         return HttpResponseRedirect(reverse("web_index"))
-    form = AssetForm()
     if request.method == "POST":
         # create a form instance & populate with request data
         form = AssetForm(request.POST, request.FILES)
@@ -125,8 +151,32 @@ def contribute_asset(request):
             context = {
                 "uuid": resource.uuid,
                 "title": resource.title,
+                "contribute_similar": reverse("contribute-asset", args=[resource.uuid]),
             }
             return render(request, "web/thanks.html", context=context)
+    elif identifier is not None:  # => GET ...
+        resource = get_object_or_404(Resource, uuid=identifier)
+        initial = {
+            "post_type": resource.post_type,
+            "firstname": resource.firstname,
+            "lastname": resource.lastname,
+            "email": resource.email,
+            "twitter_personal": resource.twitter_personal,
+            "twitter_institution": resource.twitter_institution,
+            "institution": resource.institution,
+            "institution_url": resource.institution_url,
+            "institution_is_oeg_member": resource.institution_is_oeg_member,
+            "country": resource.country,
+            "city": resource.city,
+            "title": "Copy of: " + resource.title,
+            "content": "Copy of: " + resource.content,
+            "link": resource.link,
+            "license": resource.license,
+            "form_language": resource.form_language,
+        }
+        form = ActivityForm(initial=initial)
+    else:
+        form = ActivityForm()
 
     context = {
         "form": form,
@@ -147,9 +197,11 @@ def edit_resource(request, identifier):
     if resource.post_type == "event":
         form = ActivityForm(instance=resource)
         template_url = "web/contribute-activity.html"
+        contribute_similar_url = reverse("contribute-activity", args=[uuid])
     elif resource.post_type == "resource":
         form = AssetForm(instance=resource)
         template_url = "web/contribute-asset.html"
+        contribute_similar_url = reverse("contribute-asset", args=[uuid])
 
     if request.method == "POST":
         if resource.post_type == "event":
@@ -168,6 +220,7 @@ def edit_resource(request, identifier):
         "form": form,
         "action_verb": "Edit",
         "submit_url": "/edit/" + str(uuid) + "/",
+        "contribute_similar": contribute_similar_url,
     }
     return render(request, template_url, context)
 

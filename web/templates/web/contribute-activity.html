@@ -11,15 +11,6 @@
 {# "Linkwebroom:" -> "Link to the webroom (if applicable):" #}
 {# "Language:" -> "Primary Language:" #}
 
-<!--
-<h1>{{ action_verb }} Activity</h1>
-<form action="{{ submit_url }}" method="post">
-    {#{% csrf_token %}#}
-    {{ form.as_ul }}
-    <input type="submit" value="Submit">
-</form>
--->
-
 <h1>{{ action_verb }} Activity</h1>
 <div class="card bg-white p-8 lg:p-16 rounded shadow-lg prose">
     <img src="https://conference.oeglobal.org/2021/wp-content/uploads/2022/02/submission-banner.png">
@@ -97,7 +88,7 @@
         <br>Choose the time in your local timezone.
         <br>
         {{ form.event_time.errors }}
-        <input type="datetime-local" name="event_time" id="id_event_time" />
+        <input type="datetime-local" name="event_time" id="id_event_time" value="{{ form.event_time.value|date:'Y-m-d H:m' }}"/>
     </p>
 
     {% if action_verb == "Edit" %}
@@ -116,7 +107,10 @@
         <label for="id_form_language">Primary language:</label>
         <select name="form_language" id="id_form_language" class="w-full">
         {% for id, name in form.fields.form_language.choices %}
-            <option value="{{ id }}">{{ name }}</option>
+            <option value="{{ id }}"
+                {% if id == None %}disabled=""{% endif %}
+                {% if id == form.form_language.value %}selected=""{% endif %}
+            >{{ name }}</option>
         {% endfor %}
         </select>
         </p>
@@ -136,7 +130,10 @@
         {{ form.country.label_tag }}
         <select name="country" id="id_country" class="w-full">
         {% for id, name in form.fields.country.choices %}
-            <option value="{{ id }}">{{ name }}</option>
+            <option value="{{ id }}"
+                {% if id == None %} disabled=""{% endif %}
+                {% if id == form.country.value %} selected=""{% endif %}
+            >{{ name }}</option>
         {% endfor %}
         </select>
         </p>
@@ -226,13 +223,12 @@
         </p>
     </div>
 
-    <!--
-    <p><label for="id_image">Image:</label> <select name="image" id="id_image">
-    <option value="" selected="selected">---------</option>
-
-    </select></p>
-    -->
     <input type="submit" value="Submit" class="button-outline font-bold my-8">
     </form>
+
+    {% if contribute_similar %}
+    <hr class="my-8">
+    <p>You can submit similar entry by <a href="{{ contribute_similar }}">clicking here</a>.</p>
+    {% endif %}
 </div>
 {% endblock %}
