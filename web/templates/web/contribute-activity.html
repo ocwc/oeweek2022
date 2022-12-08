@@ -234,5 +234,10 @@
     -->
     <input type="submit" value="Submit" class="button-outline font-bold my-8">
     </form>
+
+    {% if contribute_similar %}
+    <hr class="my-8">
+    <p>You can submit similar entry by <a href="{{ contribute_similar }}">clicking here</a>.</p>
+    {% endif %}
 </div>
 {% endblock %}

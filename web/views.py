@@ -88,6 +88,9 @@ def contribute_activity(request, identifier=None):
             context = {
                 "uuid": resource.uuid,
                 "title": resource.title,
+                "contribute_similar": reverse(
+                    "contribute-activity", args=[resource.uuid]
+                ),
             }
 
             try:
@@ -148,6 +151,7 @@ def contribute_asset(request, identifier=None):
             context = {
                 "uuid": resource.uuid,
                 "title": resource.title,
+                "contribute_similar": reverse("contribute-asset", args=[resource.uuid]),
             }
             return render(request, "web/thanks.html", context=context)
     elif identifier is not None:  # => GET ...
@@ -193,9 +197,11 @@ def edit_resource(request, identifier):
     if resource.post_type == "event":
         form = ActivityForm(instance=resource)
         template_url = "web/contribute-activity.html"
+        contribute_similar_url = reverse("contribute-activity", args=[uuid])
     elif resource.post_type == "resource":
         form = AssetForm(instance=resource)
         template_url = "web/contribute-asset.html"
+        contribute_similar_url = reverse("contribute-asset", args=[uuid])
 
     if request.method == "POST":
         if resource.post_type == "event":
@@ -214,6 +220,7 @@ def edit_resource(request, identifier):
         "form": form,
         "action_verb": "Edit",
         "submit_url": "/edit/" + str(uuid) + "/",
+        "contribute_similar": contribute_similar_url,
     }
     return render(request, template_url, context)
 
