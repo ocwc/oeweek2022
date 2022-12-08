@@ -88,7 +88,7 @@
         <br>Choose the time in your local timezone.
         <br>
         {{ form.event_time.errors }}
-        <input type="datetime-local" name="event_time" id="id_event_time" />
+        <input type="datetime-local" name="event_time" id="id_event_time" value="{{ form.event_time.value|date:'Y-m-d H:m' }}"/>
     </p>
 
     {% if action_verb == "Edit" %}
