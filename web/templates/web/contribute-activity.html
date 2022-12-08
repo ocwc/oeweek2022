@@ -11,15 +11,6 @@
 {# "Linkwebroom:" -> "Link to the webroom (if applicable):" #}
 {# "Language:" -> "Primary Language:" #}
 
-<!--
-<h1>{{ action_verb }} Activity</h1>
-<form action="{{ submit_url }}" method="post">
-    {#{% csrf_token %}#}
-    {{ form.as_ul }}
-    <input type="submit" value="Submit">
-</form>
--->
-
 <h1>{{ action_verb }} Activity</h1>
 <div class="card bg-white p-8 lg:p-16 rounded shadow-lg prose">
     <img src="https://conference.oeglobal.org/2021/wp-content/uploads/2022/02/submission-banner.png">
@@ -232,12 +223,6 @@
         </p>
     </div>
 
-    <!--
-    <p><label for="id_image">Image:</label> <select name="image" id="id_image">
-    <option value="" selected="selected">---------</option>
-
-    </select></p>
-    -->
     <input type="submit" value="Submit" class="button-outline font-bold my-8">
     </form>
 
