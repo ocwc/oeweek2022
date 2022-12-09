@@ -29,6 +29,7 @@ from pytz.exceptions import UnknownTimeZoneError
 
 import django.utils.timezone as djtz
 
+
 User = get_user_model()
 
 
@@ -400,6 +401,7 @@ class Resource(TimeStampedModel, ReviewModel):
 
         super().save(*args, **kwargs)
 
+    # TODO: remove
     def get_screenshot(self):
         def webshrinker_v2(access_key, secret_key, url, params):
             params["key"] = access_key

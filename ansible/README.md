@@ -37,7 +37,7 @@ Let's call it `machine-b`.
 3. have that public SSH key (`~/.ssh/id_rsa.pub`) added as "Deploy key" on GitLab for the project repo
 
 4. have there a `deployment` deploy branch with local changes need
-   
+
    * exact steps, changes, etc. - see bellow
 
 5. have the ability to run `supervisorctl restart oerweek-django` without the need to supply password
@@ -45,12 +45,27 @@ Let's call it `machine-b`.
 Some more details, aimed at DEV setup on Ubuntu (PROD setup may be different due to security requirements):
 
 
+#### for automatic screenshots
+
+As root:
+
+```
+apt install libgl1-mesa-glx libxcomposite1 libxrender1 libgstreamer-plugins-base1.0-0
+```
+
+And as user running OE Week app:
+
+```
+export QT_QPA_PLATFORM=offscreen
+```
+
+
 #### PostgreSQL
 
 As root:
 
 ```
-sudo apt install postgresql
+apt install postgresql
 systemctl enable postgresql.service
 systemctl start postgresql.service
 ```
@@ -83,6 +98,8 @@ systemctl start supervisor.service
 ```
 
 Still as root replicate `/etc/supervisor/conf.d/oerweekapi.conf` from PROD and restart the service.
+
+TODO: config for launching "export QT_QPA_PLATFORM=offscreen + ./manage.py qcluster"
 
 
 #### nginx

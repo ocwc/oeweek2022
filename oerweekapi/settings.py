@@ -55,6 +55,8 @@ INSTALLED_APPS = (
     "wagtail",
     # required by WagTail stuff
     "modelcluster",
+    # required for automatic screenshots
+    "django_q",
 )
 
 MIDDLEWARE = [
@@ -206,10 +208,24 @@ WAGTAILSEARCH_BACKENDS = {
 # TODO: we'd like to NOT have it hardcoded here => find some better/nicer way
 WAGTAILADMIN_BASE_URL = "https://oeweek.oeglobal.org"
 
+DEFAULT_AUTO_FIELD = "django.db.models.AutoField"
+
+Q_CLUSTER = {
+    "name": "oe-week",
+    "workers": 1,
+    "recycle": 5,
+    "timeout": 45,
+    "ack_failures": True,
+    "max_attempts": 2,
+    "retry": 24 * 60 * 60,
+    "queue_limit": 100,
+    "label": "Django Q",
+    "orm": "default",
+    "bulk": 10,
+}
+
 CI = os.environ.get("CI")
 if CI:
     from .testsettings import *  # noqa: F401, F403
 else:
     from .localsettings import *  # noqa: F401, F403
-
-DEFAULT_AUTO_FIELD = "django.db.models.AutoField"
