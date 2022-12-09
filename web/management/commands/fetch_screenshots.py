@@ -14,5 +14,4 @@ class Command(BaseCommand):
             post_status__in=["draft", "publish"],
         ):
             print(resource.id)
-            # TODO: remove: resource.get_screenshot()
             fetch_screenshot_async(resource)

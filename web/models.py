@@ -1,8 +1,4 @@
-import hashlib
-import requests
 import uuid
-from urllib.parse import urlencode
-from base64 import urlsafe_b64encode
 
 from django.db import models
 from django.conf import settings
@@ -400,55 +396,6 @@ class Resource(TimeStampedModel, ReviewModel):
             self.contact = "{} {}".format(self.firstname, self.lastname)
 
         super().save(*args, **kwargs)
-
-    # TODO: remove
-    def get_screenshot(self):
-        def webshrinker_v2(access_key, secret_key, url, params):
-            params["key"] = access_key
-            request = "thumbnails/v2/{}?{}".format(
-                urlsafe_b64encode(url.encode()).decode(), urlencode(params, True)
-            )
-            signed_request = hashlib.md5(
-                "{}:{}".format(secret_key, request).encode("utf-8")
-            ).hexdigest()
-
-            return "https://api.webshrinker.com/{}&hash={}".format(
-                request, signed_request
-            )
-
-        if self.image:
-            self.screenshot_status = "DONE"
-            return self.save()
-        print(self.link)
-
-        if self.link and self.screenshot_status in ["", "PENDING"]:
-            api_url = webshrinker_v2(
-                settings.WEBSHRINKER_KEY,
-                settings.WEBSHRINKEY_SECRET,
-                self.link,
-                {"size": "3xlarge"},
-            )
-            print(api_url)
-            response = requests.get(api_url)
-
-            status_code = response.status_code
-
-            if status_code == 200:
-                resource_image = ResourceImage()
-                resource_image.image.save(
-                    "screenshot_{}.png".format(self.pk), ContentFile(response.content)
-                )
-                resource_image.save()
-
-                self.image = resource_image
-                self.screenshot_status = "DONE"
-                self.save()
-            elif status_code == 202:
-                self.screenshot_status = "PENDING"
-                self.save()
-            else:
-                print("Status code {}".format(response.status_code))
-                raise NotImplementedError
 
     def send_new_submission_email(self):
         send_mail(
