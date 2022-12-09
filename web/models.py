@@ -348,17 +348,15 @@ class Resource(TimeStampedModel, ReviewModel):
         this is the order of preference for actual use:
 
         1) image_url: supplied by OE Week admin(s), used in current OE Week Django implementation (2022)
-        2) image: supplied by OE Week admin(s), used in old OE Week Django implementation (2016)
-        3) user_image: user supplied (unauthenticated => untrusted), new for 2023
-
-        TL;DR: Images supplied by untrusted anonymous users takes least precedence.
+        2) user_image: user supplied (unauthenticated => untrusted), new for 2023
+        3) image: supplied by OE Week admin(s), used in old OE Week Django implementation (2016)
         """
 
         u = self.image_url
-        if u is None and self.image:
-            u = self.image.image.url
         if u is None and self.user_image:
             u = self.user_image.url
+        if u is None and self.image:
+            u = self.image.image.url
         return u
 
     def get_image_url_for_list(self):
