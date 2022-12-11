@@ -53,15 +53,15 @@
 
     <div></div>
 
-    {{ form.title.errors }}
     <p>
         {{ form.title.label_tag }}
+        {{ form.title.errors }}
         {{ form.title }}
     </p>
 
-    {{ form.content.errors }}
     <p>
         {{ form.content.label_tag }}
+        {{ form.content.errors }}
         <br>Include a summary of the asset. What does it do? Who can use it and how can it be used? What are the expected outcomes of using the asset?
         <br><em>Suggested length: 50-500 words. Feel free to also provide the description in your own language)</em>
 
@@ -86,7 +86,7 @@
     <select name="license" id="id_license" class="w-full">
     {% for id, name in form.fields.license.choices %}
         <option value="{{ id }}"
-            {% if id == "" %}disabled=""{% endif %}
+            {% if id == None %}disabled=""{% endif %}
             {% if id == form.license.value %} selected="selected"{% endif %}
         >{{ name }}</option>
     {% endfor %}
@@ -100,7 +100,7 @@
         {% for id, name in form.fields.form_language.choices %}
             <option value="{{ id }}"
                 {% if id == None %}disabled=""{% endif %}
-                {% if id == form.form_language.value %} selected="selected"{% endif %}
+                {% if id == form.form_language.value %}selected=""{% endif %}
             >{{ name }}</option>
         {% endfor %}
         </select>
@@ -109,7 +109,7 @@
         <!--
         <p class="w-full ml-2">
         <label for="id_opentags">Opentags:</label>
-        <input type="text" name="opentags" maxlength="255" id="id_opentags" class="w-full">
+        <input type="text" name="opentags" maxlength="255" id="id_opentags" class="w-full" value="{{ form.opentags.value }}">
         </p>
         -->
     </div>

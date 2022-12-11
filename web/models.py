@@ -1,8 +1,4 @@
-import hashlib
-import requests
 import uuid
-from urllib.parse import urlencode
-from base64 import urlsafe_b64encode
 
 from django.db import models
 from django.conf import settings
@@ -20,7 +16,7 @@ from model_utils.models import TimeStampedModel
 
 from mail_templated import send_mail
 
-from .data import COUNTRY_CHOICES, LANGUAGE_CHOICES
+from .data import COUNTRY_CHOICES, LANGUAGE_CHOICES, LICENSE_CHOICES
 
 import arrow
 
@@ -28,6 +24,7 @@ from pytz import timezone
 from pytz.exceptions import UnknownTimeZoneError
 
 import django.utils.timezone as djtz
+
 
 User = get_user_model()
 
@@ -161,16 +158,6 @@ class Resource(TimeStampedModel, ReviewModel):
     institution_is_oeg_member = models.BooleanField(blank=True, null=True)
     form_language = models.CharField(
         max_length=255, blank=True, null=True, choices=LANGUAGE_CHOICES
-    )
-
-    LICENSE_CHOICES = Choices(
-        ("Public domain", "Public domain"),
-        ("CC-0", "CC Zero (CC 0)"),
-        ("CC-BY", "CC Attribution (CC BY)"),
-        ("CC-BY-SA", "CC Attribution — Share-Alike (CC BY-SA)"),
-        ("CC-BY-NC", "CC Attribution — Non-Commercial (CC BY-NC)"),
-        ("CC-NC-SA", "CC Attribution — Non-Commercial — Share-Alike (CC BY-NC-SA)"),
-        ("Other", "Other open license"),
     )
     license = models.CharField(
         max_length=255, blank=True, null=True, choices=LICENSE_CHOICES
@@ -351,17 +338,15 @@ class Resource(TimeStampedModel, ReviewModel):
         this is the order of preference for actual use:
 
         1) image_url: supplied by OE Week admin(s), used in current OE Week Django implementation (2022)
-        2) image: supplied by OE Week admin(s), used in old OE Week Django implementation (2016)
-        3) user_image: user supplied (unauthenticated => untrusted), new for 2023
-
-        TL;DR: Images supplied by untrusted anonymous users takes least precedence.
+        2) user_image: user supplied (unauthenticated => untrusted), new for 2023
+        3) image: supplied by OE Week admin(s), used in old OE Week Django implementation (2016)
         """
 
         u = self.image_url
-        if u is None and self.image:
-            u = self.image.image.url
         if u is None and self.user_image:
             u = self.user_image.url
+        if u is None and self.image:
+            u = self.image.image.url
         return u
 
     def get_image_url_for_list(self):
@@ -399,54 +384,6 @@ class Resource(TimeStampedModel, ReviewModel):
             self.contact = "{} {}".format(self.firstname, self.lastname)
 
         super().save(*args, **kwargs)
-
-    def get_screenshot(self):
-        def webshrinker_v2(access_key, secret_key, url, params):
-            params["key"] = access_key
-            request = "thumbnails/v2/{}?{}".format(
-                urlsafe_b64encode(url.encode()).decode(), urlencode(params, True)
-            )
-            signed_request = hashlib.md5(
-                "{}:{}".format(secret_key, request).encode("utf-8")
-            ).hexdigest()
-
-            return "https://api.webshrinker.com/{}&hash={}".format(
-                request, signed_request
-            )
-
-        if self.image:
-            self.screenshot_status = "DONE"
-            return self.save()
-        print(self.link)
-
-        if self.link and self.screenshot_status in ["", "PENDING"]:
-            api_url = webshrinker_v2(
-                settings.WEBSHRINKER_KEY,
-                settings.WEBSHRINKEY_SECRET,
-                self.link,
-                {"size": "3xlarge"},
-            )
-            print(api_url)
-            response = requests.get(api_url)
-
-            status_code = response.status_code
-
-            if status_code == 200:
-                resource_image = ResourceImage()
-                resource_image.image.save(
-                    "screenshot_{}.png".format(self.pk), ContentFile(response.content)
-                )
-                resource_image.save()
-
-                self.image = resource_image
-                self.screenshot_status = "DONE"
-                self.save()
-            elif status_code == 202:
-                self.screenshot_status = "PENDING"
-                self.save()
-            else:
-                print("Status code {}".format(response.status_code))
-                raise NotImplementedError
 
     def send_new_submission_email(self):
         send_mail(

@@ -32,6 +32,7 @@ from .serializers import (
     EmailTemplateSerializer,
     ResourceImageSerializer,
 )
+from .screenshot_utils import fetch_screenshot_async
 from .utils import contribution_period_is_now, days_to_go, guess_missing_activity_fields
 
 from mail_templated import send_mail
@@ -80,6 +81,7 @@ def contribute_activity(request, identifier=None):
             # TODO: possibly do in a separate worker thread
             guess_missing_activity_fields(resource)
             resource.save()
+            fetch_screenshot_async(resource)
             # process the data in form.cleaned_data as required
             # user = CustomUser.objects.create_user(
             #     form.cleaned_data['email'],
@@ -148,6 +150,7 @@ def contribute_asset(request, identifier=None):
         if form.is_valid():
             print(form.cleaned_data)
             resource = form.save()
+            fetch_screenshot_async(resource)
             context = {
                 "uuid": resource.uuid,
                 "title": resource.title,
@@ -174,9 +177,9 @@ def contribute_asset(request, identifier=None):
             "license": resource.license,
             "form_language": resource.form_language,
         }
-        form = ActivityForm(initial=initial)
+        form = AssetForm(initial=initial)
     else:
-        form = ActivityForm()
+        form = AssetForm()
 
     context = {
         "form": form,

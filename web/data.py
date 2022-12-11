@@ -38,4 +38,15 @@ LANGUAGE_CHOICES += [
     ((c.strip(), c.strip())) for c in LANGUAGE_LIST.strip().split("\n")
 ]
 
-# --- --- --- --- ---
+#
+
+LICENSE_CHOICES = [
+    (None, "Please select an option below"),
+    ("Public domain", "Public domain"),
+    ("CC-0", "CC Zero (CC 0)"),
+    ("CC-BY", "CC Attribution (CC BY)"),
+    ("CC-BY-SA", "CC Attribution — Share-Alike (CC BY-SA)"),
+    ("CC-BY-NC", "CC Attribution — Non-Commercial (CC BY-NC)"),
+    ("CC-NC-SA", "CC Attribution — Non-Commercial — Share-Alike (CC BY-NC-SA)"),
+    ("Other", "Other open license"),
+]
