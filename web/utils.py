@@ -79,12 +79,17 @@ def _abort_needed(resource):
 
 def _set_timezone_and_location(resource, city):
     if _abort_needed(resource):
-        print("guessing aborted (late): %d" % resource_id)
+        print("guessing aborted (late): %d" % resource.id)
         return
 
     resource.event_source_timezone = city["timezone"]
     resource.lat = city["latitude"]
     resource.lng = city["longitude"]
+    resource.save()
+    print(
+        "guessing for %d: timezone: %s, lat/lon: %s/%s"
+        % (resource.id, resource.event_source_timezone, resource.lat, resource.lng)
+    )
 
 
 def guess_missing_timezone_and_location_async(resource_id):
