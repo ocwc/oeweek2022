@@ -37,7 +37,10 @@ class Screenshot(QWebView):
         self.wait_load()
         # set to webpage size
         frame = self.page().mainFrame()
-        self.page().setViewportSize(frame.contentsSize())
+        size = frame.contentsSize()
+        if size.width() < self.MAX_WIDTH:
+            size.setWidth(self.MAX_WIDTH)
+        self.page().setViewportSize(size)
         # render image
         size = frame.contentsSize()
         if size.width() > self.MAX_WIDTH:
