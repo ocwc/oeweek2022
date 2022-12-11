@@ -97,9 +97,10 @@ systemctl enable supervisor.service
 systemctl start supervisor.service
 ```
 
-Still as root replicate `/etc/supervisor/conf.d/oerweekapi.conf` from PROD and restart the service.
+Still as root replicate following configuration files from PROD and restart the service:
 
-TODO: config for launching "export QT_QPA_PLATFORM=offscreen + ./manage.py qcluster"
+- `/etc/supervisor/conf.d/oerweekapi.conf`
+- `/etc/supervisor/conf.d/oerweekapi-q.conf`
 
 
 #### nginx
