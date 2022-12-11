@@ -75,12 +75,12 @@ class FetchScreenshotResult:
         self.exception = exception
 
 
-def abort_needed(resource):
+def _abort_needed(resource):
     return not (resource.link and resource.screenshot_status in ["", "PENDING"])
 
 
 def _fetch_screenshot(resource):
-    if abort_needed(resource):
+    if _abort_needed(resource):
         print("screenshot fetching aborted (early): %d" % resource.id)
 
     if resource.image:
@@ -133,7 +133,7 @@ def process_fetch_screenshot_result(task):
 
     resource_id = task.result.resource_id
     resource = Resource.objects.get(pk=resource_id)
-    if abort_needed(resource):
+    if _abort_needed(resource):
         print("screenshot fetching aborted (late): %d" % resource_id)
         return
 
