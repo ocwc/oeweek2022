@@ -7,8 +7,11 @@ from rest_framework_jwt.utils import jwt_payload_handler
 from rest_framework_json_api.exceptions import exception_handler
 from sentry_sdk import capture_message, set_context
 
+from django_q.tasks import async_task
+
 from .data import GC
-from web.serializers import SubmissionResourceSerializer
+from .models import Resource
+from .serializers import SubmissionResourceSerializer
 
 
 def custom_jwt_payload_handler(user):
@@ -68,16 +71,26 @@ def __noneOrEmpty(str):
     return False
 
 
+def _abort_needed(resource):
+    return resource.event_source_timezone != "" or (
+        __noneOrEmpty(resource.city) and __noneOrEmpty(resource.country)
+    )
+
+
 def _set_timezone_and_location(resource, city):
+    if _abort_needed(resource):
+        print("guessing aborted (late): %d" % resource_id)
+        return
+
     resource.event_source_timezone = city["timezone"]
     resource.lat = city["latitude"]
     resource.lng = city["longitude"]
 
 
-def _guess_missing_timezone_and_location(resource):
-    if resource.event_source_timezone != "" or (
-        __noneOrEmpty(resource.city) and __noneOrEmpty(resource.country)
-    ):
+def guess_missing_timezone_and_location_async(resource_id):
+    resource = Resource.objects.get(pk=resource_id)
+    if _abort_needed(resource):
+        print("guessing aborted (early): %d" % resource_id)
         return
 
     # try fast(-er) matching ...
@@ -115,4 +128,6 @@ def _guess_missing_timezone_and_location(resource):
 
 
 def guess_missing_activity_fields(resource):
-    _guess_missing_timezone_and_location(resource)
+    if _abort_needed(resource):
+        return
+    async_task(guess_missing_timezone_and_location_async, resource.id)

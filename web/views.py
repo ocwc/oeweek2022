@@ -78,9 +78,8 @@ def contribute_activity(request, identifier=None):
         if form.is_valid():
             print(form.cleaned_data)
             resource = form.save(commit=False)
-            # TODO: possibly do in a separate worker thread
-            guess_missing_activity_fields(resource)
             resource.save()
+            guess_missing_activity_fields(resource)
             fetch_screenshot_async(resource)
             # process the data in form.cleaned_data as required
             # user = CustomUser.objects.create_user(
