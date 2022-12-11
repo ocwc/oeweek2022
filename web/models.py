@@ -16,7 +16,7 @@ from model_utils.models import TimeStampedModel
 
 from mail_templated import send_mail
 
-from .data import COUNTRY_CHOICES, LANGUAGE_CHOICES
+from .data import COUNTRY_CHOICES, LANGUAGE_CHOICES, LICENSE_CHOICES
 
 import arrow
 
@@ -158,16 +158,6 @@ class Resource(TimeStampedModel, ReviewModel):
     institution_is_oeg_member = models.BooleanField(blank=True, null=True)
     form_language = models.CharField(
         max_length=255, blank=True, null=True, choices=LANGUAGE_CHOICES
-    )
-
-    LICENSE_CHOICES = Choices(
-        ("Public domain", "Public domain"),
-        ("CC-0", "CC Zero (CC 0)"),
-        ("CC-BY", "CC Attribution (CC BY)"),
-        ("CC-BY-SA", "CC Attribution — Share-Alike (CC BY-SA)"),
-        ("CC-BY-NC", "CC Attribution — Non-Commercial (CC BY-NC)"),
-        ("CC-NC-SA", "CC Attribution — Non-Commercial — Share-Alike (CC BY-NC-SA)"),
-        ("Other", "Other open license"),
     )
     license = models.CharField(
         max_length=255, blank=True, null=True, choices=LICENSE_CHOICES
