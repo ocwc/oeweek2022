@@ -213,7 +213,8 @@ DEFAULT_AUTO_FIELD = "django.db.models.AutoField"
 Q_CLUSTER = {
     "name": "oe-week",
     "workers": 1,
-    "recycle": 5,
+    # TODO: would be nice to have it at say 5, 10, or something but seems to be failing with value > 1
+    "recycle": 1,
     "timeout": 45,
     "ack_failures": True,
     "max_attempts": 2,
