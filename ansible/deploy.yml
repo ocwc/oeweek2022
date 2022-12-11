@@ -13,7 +13,9 @@
       update: no
 
   - name: Stop the service
-    shell: sudo supervisorctl stop oerweek-django
+    shell: |
+      sudo supervisorctl stop oerweek-django
+      sudo supervisorctl stop oerweek-q
 
   - name: Update the deployment branch
     ansible.builtin.git:
@@ -33,4 +35,6 @@
       executable: /usr/bin/bash
 
   - name: Start the service
-    shell: sudo supervisorctl start oerweek-django
+    shell: |
+      sudo supervisorctl start oerweek-django
+      sudo supervisorctl start oerweek-q
