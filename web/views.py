@@ -177,9 +177,9 @@ def contribute_asset(request, identifier=None):
             "license": resource.license,
             "form_language": resource.form_language,
         }
-        form = ActivityForm(initial=initial)
+        form = AssetForm(initial=initial)
     else:
-        form = ActivityForm()
+        form = AssetForm()
 
     context = {
         "form": form,
