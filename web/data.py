@@ -41,6 +41,7 @@ LANGUAGE_CHOICES += [
 #
 
 LICENSE_CHOICES = [
+    (None, "Please select an option below"),
     ("Public domain", "Public domain"),
     ("CC-0", "CC Zero (CC 0)"),
     ("CC-BY", "CC Attribution (CC BY)"),

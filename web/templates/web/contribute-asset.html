@@ -86,7 +86,7 @@
     <select name="license" id="id_license" class="w-full">
     {% for id, name in form.fields.license.choices %}
         <option value="{{ id }}"
-            {% if id == "" %}disabled=""{% endif %}
+            {% if id == None %}disabled=""{% endif %}
             {% if id == form.license.value %} selected="selected"{% endif %}
         >{{ name }}</option>
     {% endfor %}
