@@ -2,7 +2,7 @@
 <IP or hostname>
 
 [oeg_servers:vars]
-app_deploy_root=/home/<deployment user>/oerweekapi
+app_deploy_root=/home/<deployment user>/oeweek2022
 app_deploy_branch=develop
 venv_activate=<relative path to bin/activate within app_deploy_root>
 
