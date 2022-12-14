@@ -14,8 +14,8 @@
 
   - name: Stop the service
     shell: |
-      sudo supervisorctl stop oerweek-django
-      sudo supervisorctl stop oerweek-q
+      sudo supervisorctl stop oeweek-django
+      sudo supervisorctl stop oeweek-q
 
   - name: Update the deployment branch
     ansible.builtin.git:
@@ -36,5 +36,5 @@
 
   - name: Start the service
     shell: |
-      sudo supervisorctl start oerweek-django
-      sudo supervisorctl start oerweek-q
+      sudo supervisorctl start oeweek-django
+      sudo supervisorctl start oeweek-q
