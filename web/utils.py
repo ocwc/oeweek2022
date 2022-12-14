@@ -45,9 +45,11 @@ def custom_drf_exception_handler(exc, context):
 
 
 def days_to_go():
-    now_utc = djtz.now().astimezone(djtz.utc)
-    today = date(now_utc.year, now_utc.month, now_utc.day)
+    today = arrow.utcnow().date()
     future_oeweek = settings.FUTURE_OEWEEK
+    if today < arrow.get(settings.OEW_RANGE[1]).date():
+        future_oeweek = arrow.get(settings.OEW_RANGE[0]).date()
+
     delta_days = (future_oeweek - today).days
     # only return date if oeweek happens in less than a year AND more than a week
     if delta_days > 7 and delta_days < 365:
