@@ -9,30 +9,21 @@
 
 {% block content %}
 
-<!--
-<h1>{{ action_verb }} Asset</h1>
-<form action="{{ submit_url }}" method="post">
-    {#{% csrf_token %}#}
-    {{ form.as_ul }}
-    <input type="submit" value="Submit">
-</form>
--->
-
 <h1>{{ action_verb }} Asset</h1>
 <div class="card bg-white p-8 lg:p-16 rounded shadow-lg prose">
     <img src="https://conference.oeglobal.org/2021/wp-content/uploads/2022/02/submission-banner.png">
 
-    <p><strong>Open Education Week 2022 takes place March 7-11.</strong></p>
+    <p><strong>Open Education Week 2023 takes place March 6-10.</strong></p>
 
-    <p>All open educators, students, policymakers, technologists and enthusiasts, wherever you may be, are invited to celebrate their Open Education work by hosting events and activities during OE Week 2022.</p>
+    <p>All open educators, students, policymakers, technologists and enthusiasts, wherever you may be, are invited to celebrate their Open Education work by hosting events and activities during OE Week 2023.</p>
 
     <p><strong>Assets</strong> are the tangible resources, repositories or technologies that are produced for use through open education initiatives. These can range from OERs, textbooks, collections of resources, or education modules – all have educational purpose and value and are openly licenced and accessible. Add your asset to the OE Week Library to share and highlight your favorite resources.</p>
 
-    <p>Still have questions? <a href="https://www.oeglobal.org/activities/open-education-week/faq/">Read our FAQs</a>.</p>
+    <p>Still have questions? <a href="/about/faq/">Read our FAQs</a>.</p>
 
     <p><strong>Share your asset, resource, or repository by filling out the form below.</strong></p>
 
-    <form action="{{ submit_url }}" method="post">
+    <form action="{{ submit_url }}" method="post" enctype="multipart/form-data">
     {% csrf_token %}
 
     {#{{ form.uuid }}#} {# FYI: hidden field #}
@@ -62,15 +53,15 @@
 
     <div></div>
 
-    {{ form.title.errors }}
     <p>
         {{ form.title.label_tag }}
+        {{ form.title.errors }}
         {{ form.title }}
     </p>
 
-    {{ form.content.errors }}
     <p>
         {{ form.content.label_tag }}
+        {{ form.content.errors }}
         <br>Include a summary of the asset. What does it do? Who can use it and how can it be used? What are the expected outcomes of using the asset?
         <br><em>Suggested length: 50-500 words. Feel free to also provide the description in your own language)</em>
 
@@ -84,10 +75,20 @@
     </p>
 
     <p>
+    	{{ form.user_image.label_tag }}
+    	{{ form.user_image.errors }}
+    	<br><em>Recommended size: 584x232 pixels</em>
+    	{{ form.user_image }}
+   	</p>
+
+    <p>
     <label for="id_license">License:</label>
     <select name="license" id="id_license" class="w-full">
     {% for id, name in form.fields.license.choices %}
-        <option value="{{ id }}">{{ name }}</option>
+        <option value="{{ id }}"
+            {% if id == None %}disabled=""{% endif %}
+            {% if id == form.license.value %} selected="selected"{% endif %}
+        >{{ name }}</option>
     {% endfor %}
     </select>
     </p>
@@ -97,7 +98,10 @@
         <label for="id_form_language">Primary language:</label>
         <select name="form_language" id="id_form_language" class="w-full">
         {% for id, name in form.fields.form_language.choices %}
-            <option value="{{ id }}">{{ name }}</option>
+            <option value="{{ id }}"
+                {% if id == None %}disabled=""{% endif %}
+                {% if id == form.form_language.value %}selected=""{% endif %}
+            >{{ name }}</option>
         {% endfor %}
         </select>
         </p>
@@ -105,7 +109,7 @@
         <!--
         <p class="w-full ml-2">
         <label for="id_opentags">Opentags:</label>
-        <input type="text" name="opentags" maxlength="255" id="id_opentags" class="w-full">
+        <input type="text" name="opentags" maxlength="255" id="id_opentags" class="w-full" value="{{ form.opentags.value }}">
         </p>
         -->
     </div>
@@ -148,7 +152,10 @@
         {{ form.country.label_tag }}
         <select name="country" id="id_country" class="w-full">
         {% for id, name in form.fields.country.choices %}
-            <option value="{{ id }}">{{ name }}</option>
+            <option value="{{ id }}"
+                {% if id == None %} disabled=""{% endif %}
+                {% if id == form.country.value %} selected=""{% endif %}
+            >{{ name }}</option>
         {% endfor %}
         </select>
         </p>
@@ -195,20 +202,12 @@
         </p>
     </div>
 
-    <!--
-    <p><label for="id_image">Image:</label> <select name="image" id="id_image">
-    <option value="" selected="selected">---------</option>
-
-    </select></p>
-    -->
-
-    <!--
-    <p><label for="id_image">Image:</label> <select name="image" id="id_image">
-    <option value="" selected="selected" class="w-6/12">---------</option>
-    </select></p>
-    -->
-
     <input type="submit" value="Submit" class="button-outline font-bold my-8">
     </form>
+
+    {% if contribute_similar %}
+    <hr class="my-8">
+    <p>You can submit similar entry by <a href="{{ contribute_similar }}">clicking here</a>.</p>
+    {% endif %}
 </div>
 {% endblock %}

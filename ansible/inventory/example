@@ -1,0 +1,10 @@
+[oeg_servers]
+<IP or hostname>
+
+[oeg_servers:vars]
+app_deploy_root=/home/<deployment user>/oerweekapi
+app_deploy_branch=develop
+venv_activate=<relative path to bin/activate within app_deploy_root>
+
+[all:vars]
+ansible_user=<deployment user>

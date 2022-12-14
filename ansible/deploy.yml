@@ -1,0 +1,40 @@
+---
+
+- name: Update current deployment to latest release
+  hosts: oeg_servers
+  vars:
+    app_git_repo: git@github.com:ocwc/oeweek2022.git
+
+  tasks:
+  - name: Just ensuring the repo checkout exists
+    ansible.builtin.git:
+      repo: '{{ app_git_repo }}'
+      dest: '{{ app_deploy_root }}'
+      update: no
+
+  - name: Stop the service
+    shell: |
+      sudo supervisorctl stop oerweek-django
+      sudo supervisorctl stop oerweek-q
+
+  - name: Update the deployment branch
+    ansible.builtin.git:
+      repo: '{{ app_git_repo }}'
+      dest: '{{ app_deploy_root }}'
+      single_branch: yes
+      version: '{{ app_deploy_branch }}'
+
+  - name: Perform updates, migrations and other maintenance
+    shell: |
+      source '{{ venv_activate }}'
+      pip install -U -r requirements.txt
+      ./manage.py migrate
+      ./manage.py collectstatic --noinput
+    args:
+      chdir: '{{ app_deploy_root }}'
+      executable: /usr/bin/bash
+
+  - name: Start the service
+    shell: |
+      sudo supervisorctl start oerweek-django
+      sudo supervisorctl start oerweek-q

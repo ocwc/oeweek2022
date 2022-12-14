@@ -7,7 +7,13 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/1.8/howto/deployment/checklist/
 
-ALLOWED_HOSTS = ["api.openeducationweek.org", 'oeweek.oeglobal.org', 'oeweektest.oeglobal.org', 'localhost', '.lhr.life']
+ALLOWED_HOSTS = [
+    "api.openeducationweek.org",
+    "oeweek.oeglobal.org",
+    "oeweektest.oeglobal.org",
+    "localhost",
+    ".lhr.life",
+]
 
 # Application definition
 
@@ -31,6 +37,26 @@ INSTALLED_APPS = (
     "corsheaders",
     "web",
     "import_export",
+    # our WagTail-based apps
+    "home",
+    "faq",
+    "search",  # TODO: not sure about this one
+    # WagTail stuff
+    "wagtail.contrib.forms",
+    "wagtail.contrib.redirects",
+    "wagtail.embeds",
+    "wagtail.sites",
+    "wagtail.users",
+    "wagtail.snippets",
+    "wagtail.documents",
+    "wagtail.images",
+    "wagtail.search",
+    "wagtail.admin",
+    "wagtail",
+    # required by WagTail stuff
+    "modelcluster",
+    # required for automatic screenshots
+    "django_q",
 )
 
 MIDDLEWARE = [
@@ -39,10 +65,11 @@ MIDDLEWARE = [
     "django.middleware.common.CommonMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
     "django.contrib.auth.middleware.AuthenticationMiddleware",
-    #"django.contrib.auth.middleware.SessionAuthenticationMiddleware", # (...) The SessionAuthenticationMiddleware class is removed. It provided no functionality since session authentication is unconditionally enabled in Django 1.10.
+    # "django.contrib.auth.middleware.SessionAuthenticationMiddleware", # (...) The SessionAuthenticationMiddleware class is removed. It provided no functionality since session authentication is unconditionally enabled in Django 1.10.
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
     "django.middleware.security.SecurityMiddleware",
+    "wagtail.contrib.redirects.middleware.RedirectMiddleware",
 ]
 
 ROOT_URLCONF = "oerweekapi.urls"
@@ -50,7 +77,9 @@ ROOT_URLCONF = "oerweekapi.urls"
 TEMPLATES = [
     {
         "BACKEND": "django.template.backends.django.DjangoTemplates",
-        "DIRS": [],
+        "DIRS": [
+            os.path.join(BASE_DIR, "templates"),
+        ],
         "APP_DIRS": True,
         "OPTIONS": {
             "context_processors": [
@@ -86,15 +115,21 @@ APPEND_SLASH = False
 # https://docs.djangoproject.com/en/1.8/howto/static-files/
 
 STATIC_URL = "/static/"
-# STATIC_ROOT = os.path.join(BASE_DIR, "static")
+STATIC_ROOT = os.path.join(BASE_DIR, "static")
 # # STATIC_ROOT (...) The absolute path to the directory where collectstatic will collect static files for deployment.
 # # STATICFILES_DIRS (...) Your project will probably also have static assets that aren’t tied to a particular app. In addition to using a static/ directory inside your apps, you can define a list of directories (STATICFILES_DIRS) in your settings file where Django will also look for static files.
-STATICFILES_DIRS = [
-    os.path.join(BASE_DIR, "static"),
-]
+# STATICFILES_DIRS = [
+#     os.path.join(BASE_DIR, "static"),
+# ]
 
 MEDIA_ROOT = os.path.join(BASE_DIR, "media")
-MEDIA_URL = "https://api.openeducationweek.org/media/"
+# MEDIA_URL = "https://api.openeducationweek.org/media/"
+# TODO: later we need to resolve the concundrum with oeweek2022 being fork of oerweekapi, while both are run at PROD (oeweek2022 as oeweek.oeglobal.org and oerweekapi api.openeducationweek.org, with oeweek.oeglobal.org still using api.openeducationweek.org) for example via MEDIA_URL (not sure how else)
+MEDIA_URL = "/media/"
+
+RESOURCE_IMAGE_MAX_SIZE = 4 * 1024 * 1024  # for non-admin users
+RESOURCE_IMAGE_MAX_WIDTH = 4096
+RESOURCE_IMAGE_MAX_HEIGHT = 2048
 
 REST_FRAMEWORK = {
     "DEFAULT_PERMISSION_CLASSES": (
@@ -127,10 +162,10 @@ REST_FRAMEWORK = {
 # OLD: CORS_ORIGIN_ALLOW_ALL = True
 CORS_ALLOW_ALL_ORIGINS = True
 CORS_ALLOWED_ORIGINS = [
-    'https://oeweek.oeglobal.org',
-    'https://oeweektest.oeglobal.org',
-    'https://api.openeducationweek.org',
-    'http://localhost:4200',
+    "https://oeweek.oeglobal.org",
+    "https://oeweektest.oeglobal.org",
+    "https://api.openeducationweek.org",
+    "http://localhost:4200",
 ]
 
 REST_USE_JWT = True
@@ -147,17 +182,51 @@ JWT_AUTH = {
 DJANGO_WYSIWYG_FLAVOR = "ckeditor"
 
 LOGIN_URL = "/api-auth/login/"
-OEW_YEAR = 2022
-OEW_RANGE = ["2022-03-07 00:00:00", "2022-03-11 23:59:59"]
-OEW_CFP_OPEN = "2022-01-08"
+
+# all in UTC, see TIME_ZONE above
+OEW_YEAR = 2023
+OEW_RANGE = ["2023-03-06 00:00:00", "2023-03-10 23:59:59"]
+OEW_CFP_OPEN = "2023-01-16"
 
 # next year's OE week starting date
-FUTURE_OEWEEK=datetime.date(2023, 3, 6)
+FUTURE_OEWEEK = datetime.date(2024, 3, 4)
+
+# Wagtail settings
+
+WAGTAIL_SITE_NAME = "OE Week CMS"
+
+# Search
+# https://docs.wagtail.org/en/stable/topics/search/backends.html
+WAGTAILSEARCH_BACKENDS = {
+    "default": {
+        "BACKEND": "wagtail.search.backends.database",
+    }
+}
+
+# Base URL to use when referring to full URLs within the Wagtail admin backend -
+# e.g. in notification emails. Don't include '/admin' or a trailing slash
+# TODO: we'd like to NOT have it hardcoded here => find some better/nicer way
+WAGTAILADMIN_BASE_URL = "https://oeweek.oeglobal.org"
+
+DEFAULT_AUTO_FIELD = "django.db.models.AutoField"
+
+Q_CLUSTER = {
+    "name": "oe-week",
+    "workers": 1,
+    # TODO: would be nice to have it at say 5, 10, or something but seems to be failing with value > 1
+    "recycle": 1,
+    "timeout": 45,
+    "ack_failures": True,
+    "max_attempts": 2,
+    "retry": 24 * 60 * 60,
+    "queue_limit": 100,
+    "label": "Django Q",
+    "orm": "default",
+    "bulk": 10,
+}
 
 CI = os.environ.get("CI")
 if CI:
     from .testsettings import *  # noqa: F401, F403
 else:
     from .localsettings import *  # noqa: F401, F403
-
-DEFAULT_AUTO_FIELD='django.db.models.AutoField'

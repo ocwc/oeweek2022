@@ -4,7 +4,7 @@
 
 <br>
 
-<h1><!--<i class="fad fa-box-open"></i>--> OE Week 2022 Resources</h1>
+<h1><!--<i class="fad fa-box-open"></i>--> OE Week 2023 Resources</h1>
 
 {% if resource_count %}
     <p><i class="fal fa-calculator"></i> <strong>Showing {{ resource_count }} resources</strong></p>
@@ -12,14 +12,14 @@
 {% endif %}
 
 <div class="grid gird-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 md:gap-x-4 gap-y-6">
-    
+
     {% for resource in resource_list %}
 
         <div class="bg-white mb-2 rounded-lg shadow-sm transition-shadow overflow-hidden hover:shadow-lg border-2 border-gray-200 hover:border-purple-500">
 
             <div class="item-media">
-                {% if resource.image_url %}
-                <a href="/resources/{{resource.year}}/{{resource.slug}}/"><img src="{{ resource.image_url }}" class="object-cover h-150px md:h-120px"></a>
+                {% if resource.consolidated_image_url %}
+                <a href="/resources/{{resource.year}}/{{resource.slug}}/"><img src="{{ resource.consolidated_image_url }}" class="object-cover h-150px md:h-120px"></a>
                 {% else %}
                     {% load static %}
                     <a href="/resources/{{resource.year}}/{{resource.slug}}/"><img rel="stylesheet" src="{% static 'web/images/placeholder-asset-sm.png' %}" class="mb-4 w-full"></a>
@@ -43,7 +43,7 @@
         </div>
 
     {% endfor %}
-    
+
 </div>
 
 {% endblock %}
