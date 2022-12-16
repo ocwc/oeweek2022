@@ -627,10 +627,27 @@ svg {
   color: rgba(51, 51, 51, var(--tw-text-opacity));
 }
 
+.content h2 {
+  font-weight: 700;
+  font-size: 1.5rem;
+  line-height: 2.0rem;
+  letter-spacing: -0.1px;
+  margin-bottom: 2.1rem;
+  --tw-text-opacity: 1;
+  color: rgba(51, 51, 51, var(--tw-text-opacity));
+}
+
+/* TODO: adjust H2, add H3 and H3 */
+
 @media (min-width: 1024px) {
   .content h1 {
     font-size: 2.75rem;
     line-height: 3.3rem;
+    letter-spacing: -0.35px;
+  }
+  .content h2 {
+    font-size: 2.5rem;
+    line-height: 3.0rem;
     letter-spacing: -0.35px;
   }
 }
