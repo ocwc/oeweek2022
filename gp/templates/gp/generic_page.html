@@ -1,0 +1,30 @@
+{% extends "base-cms.html" %}
+{% load wagtailimages_tags wagtailcore_tags %}
+
+{% block extra_css %}
+<style id='coblocks-frontend-inline-css' type='text/css'>
+.coblocks-hero-02116528426 > div {padding-top:30px;padding-right:30px;padding-bottom:30px;padding-left:30px;}@media only screen and (max-width: 514px) {.coblocks-hero-02116528426 > div {padding-top:10px;padding-right:30px;padding-bottom:30px;padding-left:30px;}}@media only screen and (max-width: 768px) {}@media only screen and (max-width: 514px) {}
+</style>
+{% endblock extra_css %}
+
+{% block content %}
+<!-- hard-coded proof-of-concept HTML from WordPress based content: -->
+<div class="container breadcrumbs">
+    <!-- Breadcrumb NavXT 7.1.0 -->
+    <span property="itemListElement" typeof="ListItem"><a property="item" typeof="WebPage" title="Go to OEGlobal." href="https://www.oeglobal.org" class="home"><span property="name">Home</span></a><meta property="position" content="1"></span> − <span property="itemListElement" typeof="ListItem"><a property="item" typeof="WebPage" title="Go to Activities." href="/" class="post post-page" ><span property="name">OE Week</span></a><meta property="position" content="2"></span> − <span class="post post-page current-item">{{ page.title }}</span>
+</div>
+
+<div class="container w-full">
+	<h1 class="text-3xl font-bold h1">{{ page.title }}</h1>
+</div>
+
+<article class="container post-11620 page type-page status-publish hentry">
+  <div class="content lg:mb-6 lg:p-0 w-full">
+  {% if page.body %}
+  <div class="wp-container-3 wp-block-group"><div class="wp-block-group__inner-container">
+    {{ page.body }}
+  </div></div>
+  {% endif %}
+  </div>
+</article>
+{% endblock content %}
