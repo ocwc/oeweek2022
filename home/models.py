@@ -108,3 +108,6 @@ class HomePage(Page):
             heading='"More details" section',
         ),
     ]
+
+    def __str__(self):
+        return "home page: %s" % self.title
