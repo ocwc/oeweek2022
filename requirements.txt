@@ -36,6 +36,7 @@ django-taggit
 # django-vanilla-views==1.0.5
 
 # DONOTDELETE -- used in settings.py (with ckeditor)
+# FIXME: unmaintained => replace
 django-wysiwyg
 
 # DONOTDELETE
@@ -55,7 +56,9 @@ future
 # DONOTDELETE
 gunicorn
 
-# html5lib==1.0.1
+# needed for django_wysiwyg.sanitize_html() and some other functionality
+html5lib>=1.1,==1.*
+
 # ipdb==0.11
 # ipython==6.5.0
 # ipython-genutils==0.2.0

@@ -1,4 +1,5 @@
 import arrow
+import django_wysiwyg
 import xlwt
 import urllib.parse
 import twitter
@@ -76,6 +77,7 @@ def contribute_activity(request, identifier=None):
         # create a form instance & populate with request data
         form = ActivityForm(request.POST, request.FILES)
         if form.is_valid():
+            resource.content = django_wysiwyg.sanitize_html(resource.content)
             print(form.cleaned_data)
             resource = form.save(commit=False)
             resource.save()
@@ -147,6 +149,7 @@ def contribute_asset(request, identifier=None):
         # create a form instance & populate with request data
         form = AssetForm(request.POST, request.FILES)
         if form.is_valid():
+            resource.content = django_wysiwyg.sanitize_html(resource.content)
             print(form.cleaned_data)
             resource = form.save()
             fetch_screenshot_async(resource)
@@ -212,8 +215,10 @@ def edit_resource(request, identifier):
             form = AssetForm(request.POST or None, request.FILES, instance=resource)
 
         if form.is_valid():
-            resource = Resource.objects.get(uuid=uuid)
-            form.save()
+            resource = form.save(commit=False)
+            # FIXME (this and others): ImportError: cannot import name 'sanitizer' from 'html5lib'
+            resource.content = django_wysiwyg.sanitize_html(resource.content)
+            resource.save()
             return render(request, "web/updated.html")
         else:
             print(form.errors)
@@ -282,7 +287,6 @@ def show_events(request):
 def show_event_detail(request, year, slug):
     event = get_object_or_404(Resource, year=year, slug=slug)
     # #todo -- check if event is "published" (throw 404 for drafts / trash)
-    event.content = event.content.replace("\n", "<br>")
     event.convertedtime = event.event_time_utc
     event.convertedtimezone = "UTC"
     event.consolidated_image_url = event.get_image_url_for_detail()
@@ -315,7 +319,6 @@ def show_resources(request):
 # @login_required(login_url='/admin/')
 def show_resource_detail(request, year, slug):
     resource = get_object_or_404(Resource, year=year, slug=slug)
-    resource.content = resource.content.replace("\n", "<br>")
     resource.consolidated_image_url = resource.get_image_url_for_detail()
     context = {"obj": resource}
     return render(request, "web/resource_detail.html", context=context)
