@@ -68,7 +68,7 @@
         <br><em>Suggested length: 50-500 words. Feel free to also provide the description in your own language)</em>
 
         {{ form.content }}
-        {% wysiwyg_editor "id_content" %}
+        {% wysiwyg_editor "id_content" "id_content_editor" "{ toolbar: 'Custom', toolbar_Custom: [['Bold', 'Italic', 'Underline'], ['NumberedList', 'BulletedList'], ['Link', 'Unlink'], ['RemoveFormat', 'Source']]}" %}
     </p>
 
     {{ form.link.errors }}
