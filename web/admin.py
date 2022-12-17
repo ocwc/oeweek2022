@@ -11,6 +11,8 @@ class ResourceAdmin(ImportExportMixin, admin.ModelAdmin):
     search_fields = ('post_id', 'title', 'country', 'contact', 'firstname', 'lastname', 'email', 'institution', 'link')
     list_filter = ('post_status', 'post_type', 'event_type', 'notified')
 
+    change_form_template = 'web/admin/change_form.html'
+
     save_as = True
 
 
