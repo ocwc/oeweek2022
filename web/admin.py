@@ -6,19 +6,41 @@ from .models import Page, Resource, Category, EmailTemplate, ResourceImage
 
 
 class ResourceAdmin(ImportExportMixin, admin.ModelAdmin):
-    list_display = ('id', 'title', 'post_status', 'event_source_timezone', 'contact', 'institution', 'year')
-    readonly_fields = ('uuid', 'created', 'modified',)
-    search_fields = ('post_id', 'title', 'country', 'contact', 'firstname', 'lastname', 'email', 'institution', 'link')
-    list_filter = ('post_status', 'post_type', 'event_type', 'notified')
+    list_display = (
+        "id",
+        "title",
+        "post_status",
+        "event_source_timezone",
+        "contact",
+        "institution",
+        "year",
+    )
+    readonly_fields = (
+        "uuid",
+        "created",
+        "modified",
+    )
+    search_fields = (
+        "post_id",
+        "title",
+        "country",
+        "contact",
+        "firstname",
+        "lastname",
+        "email",
+        "institution",
+        "link",
+    )
+    list_filter = ("post_status", "post_type", "event_type", "notified")
 
-    change_form_template = 'web/admin/change_form.html'
+    change_form_template = "web/admin/change_form.html"
 
     save_as = True
 
 
 class PageAdmin(admin.ModelAdmin):
     prepopulated_fields = {"slug": ("title",)}
-    change_form_template = 'web/admin/change_form.html'
+    change_form_template = "web/admin/change_form.html"
 
 
 class CategoryAdmin(admin.ModelAdmin):
