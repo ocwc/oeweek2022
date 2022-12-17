@@ -46,6 +46,10 @@ from pytz import timezone
 import django.utils.timezone as djtz
 
 
+ALLOWED_TAGS = bleach.sanitizer.ALLOWED_TAGS
+ALLOWED_TAGS += ["p"]
+
+
 def index(request):
     # if request.user.is_authenticated:
     #     return render(request, 'web/home.html', context={})
@@ -77,9 +81,9 @@ def contribute_activity(request, identifier=None):
         # create a form instance & populate with request data
         form = ActivityForm(request.POST, request.FILES)
         if form.is_valid():
-            resource.content = bleach.clean(resource.content)
             print(form.cleaned_data)
             resource = form.save(commit=False)
+            resource.content = bleach.clean(resource.content, tags=ALLOWED_TAGS)
             resource.save()
             guess_missing_activity_fields(resource)
             fetch_screenshot_async(resource)
@@ -149,9 +153,10 @@ def contribute_asset(request, identifier=None):
         # create a form instance & populate with request data
         form = AssetForm(request.POST, request.FILES)
         if form.is_valid():
-            resource.content = bleach.clean(resource.content)
             print(form.cleaned_data)
-            resource = form.save()
+            resource = form.save(commit=False)
+            resource.content = bleach.clean(resource.content, tags=ALLOWED_TAGS)
+            resource.save()
             fetch_screenshot_async(resource)
             context = {
                 "uuid": resource.uuid,
@@ -216,7 +221,7 @@ def edit_resource(request, identifier):
 
         if form.is_valid():
             resource = form.save(commit=False)
-            resource.content = bleach.clean(resource.content)
+            resource.content = bleach.clean(resource.content, tags=ALLOWED_TAGS)
             resource.save()
             return render(request, "web/updated.html")
         else:
