@@ -1,5 +1,5 @@
 import arrow
-import django_wysiwyg
+import bleach
 import xlwt
 import urllib.parse
 import twitter
@@ -77,7 +77,7 @@ def contribute_activity(request, identifier=None):
         # create a form instance & populate with request data
         form = ActivityForm(request.POST, request.FILES)
         if form.is_valid():
-            resource.content = django_wysiwyg.sanitize_html(resource.content)
+            resource.content = bleach.clean(resource.content)
             print(form.cleaned_data)
             resource = form.save(commit=False)
             resource.save()
@@ -149,7 +149,7 @@ def contribute_asset(request, identifier=None):
         # create a form instance & populate with request data
         form = AssetForm(request.POST, request.FILES)
         if form.is_valid():
-            resource.content = django_wysiwyg.sanitize_html(resource.content)
+            resource.content = bleach.clean(resource.content)
             print(form.cleaned_data)
             resource = form.save()
             fetch_screenshot_async(resource)
@@ -216,8 +216,7 @@ def edit_resource(request, identifier):
 
         if form.is_valid():
             resource = form.save(commit=False)
-            # FIXME (this and others): ImportError: cannot import name 'sanitizer' from 'html5lib'
-            resource.content = django_wysiwyg.sanitize_html(resource.content)
+            resource.content = bleach.clean(resource.content)
             resource.save()
             return render(request, "web/updated.html")
         else:

@@ -56,9 +56,6 @@ future
 # DONOTDELETE
 gunicorn
 
-# needed for django_wysiwyg.sanitize_html() and some other functionality
-html5lib>=1.1,==1.*
-
 # ipdb==0.11
 # ipython==6.5.0
 # ipython-genutils==0.2.0
@@ -137,6 +134,9 @@ django-import-export
 django-timezone-field
 
 geonamescache>=1.5.0,==1.5.*
+
+# required for rich text editing
+bleach>=5.0.1,==5.0.*
 
 # required for automatic screenshots
 PyQtWebKit>=5.15.2,==5.15.*
