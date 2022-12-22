@@ -1,4 +1,5 @@
 import arrow
+import bleach
 import xlwt
 import urllib.parse
 import twitter
@@ -45,6 +46,10 @@ from pytz import timezone
 import django.utils.timezone as djtz
 
 
+ALLOWED_TAGS = bleach.sanitizer.ALLOWED_TAGS
+ALLOWED_TAGS += ["p"]
+
+
 def index(request):
     # if request.user.is_authenticated:
     #     return render(request, 'web/home.html', context={})
@@ -78,6 +83,7 @@ def contribute_activity(request, identifier=None):
         if form.is_valid():
             print(form.cleaned_data)
             resource = form.save(commit=False)
+            resource.content = bleach.clean(resource.content, tags=ALLOWED_TAGS)
             resource.save()
             guess_missing_activity_fields(resource)
             fetch_screenshot_async(resource)
@@ -148,7 +154,9 @@ def contribute_asset(request, identifier=None):
         form = AssetForm(request.POST, request.FILES)
         if form.is_valid():
             print(form.cleaned_data)
-            resource = form.save()
+            resource = form.save(commit=False)
+            resource.content = bleach.clean(resource.content, tags=ALLOWED_TAGS)
+            resource.save()
             fetch_screenshot_async(resource)
             context = {
                 "uuid": resource.uuid,
@@ -212,8 +220,9 @@ def edit_resource(request, identifier):
             form = AssetForm(request.POST or None, request.FILES, instance=resource)
 
         if form.is_valid():
-            resource = Resource.objects.get(uuid=uuid)
-            form.save()
+            resource = form.save(commit=False)
+            resource.content = bleach.clean(resource.content, tags=ALLOWED_TAGS)
+            resource.save()
             return render(request, "web/updated.html")
         else:
             print(form.errors)
@@ -282,7 +291,6 @@ def show_events(request):
 def show_event_detail(request, year, slug):
     event = get_object_or_404(Resource, year=year, slug=slug)
     # #todo -- check if event is "published" (throw 404 for drafts / trash)
-    event.content = event.content.replace("\n", "<br>")
     event.convertedtime = event.event_time_utc
     event.convertedtimezone = "UTC"
     event.consolidated_image_url = event.get_image_url_for_detail()
@@ -315,7 +323,6 @@ def show_resources(request):
 # @login_required(login_url='/admin/')
 def show_resource_detail(request, year, slug):
     resource = get_object_or_404(Resource, year=year, slug=slug)
-    resource.content = resource.content.replace("\n", "<br>")
     resource.consolidated_image_url = resource.get_image_url_for_detail()
     context = {"obj": resource}
     return render(request, "web/resource_detail.html", context=context)

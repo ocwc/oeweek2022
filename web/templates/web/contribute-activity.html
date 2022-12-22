@@ -1,4 +1,4 @@
-{% extends 'web/base.html' %}
+{% extends 'base.html' %}
 
 {# "Content:" -> "Description:" #}
 {# "City:" -> "City, State:" #}
@@ -11,6 +11,8 @@
 {# "Language:" -> "Primary Language:" #}
 
 {% block content %}
+{% load wysiwyg %}
+{% wysiwyg_setup %}
 
 <h1>{{ action_verb }} Activity</h1>
 <div class="card bg-white p-8 lg:p-16 rounded shadow-lg prose">
@@ -75,6 +77,7 @@
         <br><em>Suggested length: 50-500 words. Feel free to also provide the description in your own language)</em>
 
         {{ form.content }}
+        {% wysiwyg_editor "id_content" "id_content_editor" "{ toolbar: 'Custom', toolbar_Custom: [['Bold', 'Italic', 'Underline'], ['NumberedList', 'BulletedList'], ['Link', 'Unlink'], ['RemoveFormat', 'Source']]}" %}
     </p>
 
     <p>

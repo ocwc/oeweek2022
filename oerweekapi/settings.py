@@ -38,6 +38,7 @@ INSTALLED_APPS = (
     "web",
     "import_export",
     # our WagTail-based apps
+    "gp",
     "home",
     "faq",
     "search",  # TODO: not sure about this one

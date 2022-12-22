@@ -35,3 +35,6 @@ class FaqPage(Page):
     content_panels = Page.content_panels + [
         FieldPanel("answer"),
     ]
+
+    def __str__(self):
+        return "FAQ page: %s" % self.title
