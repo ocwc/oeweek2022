@@ -112,7 +112,14 @@ urlpatterns = (
         # url(r'^page/home/$', views.index, name='web_index'),
         path("cms/", include(wagtailadmin_urls)),
         path("documents/", include(wagtaildocs_urls)),
-        path("about/", include(wagtail_urls)),
+        # redirect from legacy URL path to new URLs
+        url(r"^about$", RedirectView.as_view(url="/pages/about/", permanent=False)),
+        url(r"^about/$", RedirectView.as_view(url="/pages/about/", permanent=False)),
+        url(r"^about/faq/$", RedirectView.as_view(url="/pages/faq/", permanent=False)),
+        url(
+            r"^about/2023/$", RedirectView.as_view(url="/pages/2023/", permanent=False)
+        ),
+        path("pages/", include(wagtail_urls)),
         # path("search/", search_views.search, name="search"),
     ]
     + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
