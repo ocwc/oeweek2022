@@ -3,10 +3,14 @@ import sys
 import tempfile
 import time
 
-from PyQt5.QtCore import QUrl
-from PyQt5.QtGui import QImage, QPainter
-from PyQt5.QtWidgets import QApplication
-from PyQt5.QtWebKitWidgets import QWebView
+try:
+    from PyQt5.QtCore import QUrl
+    from PyQt5.QtGui import QImage, QPainter
+    from PyQt5.QtWidgets import QApplication
+    from PyQt5.QtWebKitWidgets import QWebView
+except:
+    # TODO: maybe find a more elegant way to avoid crashes on systems without PyQt5 (e.g. MacOS)?
+    QUrl, QImage, QPainter, QApplication, QWebView = object
 
 from django.core.files import File
 from django_q.tasks import async_task
