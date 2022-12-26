@@ -249,8 +249,6 @@ MAGICLINK_ALLOW_STAFF_LOGIN = False
 MAGICLINK_IGNORE_IS_ACTIVE_FLAG = False
 MAGICLINK_ANTISPAM_FORMS = True
 
-# TODO: use django-q to call `python manage.py magiclink_clear_logins` periodically once a day
-
 
 CI = os.environ.get("CI")
 if CI:
