@@ -1,31 +1,26 @@
-<!doctype html>
-<html lang="en">
-<head>
-  <meta charset="utf-8">
+{% extends 'base.html' %}
 
-  <title>Django MagicLink Login - Please override this template</title>
-  <meta name="description" content="Django MagicLink">
-  <meta name="author" content="Django MagicLink">
+{# Hide the antispam field labels for the  Django's defailt form output #}
+{% block extra_css %}
   <style type="text/css">
-    /* Hide the antispan field labels for the  Django's defailt form output */
     label[for="id_url"], label[for="id_load_time"] {
       display: none;
     }
   </style>
-</head>
+{% endblock extra_css %}
 
-<body>
-  <h1>Login via email</h1>
+{% block content %}
+<h1>Login via email</h1>
+
+<div class="card bg-white p-8 lg:p-16 rounded shadow-lg prose">
   <form action="{% url 'magiclink:login' %}{% if request.GET.next %}?next={{ request.GET.next }}{% endif %}" method="post">
     {% csrf_token %}
-    {{ login_form }}
-    <button type="submit">Send login email</button>
+    <p>{{ login_form }}</p>
+    <input type="submit" value="Send login email" class="button-outline font-bold my-8">
   </form>
   {% if require_signup %}
+    <hr class="my-8">
     <p>Don't have an account? <a href="{% url 'magiclink:signup' %}">Sign up here</a></p>
   {% endif %}
-
-  <p>If you are seeing this you have not yet overridden the 'MAGICLINK_LOGIN_TEMPLATE_NAME' setting yet.</p>
-  <p>Please see the <a href="https://github.com/pyepye/django-magiclink">README on Github</a> for more details on setting up django-magiclink correctly</p>
-</body>
-</html>
+</div>
+{% endblock %}

@@ -1,19 +1,13 @@
-<!doctype html>
-<html lang="en">
-<head>
-  <meta charset="utf-8">
+{% extends 'base.html' %}
 
-  <title>Django MagicLink Login sent - Please override this template</title>
-  <meta name="description" content="Django MagicLink">
-  <meta name="author" content="Django MagicLink">
-</head>
+{% block content %}
+<h1>Login failed</h1>
 
-<body>
-  <h1>Login failed</h1>
+<div class="card bg-white p-8 lg:p-16 rounded shadow-lg prose">
   <p>It was not possible to log you in due to:</p>
   <p>{{ login_error }}</p>
 
-  <p>There are several possible ways for logins to fail with the current Django MagicLink settings:</p>
+  <p>There are several possible ways for logins to fail:</p>
   <ul>
     <li>The URL you are trying to use is malformed</li>
     <li>The magic link you tried to use has expired</li>
@@ -31,8 +25,6 @@
     <li>You are a superuser or staff user</li>
     {% endif %}
   </ul>
-
-  <p>If you are seeing this you have not yet overridden the 'MAGICLINK_LOGIN_FAILED_TEMPLATE_NAME' setting yet.</p>
-  <p>Please see the <a href="https://github.com/pyepye/django-magiclink">README on Github</a> for more details on setting up django-magiclink correctly</p>
-</body>
-</html>
+  <p>If the problems persists, please contact us at <a href="mailto:info@openeducationweek.org">info@openeducationweek.org</a> .</p>
+</div>
+{% endblock %}
