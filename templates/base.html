@@ -165,6 +165,20 @@
                                     role="button" tabindex="0" data-ebd-id="ember5-trigger"
                                     aria-owns="ember-basic-dropdown-content-ember5" aria-expanded="false">
 
+                                    <li class="menu-item">
+                                        <a href="{% url 'c_profile:view' %}"
+                                            id="ember5" class="ember-view"><i class="fal fa-user"></i> Profile</a>
+                                    </li>
+
+                                </div>
+                            </div>
+
+                            <div class="ember-basic-dropdown">
+                                <div id="ember6"
+                                    class="ember-view ember-basic-dropdown-trigger ember-basic-dropdown-trigger--in-place"
+                                    role="button" tabindex="0" data-ebd-id="ember5-trigger"
+                                    aria-owns="ember-basic-dropdown-content-ember5" aria-expanded="false">
+
                                     <!--
                                     <li class="md:ml-4">
                                         <a href="/contribute/" id="ember13"
@@ -294,8 +308,17 @@
                         </li>
                         <li><a href="/events/">2023 Activity Schedule</a></li>
                         <li><a href="/resources/">2023 OE Resource Library</a></li>
-                        <li><a href="{% url 'magiclink:signup' %}">Sign up</a></li>
-                        <li><a href="{% url 'magiclink:login' %}">Log in</a></li>
+                        {% if user.is_authenticated %}
+                            {# TODO: find a better place for logout link - it is usually expected at top-right where "profile" link is #}
+                            {% if user.is_staff %}
+                                <li><a href="{% url 'admin:logout' %}?next=/">Log out</a></li>
+                            {% else %}
+                                <li><a href="{% url 'magiclink:logout' %}?next=/">Log out</a></li>
+                            {% endif %}
+                        {% else %}
+                            <li><a href="{% url 'magiclink:signup' %}">Sign up</a></li>
+                            <li><a href="{% url 'magiclink:login' %}">Log in</a></li>
+                        {% endif %}
                         <li class="mb-1">
                             <a href="https://connect.oeglobal.org/c/oeweek/33/none" target="_blank"
                                 rel="noopener noreferrer">OEG
