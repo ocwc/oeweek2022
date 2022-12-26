@@ -1,0 +1,29 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+
+  <title>Django MagicLink Sign up - Please override this template</title>
+  <meta name="description" content="Django MagicLink">
+  <meta name="author" content="Django MagicLink">
+  <style type="text/css">
+    /* Hide the antispan field labels for the  Django's defailt form output */
+    label[for="id_url"], label[for="id_load_time"] {
+      display: none;
+    }
+  </style>
+</head>
+
+<body>
+  <h1>Create an account</h1>
+  <form action="{% url 'magiclink:signup' %}{% if request.GET.next %}?next={{ request.GET.next }}{% endif %}" method="post">
+    {% csrf_token %}
+    {{ SignupForm }}
+    <button type="submit">Sign up</button>
+  </form>
+  <p>Already have an account? <a href="{% url 'magiclink:login' %}">Log in here</a></p>
+
+  <p>If you are seeing this you have not yet overridden the 'MAGICLINK_SIGNUP_TEMPLATE_NAME' setting yet.</p>
+  <p>Please see the <a href="https://github.com/pyepye/django-magiclink">README on Github</a> for more details on setting up django-magiclink correctly</p>
+</body>
+</html>

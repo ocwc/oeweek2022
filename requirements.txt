@@ -141,3 +141,5 @@ bleach>=5.0.1,==5.0.*
 # required for automatic screenshots
 PyQtWebKit>=5.15.2,==5.15.*
 django-q>=1.3.9,==1.3.*
+
+django-magiclink
