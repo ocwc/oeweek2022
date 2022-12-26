@@ -8,5 +8,4 @@ from django.conf import settings
 
 @login_required(login_url="magiclink:login")
 def view_profile(request):
-    # TODO: show name + email into profile
     return render(request, "contributor_profile/view.html")
