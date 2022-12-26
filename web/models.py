@@ -394,6 +394,7 @@ class Resource(TimeStampedModel, ReviewModel):
         )
 
     def send_new_account_email(self, force=False):
+        # TODO: chek and possibly adjust how that should relate to magiclink accounts
         email = self.email.lower()
         if force or not User.objects.filter(email=email).exists():
             user, is_created = User.objects.get_or_create(
