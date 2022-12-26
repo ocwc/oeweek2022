@@ -237,6 +237,8 @@ Q_CLUSTER = {
 LOGIN_URL = "magiclink:login"
 LOGIN_REDIRECT_URL = "/profile/"
 
+MAGICLINK_EMAIL_SUBJECT = "OE Week: Your login link"
+
 MAGICLINK_LOGIN_TEMPLATE_NAME = "magiclink/login.html"
 MAGICLINK_LOGIN_SENT_TEMPLATE_NAME = "magiclink/login_sent.html"
 MAGICLINK_LOGIN_FAILED_TEMPLATE_NAME = "magiclink/login_failed.html"
