@@ -1,0 +1,24 @@
+{% extends 'base.html' %}
+
+{# Hide the antispam field labels for the  Django's defailt form output #}
+{% block extra_css %}
+  <style type="text/css">
+    label[for="id_url"], label[for="id_load_time"] {
+      display: none;
+    }
+  </style>
+{% endblock extra_css %}
+
+{% block content %}
+<h1>Create an account</h1>
+
+<div class="card bg-white p-8 lg:p-16 rounded shadow-lg prose">
+  <form action="{% url 'magiclink:signup' %}{% if request.GET.next %}?next={{ request.GET.next }}{% endif %}" method="post">
+    {% csrf_token %}
+    <p>{{ SignupForm }}</p>
+    <input type="submit" value="Sign up" class="button-outline font-bold my-8">
+  </form>
+  <hr class="my-8">
+  <p>Already have an account? <a href="{% url 'magiclink:login' %}">Log in here</a></p>
+</div>
+{% endblock %}

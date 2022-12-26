@@ -1,0 +1,12 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<h1>Profile</h1>
+
+<div class="card bg-white p-8 lg:p-16 rounded shadow-lg prose">
+  <p>
+    <strong>Name:</strong> {{ user.name }}<br />
+    <strong>Email:</strong> {{ user.email }}<br />
+  </p>
+</div>
+{% endblock %}

@@ -25,6 +25,7 @@ INSTALLED_APPS = (
     "django.contrib.messages",
     "django.contrib.staticfiles",
     "django_filters",
+    "magiclink",
     "markdown",
     "taggit",
     "rest_framework",
@@ -38,6 +39,7 @@ INSTALLED_APPS = (
     "web",
     "import_export",
     # our WagTail-based apps
+    "contributor_profile",
     "gp",
     "home",
     "faq",
@@ -72,6 +74,11 @@ MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
     "wagtail.contrib.redirects.middleware.RedirectMiddleware",
 ]
+
+AUTHENTICATION_BACKENDS = (
+    "magiclink.backends.MagicLinkBackend",
+    "django.contrib.auth.backends.ModelBackend",
+)
 
 ROOT_URLCONF = "oerweekapi.urls"
 
@@ -225,6 +232,25 @@ Q_CLUSTER = {
     "orm": "default",
     "bulk": 10,
 }
+
+# magiclink
+LOGIN_URL = "magiclink:login"
+LOGIN_REDIRECT_URL = "/profile/"
+
+MAGICLINK_EMAIL_SUBJECT = "OE Week: Your login link"
+
+MAGICLINK_LOGIN_TEMPLATE_NAME = "magiclink/login.html"
+MAGICLINK_LOGIN_SENT_TEMPLATE_NAME = "magiclink/login_sent.html"
+MAGICLINK_LOGIN_FAILED_TEMPLATE_NAME = "magiclink/login_failed.html"
+
+MAGICLINK_REQUIRE_SIGNUP = True
+MAGICLINK_SIGNUP_TEMPLATE_NAME = "magiclink/signup.html"
+
+MAGICLINK_ALLOW_SUPERUSER_LOGIN = False
+MAGICLINK_ALLOW_STAFF_LOGIN = False
+MAGICLINK_IGNORE_IS_ACTIVE_FLAG = False
+MAGICLINK_ANTISPAM_FORMS = True
+
 
 CI = os.environ.get("CI")
 if CI:
