@@ -12,7 +12,15 @@ Notes:
 
 ## Development
 
-Branches, pull-requests, releases, etc.: according to [git-flow](http://danielkummer.github.io/git-flow-cheatsheet/)
+Branches, pull-requests, releases, etc.: according to [git-flow](http://danielkummer.github.io/git-flow-cheatsheet/) but ...
+
+... in order to allow better overview for current and future contributors, we'd like to conclude features with pull-requests,
+i.e. instead of `git flow feature finish MYFEATURE` do following:
+
+1. `git flow feature publish MYFEATURE`
+2. go to GitLab/GitHub and open pull-request from your feature branch to `develop`
+3. review + adjustments
+4. merge + delete branch after merge
 
 
 ### Git hooks
