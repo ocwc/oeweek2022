@@ -435,3 +435,11 @@ class ResourceImage(models.Model):
 
     def __str__(self):
         return repr(self.image)
+
+
+# TODO: Profile
+# - map to a user account
+# - add timezone setting
+# - initial value (when signing up) of timezone settings comes from SESSION_TIMEZONE
+# - when guessing tiemzone and user is logged in, use value from profile
+# - timezone selection form will still override (in display) override profile value but changing it will affect only display, (e.g. NOT saved in profile, that is reserved only for "edit profile")
