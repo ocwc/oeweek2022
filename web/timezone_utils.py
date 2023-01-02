@@ -1,6 +1,6 @@
 import pytz
 
-from django.utils import timezone
+import django.utils.timezone as djtz
 
 
 SESSION_TIMEZONE = "django_timezone"
@@ -15,10 +15,10 @@ class TimezoneMiddleware:
     def __call__(self, request):
         tzname = request.session.get(SESSION_TIMEZONE)
         if tzname:
-            timezone.activate(pytz.timezone(tzname))
+            djtz.activate(pytz.timezone(tzname))
         else:
             # TODO: try guessing timezone from IP, language, whatever
-            timezone.deactivate()
+            djtz.deactivate()
         return self.get_response(request)
 
 

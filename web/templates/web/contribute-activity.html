@@ -14,6 +14,9 @@
 {% load wysiwyg %}
 {% wysiwyg_setup %}
 
+{% load tz %}
+{% get_current_timezone as current_timezone %}
+
 <h1>{{ action_verb }} Activity</h1>
 <div class="card bg-white p-8 lg:p-16 rounded shadow-lg prose">
     <img src="https://conference.oeglobal.org/2021/wp-content/uploads/2022/02/submission-banner.png">
@@ -92,17 +95,17 @@
         <br>Choose the time in your local timezone.
         <br>
         {{ form.event_time.errors }}
-        <input type="datetime-local" name="event_time" id="id_event_time" value="{{ form.event_time.value|date:'Y-m-d H:m' }}"/>
+        <input type="datetime-local" name="event_time" id="id_event_time" value="{{ form.event_time.value|date:'Y-m-d H:i' }}"/>
     </p>
 
-    {% if action_verb == "Edit" %}
     <p>
-        {{ form.event_source_timezone.label_tag }}
-        {{ form.event_source_timezone.errors }}
-        <br><em>E.g.: US/Eastern, Europe/Paris, etc.</em>
-        {{ form.event_source_timezone }}
+        <label for="id_event_source_timezone">Time zone:</label>
+        <select name="event_source_timezone" id="id_event_source_timezone" class="w-full">
+        {% for tz in timezones %}
+            <option value="{{ tz }}"{% if tz == current_timezone %} selected{% endif %}>{{ tz }}</option>
+        {% endfor %}
+        </select>
     </p>
-    {% endif %}
 
     {{ form.primarylanguage.errors }}
     {{ form.opentags.errors }}
