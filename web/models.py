@@ -199,8 +199,7 @@ class Resource(TimeStampedModel, ReviewModel):
 
     @property
     def event_offset_in_hours(self):
-        # TODO: check + possibly adjust to handle current_timezone (as selected/active for user, see SESSION_TIMEZONE)
-        then = self.event_time_utc
+        then = self.event_time
         now = djtz.now()
 
         duration = then - now
