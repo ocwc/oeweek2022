@@ -1,6 +1,9 @@
 {% extends 'base.html' %}
 
+{% load tz %}
+
 {% block content %}
+{% get_current_timezone as current_timezone %}
 
 <br>
 
@@ -9,7 +12,7 @@
 
 <p><i class="fal fa-hand-pointer"></i> <strong>Please click on a date to expand the details.</strong></p>
 
-<p><i class="fal fa-clock"></i> <strong>current time in UTC: <span style='background-color: #ffffcc;'>{{ current_time_utc | date:'M d, Y H:i' }}</span></strong></p>
+<p><i class="fal fa-clock"></i> <strong>current time: <span style='background-color: #ffffcc;'>{{ current_time_utc | date:'M d, Y H:i' }} ({{ current_timezone }})</span>, UTC: {{ current_time_utc | utc | date:'M d, Y H:i' }}</strong></p>
 
     <p><i class="fal fa-calculator"></i> <strong>Showing {{ event_count }} events</strong></p>
 
@@ -65,20 +68,17 @@
                 -->
 
                 <p class="text-sm mb-1">
-                    {% if event.convertedtime %}
-                        <i class="fal fa-calendar-star"></i> {{ event.convertedtime|date:'M d, Y H:i' }} <em>({{ event.convertedtimezone }})</em>
-                        {% if event.event_offset_in_hours %}
-                            <span style="color: #cc0000;">&nbsp;
-                            {{ event.event_offset_in_hours }}
-                            </span>
-                        {% endif %}
+                    <i class="fal fa-calendar-star"></i> {{ event.event_time|date:'M d, Y H:i' }} <em>({{ current_timezone }})</em>
+                    {% if event.event_offset_in_hours %}
+                        <span style="color: #cc0000;">&nbsp;
+                        {{ event.event_offset_in_hours }}
+                        </span>
+                    {% endif %}
 
-                        {% if event.event_time_link_to_everytimezone %}
-                            <span style="color: #999999;">&nbsp;
-                            <em><a href="{{ event.event_time_link_to_everytimezone }}" target="_blank">(view in other timezones)</a></em>
-                            </span>
-                        {% endif %}
-
+                    {% if event.event_time_link_to_everytimezone %}
+                        <span style="color: #999999;">&nbsp;
+                        <em><a href="{{ event.event_time_link_to_everytimezone }}" target="_blank">(view in other timezones)</a></em>
+                        </span>
                     {% endif %}
                 </p>
             </div>
