@@ -5,13 +5,7 @@ from django.utils import timezone
 
 SESSION_TIMEZONE = "django_timezone"
 
-TIMEZONE_CHOICES = [
-    # TODO: do a proper list, fox example from  zoneinfo.available_timezones(): https://docs.python.org/3/library/zoneinfo.html#zoneinfo.available_timezones
-    ("America/New_York", "America/New_York"),
-    ("Europe/Bratislava", "Europe/Bratislava"),
-    ("Europe/Paris", "Europe/Paris"),
-    ("UTC", "UTC"),
-]
+TIMEZONE_CHOICES = [((c, c)) for c in sorted(pytz.common_timezones)]
 
 
 class TimezoneMiddleware:
