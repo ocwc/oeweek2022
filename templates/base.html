@@ -341,6 +341,23 @@
                     </ul>
                 </div>
             </div>
+            </div>
+            <div class="container flex flex-col lg:flex-row justify-between border-t border-white pt-8 text-sm">
+                <div class="w-full">
+                    {% load tz %}
+                    {% get_current_timezone as current_timezone %}
+                    <form action="{% url 'set_timezone' %}" method="POST">
+                        {% csrf_token %}
+                        <label for="timezone">Time zone:</label>
+                        <select name="timezone" class="w-full lg:w-1/4 bg-black">
+                            {% for tz_name, tz_value in timezones %}
+                            <option value="{{ tz_value }}"{% if tz_value == current_timezone %} selected{% endif %}>{{ tz_name }}</option>
+                            {% endfor %}
+                        </select>
+                        <input type="submit" value="Set" class="button-outline font-bold my-8">
+                    </form>
+                </div>
+            </div>
             <div class="container flex flex-col lg:flex-row justify-between border-t border-white pt-8 text-sm">
                 <div class="w-full lg:w-8/12 pb-4 lg:pb-0">
                     Content on this site is licensed under a <a class="underline"

@@ -123,6 +123,7 @@ urlpatterns = (
         path("pages/", include(wagtail_urls)),
         path("profile/", include("contributor_profile.urls", namespace="c_profile")),
         # path("search/", search_views.search, name="search"),
+        url(r"^set-timezone/$", views.set_timezone, name="set_timezone"),
     ]
     + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
     + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)

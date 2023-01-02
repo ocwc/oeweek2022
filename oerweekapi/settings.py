@@ -73,6 +73,7 @@ MIDDLEWARE = [
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
     "django.middleware.security.SecurityMiddleware",
     "wagtail.contrib.redirects.middleware.RedirectMiddleware",
+    "web.timezone_utils.TimezoneMiddleware",
 ]
 
 AUTHENTICATION_BACKENDS = (
@@ -95,6 +96,7 @@ TEMPLATES = [
                 "django.template.context_processors.request",
                 "django.contrib.auth.context_processors.auth",
                 "django.contrib.messages.context_processors.messages",
+                "web.timezone_utils.inject_timezones",
             ],
         },
     },

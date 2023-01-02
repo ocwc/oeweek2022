@@ -14,6 +14,7 @@ from django.db.models import Q
 from django.db.models.functions import Lower
 from django.conf import settings
 from django.core.cache import cache
+from django.shortcuts import redirect
 from django.urls import reverse
 
 from braces.views import LoginRequiredMixin
@@ -34,6 +35,7 @@ from .serializers import (
     ResourceImageSerializer,
 )
 from .screenshot_utils import fetch_screenshot_async
+from .timezone_utils import SESSION_TIMEZONE
 from .utils import contribution_period_is_now, days_to_go, guess_missing_activity_fields
 
 from mail_templated import send_mail
@@ -636,3 +638,10 @@ class RequestAccessView(APIView):
             return Response({"status": "invalid_email"})
 
         return Response({"status": "ok"})
+
+
+def set_timezone(request):
+    # TODO: later rework with HTMX
+    if request.method == "POST":
+        request.session[SESSION_TIMEZONE] = request.POST["timezone"]
+    return redirect("/")
