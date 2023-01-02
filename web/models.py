@@ -237,7 +237,8 @@ class Resource(TimeStampedModel, ReviewModel):
         max_length=255, blank=True, null=True, choices=EVENT_TYPES
     )
     event_online = models.BooleanField(default=False)
-    # TODO: store original value filled by user (see then also event_source_timezone, given that Django will convert it to UTC before storing to `event_time`) *or* if too difficult, simply remove
+    # TODO 1: store original value filled by user (see then also event_source_timezone, given that Django will convert it to UTC before storing to `event_time`) *or* if too difficult, simply remove
+    # TODO 2: once 1 is done, we can treat add migration which will treat empty event_source_datetime as "old content" and 1) copying `event_time` into `event_source_datetime` and 2) adjusting `event_time` to UTC assuming `event_source_timezone`
     event_source_datetime = models.CharField(max_length=255, blank=True)
     # TODO: store SESSION_TIMEZONE (see then also event_source_datetime) *or* if too difficult, simply remove
     event_source_timezone = models.CharField(
