@@ -10,6 +10,15 @@
 {# "Linkwebroom:" -> "Link to the webroom (if applicable):" #}
 {# "Language:" -> "Primary Language:" #}
 
+{% block extra_head %}
+  <script>
+    window.onload = function () {
+      var input = document.getElementById('id_event_source_timezone');
+      input.value = Intl.DateTimeFormat().resolvedOptions().timeZone;
+    }
+  </script>
+{% endblock extra_head %}
+
 {% block content %}
 {% load wysiwyg %}
 {% wysiwyg_setup %}
