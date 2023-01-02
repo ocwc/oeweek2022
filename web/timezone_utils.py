@@ -5,7 +5,7 @@ from django.utils import timezone
 
 SESSION_TIMEZONE = "django_timezone"
 
-TIMEZONE_CHOICES = [((c, c)) for c in sorted(pytz.common_timezones)]
+TIMEZONE_CHOICES = sorted(pytz.common_timezones)
 
 
 class TimezoneMiddleware:
