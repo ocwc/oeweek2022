@@ -25,6 +25,7 @@ INSTALLED_APPS = (
     "django.contrib.messages",
     "django.contrib.staticfiles",
     "django_filters",
+    "django_htmx",
     "magiclink",
     "markdown",
     "taggit",
@@ -72,6 +73,7 @@ MIDDLEWARE = [
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
     "django.middleware.security.SecurityMiddleware",
+    "django_htmx.middleware.HtmxMiddleware",
     "wagtail.contrib.redirects.middleware.RedirectMiddleware",
     "web.timezone_utils.TimezoneMiddleware",
 ]

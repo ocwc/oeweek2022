@@ -223,6 +223,9 @@ class Resource(TimeStampedModel, ReviewModel):
 
     @property
     def event_oeweekday(self):
+        # TODO: Make a decision, whether we have UTC as base or user's timezone as base. Say "Monday morning" in Oceania
+        # is "Sunday evening" for say USA, hence do we put it in "Monday" or "Other"? USer's timezone as base seems better,
+        # since more consistent (e.g. if I'm from USA, I'll see that under "Other", since for me it is not "Monday".
         if not self.event_time:
             return "Other"
         if arrow.get(self.event_time) < arrow.get(

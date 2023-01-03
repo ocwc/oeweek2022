@@ -4,20 +4,24 @@ import pytz
 import urllib.parse
 import twitter
 import uuid
+import xlwt
 
 from itertools import groupby
 from datetime import datetime
 
 from django.views.generic import View
-from django.http import HttpResponse, HttpResponseRedirect
+from django.http import HttpRequest, HttpResponse, HttpResponseRedirect
 from django.db.models import Q
 from django.db.models.functions import Lower
 from django.conf import settings
 from django.core.cache import cache
 from django.shortcuts import redirect
 from django.urls import reverse
+from django.views.decorators.http import require_POST
 
 from braces.views import LoginRequiredMixin
+
+from django_htmx.middleware import HtmxDetails
 
 from rest_framework import permissions, viewsets, generics, mixins
 from rest_framework.views import APIView
@@ -35,7 +39,7 @@ from .serializers import (
     ResourceImageSerializer,
 )
 from .screenshot_utils import fetch_screenshot_async
-from .timezone_utils import SESSION_TIMEZONE
+from .timezone_utils import SESSION_TIMEZONE, TIMEZONE_CHOICES
 from .utils import contribution_period_is_now, days_to_go, guess_missing_activity_fields
 
 from mail_templated import send_mail
@@ -304,6 +308,7 @@ def show_events(request):
         "event_count": event_count,
         "today": today,
         "days_to_go": days_to_go,
+        "reload_after_timezone_change": True,
     }
     return render(request, "web/events.html", context=context)
 
@@ -316,7 +321,10 @@ def show_event_detail(request, year, slug):
     event.convertedtime = event.event_time_utc
     event.convertedtimezone = "UTC"
     event.consolidated_image_url = event.get_image_url_for_detail()
-    context = {"obj": event}
+    context = {
+        "obj": event,
+        "reload_after_timezone_change": True,
+    }
     return render(request, "web/event_detail.html", context=context)
 
 
@@ -660,8 +668,31 @@ class RequestAccessView(APIView):
         return Response({"status": "ok"})
 
 
-def set_timezone(request):
-    # TODO: later rework with HTMX
-    if request.method == "POST":
+# HTMX stuff:
+
+# Typing pattern recommended by django-stubs:
+# https://github.com/typeddjango/django-stubs#how-can-i-create-a-httprequest-thats-guaranteed-to-have-an-authenticated-user
+class HtmxHttpRequest(HttpRequest):
+    htmx: HtmxDetails
+
+
+@require_POST
+def set_timezone(request: HtmxHttpRequest) -> HttpResponse:
+    timezone = request.POST["timezone"]
+    if timezone in TIMEZONE_CHOICES:
         request.session[SESSION_TIMEZONE] = request.POST["timezone"]
-    return redirect("/")
+        result = "timezone changed: %s" % timezone
+    else:
+        result = "NOK"
+    return render(
+        request,
+        "web/timezone.html",
+        {"result": result},
+    )
+
+
+@require_POST
+def set_timezone_and_reload(request: HtmxHttpRequest) -> HttpResponse:
+    response = set_timezone(request)
+    response["HX-Refresh"] = "true"
+    return response

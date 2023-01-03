@@ -84,6 +84,7 @@ def _set_timezone_and_location(resource, city):
         print("guessing aborted (late): %d" % resource.id)
         return
 
+    # TODO: 1) make sure "timezone" in "contribute activity" is mandatory and then 2) remove this
     resource.event_source_timezone = city["timezone"]
     resource.lat = city["latitude"]
     resource.lng = city["longitude"]
