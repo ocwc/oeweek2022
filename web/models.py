@@ -175,21 +175,6 @@ class Resource(TimeStampedModel, ReviewModel):
         blank=True, null=True
     )  # in TZ set in setting.py:TIME_ZONE
 
-    # TODO: remove, since 1) with TIME_ZONE = "UTC" in settings.py and 2) appropriate value in SESSION_TIMEZONE ("UTC" by default) Django will automatically convert time given in form into UTC, store it in DB and then upon rendering again converts to match SESSION_TIMEZONE
-    @property
-    def event_time_utc(self):
-        try:
-            event_tzinfo = timezone(self.event_source_timezone)
-            event_localtime = self.event_time
-
-            if event_localtime and event_tzinfo:
-                dt = arrow.get(event_localtime, tzinfo=event_tzinfo)
-                utc = dt.to("UTC")  # .replace(tzinfo=timezone('UTC'))
-                return utc
-        except:
-            return ""
-            # return self.event_time
-
     @property
     def event_time_link_to_everytimezone(self):
         ts = self.event_time
