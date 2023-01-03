@@ -344,21 +344,19 @@
             </div>
             </div>
             <div class="container flex flex-col lg:flex-row justify-between border-t border-white pt-8 text-sm">
-                <div class="w-full">
+                <div class="w-full mb-4">
                     {% load tz %}
                     {% get_current_timezone as current_timezone %}
-                    <form hx-post="{% url 'set_timezone' %}" hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}' hx-target="#result">
+                    <form hx-post="{% url 'set_timezone' %}" hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}' hx-trigger="change" hx-target="#timezone_result">
                         <label for="timezone">Time zone:</label>
                         <select name="timezone" class="w-full lg:w-1/4 bg-black">
                             {% for tz in timezones %}
                             <option value="{{ tz }}"{% if tz == current_timezone %} selected{% endif %}>{{ tz }}</option>
                             {% endfor %}
                         </select>
-                        <button type="submit" class="button-outline font-bold my-8">Set</button>
                     </form>
-                    <!--  DEBUG => TODO: late remove -->
-                    <div id="result">no result yet</div>
                 </div>
+                <div class="hidden" id="timezone_result">{{ current_timezone }}</div>
             </div>
             <div class="container flex flex-col lg:flex-row justify-between border-t border-white pt-8 text-sm">
                 <div class="w-full lg:w-8/12 pb-4 lg:pb-0">

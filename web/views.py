@@ -677,7 +677,7 @@ def set_timezone(request: HtmxHttpRequest) -> HttpResponse:
     timezone = request.POST["timezone"]
     if timezone in TIMEZONE_CHOICES:
         request.session[SESSION_TIMEZONE] = request.POST["timezone"]
-        result = "ok: %s" % timezone
+        result = "timezone changed: %s" % timezone
     else:
         result = "NOK"
     return render(
