@@ -74,28 +74,21 @@ def __noneOrEmpty(str):
 
 
 def _abort_needed(resource):
-    return resource.event_source_timezone != "" or (
-        __noneOrEmpty(resource.city) and __noneOrEmpty(resource.country)
-    )
+    return __noneOrEmpty(resource.city) and __noneOrEmpty(resource.country)
 
 
-def _set_timezone_and_location(resource, city):
+def _set_location(resource, city):
     if _abort_needed(resource):
         print("guessing aborted (late): %d" % resource.id)
         return
 
-    # TODO: 1) make sure "timezone" in "contribute activity" is mandatory and then 2) remove this
-    resource.event_source_timezone = city["timezone"]
     resource.lat = city["latitude"]
     resource.lng = city["longitude"]
     resource.save()
-    print(
-        "guessing for %d: timezone: %s, lat/lon: %s/%s"
-        % (resource.id, resource.event_source_timezone, resource.lat, resource.lng)
-    )
+    print("guessing for %d: lat/lon: %s/%s" % (resource.id, resource.lat, resource.lng))
 
 
-def guess_missing_timezone_and_location_async(resource_id):
+def guess_missing_location_async(resource_id):
     resource = Resource.objects.get(pk=resource_id)
     if _abort_needed(resource):
         print("guessing aborted (early): %d" % resource_id)
@@ -111,7 +104,7 @@ def guess_missing_timezone_and_location_async(resource_id):
 
     # easy case: we find just one city
     if len(cities) == 1:
-        _set_timezone_and_location(resource, cities[0])
+        _set_location(resource, cities[0])
         return
 
     # complicated case: we find more cities or no city given => we try to figure it out via country
@@ -122,20 +115,20 @@ def guess_missing_timezone_and_location_async(resource_id):
             if len(cities) > 0:
                 for city in cities:
                     if city["countrycode"] == country["iso"]:
-                        _set_timezone_and_location(resource, city)
+                        _set_location(resource, city)
                         return
             else:
                 cities = GC.get_cities_by_name(country["capital"])
                 if len(cities) == 1:
                     city_dict = cities[0]
                     city_key = next(iter(city_dict))
-                    _set_timezone_and_location(resource, city_dict[city_key])
+                    _set_location(resource, city_dict[city_key])
                     return
 
-    print("failed to guess timezone for %s" % resource.city)
+    print("failed to guess lat/lon for %s" % resource.city)
 
 
 def guess_missing_activity_fields(resource):
     if _abort_needed(resource):
         return
-    async_task(guess_missing_timezone_and_location_async, resource.id)
+    async_task(guess_missing_location_async, resource.id)
