@@ -175,21 +175,6 @@ class Resource(TimeStampedModel, ReviewModel):
         blank=True, null=True
     )  # in TZ set in setting.py:TIME_ZONE
 
-    # TODO: remove, since 1) with TIME_ZONE = "UTC" in settings.py and 2) appropriate value in SESSION_TIMEZONE ("UTC" by default) Django will automatically convert time given in form into UTC, store it in DB and then upon rendering again converts to match SESSION_TIMEZONE
-    @property
-    def event_time_utc(self):
-        try:
-            event_tzinfo = timezone(self.event_source_timezone)
-            event_localtime = self.event_time
-
-            if event_localtime and event_tzinfo:
-                dt = arrow.get(event_localtime, tzinfo=event_tzinfo)
-                utc = dt.to("UTC")  # .replace(tzinfo=timezone('UTC'))
-                return utc
-        except:
-            return ""
-            # return self.event_time
-
     @property
     def event_time_link_to_everytimezone(self):
         ts = self.event_time
@@ -212,29 +197,6 @@ class Resource(TimeStampedModel, ReviewModel):
         else:
             return ""
         # FYI: https://stackoverflow.com/questions/1345827/how-do-i-find-the-time-difference-between-two-datetime-objects-in-python
-
-    @property
-    def event_day(self):
-        return self.event_time.strftime("%Y-%m-%d") if self.event_time else ""
-
-    @property
-    def event_weekday(self):
-        return self.event_time.strftime("%A") if self.event_time else ""
-
-    @property
-    def event_oeweekday(self):
-        # TODO: Make a decision, whether we have UTC as base or user's timezone as base. Say "Monday morning" in Oceania
-        # is "Sunday evening" for say USA, hence do we put it in "Monday" or "Other"? USer's timezone as base seems better,
-        # since more consistent (e.g. if I'm from USA, I'll see that under "Other", since for me it is not "Monday".
-        if not self.event_time:
-            return "Other"
-        if arrow.get(self.event_time) < arrow.get(
-            settings.OEW_RANGE[0]
-        ):  # .replace(tzinfo='local'):
-            return "Other"
-        if arrow.get(self.event_time) > arrow.get(settings.OEW_RANGE[1]):
-            return "Other"
-        return self.event_time.strftime("%A")
 
     event_type = models.CharField(
         max_length=255, blank=True, null=True, choices=EVENT_TYPES

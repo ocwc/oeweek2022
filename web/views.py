@@ -7,7 +7,7 @@ import uuid
 import xlwt
 
 from itertools import groupby
-from datetime import datetime
+from datetime import datetime, timezone
 
 from django.views.generic import View
 from django.http import HttpRequest, HttpResponse, HttpResponseRedirect
@@ -46,8 +46,6 @@ from mail_templated import send_mail
 
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import get_object_or_404, render
-
-from pytz import timezone
 
 import django.utils.timezone as djtz
 
@@ -264,6 +262,20 @@ def thanks(request):
     return render(request, "web/thanks.html")
 
 
+def _set_event_day_number(event, tz):
+    result = "other"
+    if not event.event_time:
+        return result
+
+    oew_start = arrow.get(settings.OEW_RANGE[0], tzinfo=tz).datetime
+    oew_end = arrow.get(settings.OEW_RANGE[1], tzinfo=tz).datetime
+    if event.event_time >= oew_start and event.event_time <= oew_end:
+        result = event.event_time.astimezone(tz).strftime("%w")
+
+    event.event_day_number = result
+    return event
+
+
 # @login_required(login_url='/admin/')
 def show_events(request):
     request_timezone = request.GET.get("timezone", "local")  # "local" = default
@@ -276,29 +288,23 @@ def show_events(request):
     )  # .exclude(post_status='trash')
 
     event_count = len(event_list)
+    tz = pytz.timezone(request.session[SESSION_TIMEZONE])
     for event in event_list:
         event.consolidated_image_url = event.get_image_url_for_list()
-        # TODO: remove converted*
-        event.convertedtime = event.event_time_utc
-        event.convertedtimezone = "UTC"
+        _set_event_day_number(event, tz)
 
     # sort django queryset by UTC (property) values, not by local timezone
     event_list = sorted(event_list, key=lambda item: item.event_time)
-
-    # now = djtz.make_aware(djtz.now(), djtz.get_default_timezone())
-    now = djtz.now()
-    current_time_utc = now.astimezone(djtz.utc)
-    today = current_time_utc.strftime("%Y-%m-%d")
-
+    current_time_utc = djtz.now()
     days = [
-        ("Monday", "Monday, March 6", "2023-03-06"),
-        ("Tuesday", "Tuesday, March 7", "2023-03-07"),
-        ("Wednesday", "Wednesday, March 8", "2023-03-08"),
-        ("Thursday", "Thursday, March 9", "2023-03-09"),
-        ("Friday", "Friday, March 10", "2023-03-10"),
-        # ('Saturday', 'Saturday, March 11', '2023-03-11'),
-        # ('Sunday', 'Sunday, March 12', '2023-03-12'),
-        ("Other", "Other days", ""),
+        ("Monday", "Monday, March 6", "1"),
+        ("Tuesday", "Tuesday, March 7", "2"),
+        ("Wednesday", "Wednesday, March 8", "3"),
+        ("Thursday", "Thursday, March 9", "4"),
+        ("Friday", "Friday, March 10", "5"),
+        # ('Saturday', 'Saturday, March 11', "6"),
+        # ('Sunday', 'Sunday, March 12', "0"),
+        ("Other", "Other days", "other"),
     ]
 
     context = {
@@ -306,7 +312,6 @@ def show_events(request):
         "event_list": event_list,
         "current_time_utc": current_time_utc,
         "event_count": event_count,
-        "today": today,
         "days_to_go": days_to_go,
         "reload_after_timezone_change": True,
     }
@@ -317,9 +322,6 @@ def show_events(request):
 def show_event_detail(request, year, slug):
     event = get_object_or_404(Resource, year=year, slug=slug)
     # #todo -- check if event is "published" (throw 404 for drafts / trash)
-    # TODO: remove converted*
-    event.convertedtime = event.event_time_utc
-    event.convertedtimezone = "UTC"
     event.consolidated_image_url = event.get_image_url_for_detail()
     context = {
         "obj": event,
