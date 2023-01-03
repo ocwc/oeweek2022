@@ -312,7 +312,6 @@ def show_events(request):
         "event_list": event_list,
         "current_time_utc": current_time_utc,
         "event_count": event_count,
-        "today": today,
         "days_to_go": days_to_go,
         "reload_after_timezone_change": True,
     }
