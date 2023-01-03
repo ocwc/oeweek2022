@@ -10,15 +10,18 @@ from itertools import groupby
 from datetime import datetime
 
 from django.views.generic import View
-from django.http import HttpResponse, HttpResponseRedirect
+from django.http import HttpRequest, HttpResponse, HttpResponseRedirect
 from django.db.models import Q
 from django.db.models.functions import Lower
 from django.conf import settings
 from django.core.cache import cache
 from django.shortcuts import redirect
 from django.urls import reverse
+from django.views.decorators.http import require_POST
 
 from braces.views import LoginRequiredMixin
+
+from django_htmx.middleware import HtmxDetails
 
 from rest_framework import permissions, viewsets, generics, mixins
 from rest_framework.views import APIView
@@ -36,7 +39,7 @@ from .serializers import (
     ResourceImageSerializer,
 )
 from .screenshot_utils import fetch_screenshot_async
-from .timezone_utils import SESSION_TIMEZONE
+from .timezone_utils import SESSION_TIMEZONE, TIMEZONE_CHOICES
 from .utils import contribution_period_is_now, days_to_go, guess_missing_activity_fields
 
 from mail_templated import send_mail
@@ -661,8 +664,24 @@ class RequestAccessView(APIView):
         return Response({"status": "ok"})
 
 
-def set_timezone(request):
-    # TODO: later rework with HTMX
-    if request.method == "POST":
+# HTMX stuff:
+
+# Typing pattern recommended by django-stubs:
+# https://github.com/typeddjango/django-stubs#how-can-i-create-a-httprequest-thats-guaranteed-to-have-an-authenticated-user
+class HtmxHttpRequest(HttpRequest):
+    htmx: HtmxDetails
+
+
+@require_POST
+def set_timezone(request: HtmxHttpRequest) -> HttpResponse:
+    timezone = request.POST["timezone"]
+    if timezone in TIMEZONE_CHOICES:
         request.session[SESSION_TIMEZONE] = request.POST["timezone"]
-    return redirect("/")
+        result = "ok: %s" % timezone
+    else:
+        result = "NOK"
+    return render(
+        request,
+        "web/timezone.html",
+        {"result": result},
+    )

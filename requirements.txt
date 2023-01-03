@@ -143,3 +143,5 @@ PyQtWebKit>=5.15.2,==5.15.*
 django-q>=1.3.9,==1.3.*
 
 django-magiclink>=1.2.0,==1.2.*
+
+django-htmx>=1.13.0,==1.13.*
