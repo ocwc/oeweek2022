@@ -199,10 +199,6 @@ class Resource(TimeStampedModel, ReviewModel):
         # FYI: https://stackoverflow.com/questions/1345827/how-do-i-find-the-time-difference-between-two-datetime-objects-in-python
 
     @property
-    def event_weekday(self):
-        return self.event_time.strftime("%A") if self.event_time else ""
-
-    @property
     def event_oeweekday(self):
         # TODO: Make a decision, whether we have UTC as base or user's timezone as base. Say "Monday morning" in Oceania
         # is "Sunday evening" for say USA, hence do we put it in "Monday" or "Other"? USer's timezone as base seems better,
