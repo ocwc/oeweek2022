@@ -124,6 +124,11 @@ urlpatterns = (
         path("profile/", include("contributor_profile.urls", namespace="c_profile")),
         # path("search/", search_views.search, name="search"),
         url(r"^set-timezone/$", views.set_timezone, name="set_timezone"),
+        url(
+            r"^set-timezone-reload/$",
+            views.set_timezone_and_reload,
+            name="set_timezone_reload",
+        ),
     ]
     + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
     + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)

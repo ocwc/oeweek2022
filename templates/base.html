@@ -347,7 +347,9 @@
                 <div class="w-full mb-4">
                     {% load tz %}
                     {% get_current_timezone as current_timezone %}
-                    <form hx-post="{% url 'set_timezone' %}" hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}' hx-trigger="change" hx-target="#timezone_result">
+                    <form hx-post="{% if reload_after_timezone_change %}{% url 'set_timezone_reload' %}{% else %}{% url 'set_timezone' %}{% endif %}"
+                          hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}'
+                          hx-trigger="change" hx-target="#timezone_result">
                         <label for="timezone">Time zone:</label>
                         <select name="timezone" class="w-full lg:w-1/4 bg-black">
                             {% for tz in timezones %}

@@ -308,6 +308,7 @@ def show_events(request):
         "event_count": event_count,
         "today": today,
         "days_to_go": days_to_go,
+        "reload_after_timezone_change": True,
     }
     return render(request, "web/events.html", context=context)
 
@@ -320,7 +321,10 @@ def show_event_detail(request, year, slug):
     event.convertedtime = event.event_time_utc
     event.convertedtimezone = "UTC"
     event.consolidated_image_url = event.get_image_url_for_detail()
-    context = {"obj": event}
+    context = {
+        "obj": event,
+        "reload_after_timezone_change": True,
+    }
     return render(request, "web/event_detail.html", context=context)
 
 
@@ -685,3 +689,10 @@ def set_timezone(request: HtmxHttpRequest) -> HttpResponse:
         "web/timezone.html",
         {"result": result},
     )
+
+
+@require_POST
+def set_timezone_and_reload(request: HtmxHttpRequest) -> HttpResponse:
+    response = set_timezone(request)
+    response["HX-Refresh"] = "true"
+    return response
