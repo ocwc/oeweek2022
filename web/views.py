@@ -1,6 +1,6 @@
 import arrow
 import bleach
-import xlwt
+import pytz
 import urllib.parse
 import twitter
 import uuid
@@ -14,6 +14,7 @@ from django.db.models import Q
 from django.db.models.functions import Lower
 from django.conf import settings
 from django.core.cache import cache
+from django.shortcuts import redirect
 from django.urls import reverse
 
 from braces.views import LoginRequiredMixin
@@ -34,6 +35,7 @@ from .serializers import (
     ResourceImageSerializer,
 )
 from .screenshot_utils import fetch_screenshot_async
+from .timezone_utils import SESSION_TIMEZONE
 from .utils import contribution_period_is_now, days_to_go, guess_missing_activity_fields
 
 from mail_templated import send_mail
@@ -74,10 +76,26 @@ def contribute(request):
         return HttpResponseRedirect(reverse("web_index"))
 
 
+def _set_session_tz_from_form_value(request):
+    """Generally, we somehow guess timezone for users (their sessions) and then let them adjust that with SELECT
+    at the bottom of all pages. Since 1) guess might be wrong and 2) users may overlook that option at the bottom,
+    we "repeat" timezone SELECT in submit/edit activity form. But, we do not store that value into form/resource,
+    we use it to set/reset timezone setting for the user in his session.
+
+    Make sure to call this before processing the form, so that Django does timezone conversion properly,
+    with the selected value.
+    """
+    tzname = request.POST.get("event_source_timezone")
+    if tzname:
+        request.session[SESSION_TIMEZONE] = tzname
+        djtz.activate(pytz.timezone(tzname))
+
+
 def contribute_activity(request, identifier=None):
     if not contribution_period_is_now():
         return HttpResponseRedirect(reverse("web_index"))
     if request.method == "POST":
+        _set_session_tz_from_form_value(request)
         # create a form instance & populate with request data
         form = ActivityForm(request.POST, request.FILES)
         if form.is_valid():
@@ -214,6 +232,8 @@ def edit_resource(request, identifier):
         contribute_similar_url = reverse("contribute-asset", args=[uuid])
 
     if request.method == "POST":
+        _set_session_tz_from_form_value(request)
+
         if resource.post_type == "event":
             form = ActivityForm(request.POST or None, request.FILES, instance=resource)
         elif resource.post_type == "resource":
@@ -254,11 +274,12 @@ def show_events(request):
     event_count = len(event_list)
     for event in event_list:
         event.consolidated_image_url = event.get_image_url_for_list()
+        # TODO: remove converted*
         event.convertedtime = event.event_time_utc
         event.convertedtimezone = "UTC"
 
     # sort django queryset by UTC (property) values, not by local timezone
-    event_list = sorted(event_list, key=lambda item: item.event_time_utc)
+    event_list = sorted(event_list, key=lambda item: item.event_time)
 
     # now = djtz.make_aware(djtz.now(), djtz.get_default_timezone())
     now = djtz.now()
@@ -291,6 +312,7 @@ def show_events(request):
 def show_event_detail(request, year, slug):
     event = get_object_or_404(Resource, year=year, slug=slug)
     # #todo -- check if event is "published" (throw 404 for drafts / trash)
+    # TODO: remove converted*
     event.convertedtime = event.event_time_utc
     event.convertedtimezone = "UTC"
     event.consolidated_image_url = event.get_image_url_for_detail()
@@ -636,3 +658,10 @@ class RequestAccessView(APIView):
             return Response({"status": "invalid_email"})
 
         return Response({"status": "ok"})
+
+
+def set_timezone(request):
+    # TODO: later rework with HTMX
+    if request.method == "POST":
+        request.session[SESSION_TIMEZONE] = request.POST["timezone"]
+    return redirect("/")

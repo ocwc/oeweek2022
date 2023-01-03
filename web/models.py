@@ -171,8 +171,11 @@ class Resource(TimeStampedModel, ReviewModel):
     country = models.CharField(
         max_length=255, blank=True, null=True, choices=COUNTRY_CHOICES
     )
-    event_time = models.DateTimeField(blank=True, null=True)
+    event_time = models.DateTimeField(
+        blank=True, null=True
+    )  # in TZ set in setting.py:TIME_ZONE
 
+    # TODO: remove, since 1) with TIME_ZONE = "UTC" in settings.py and 2) appropriate value in SESSION_TIMEZONE ("UTC" by default) Django will automatically convert time given in form into UTC, store it in DB and then upon rendering again converts to match SESSION_TIMEZONE
     @property
     def event_time_utc(self):
         try:
@@ -189,14 +192,14 @@ class Resource(TimeStampedModel, ReviewModel):
 
     @property
     def event_time_link_to_everytimezone(self):
-        ts = self.event_time_utc
+        ts = self.event_time
         noon_utc = ts.replace(hour=12, minute=0, second=0)
         offset = int((ts - noon_utc).total_seconds() / 60)
         return f"https://everytimezone.com/#{ts.year}-{ts.month}-{ts.day},{offset},6bj"
 
     @property
     def event_offset_in_hours(self):
-        then = self.event_time_utc
+        then = self.event_time
         now = djtz.now()
 
         duration = then - now
@@ -212,29 +215,32 @@ class Resource(TimeStampedModel, ReviewModel):
 
     @property
     def event_day(self):
-        return self.event_time_utc.strftime("%Y-%m-%d") if self.event_time_utc else ""
+        return self.event_time.strftime("%Y-%m-%d") if self.event_time else ""
 
     @property
     def event_weekday(self):
-        return self.event_time_utc.strftime("%A") if self.event_time_utc else ""
+        return self.event_time.strftime("%A") if self.event_time else ""
 
     @property
     def event_oeweekday(self):
-        if not self.event_time_utc:
+        if not self.event_time:
             return "Other"
-        if arrow.get(self.event_time_utc) < arrow.get(
+        if arrow.get(self.event_time) < arrow.get(
             settings.OEW_RANGE[0]
         ):  # .replace(tzinfo='local'):
             return "Other"
-        if arrow.get(self.event_time_utc) > arrow.get(settings.OEW_RANGE[1]):
+        if arrow.get(self.event_time) > arrow.get(settings.OEW_RANGE[1]):
             return "Other"
-        return self.event_time_utc.strftime("%A")
+        return self.event_time.strftime("%A")
 
     event_type = models.CharField(
         max_length=255, blank=True, null=True, choices=EVENT_TYPES
     )
     event_online = models.BooleanField(default=False)
+    # TODO 1: store original value filled by user (see then also event_source_timezone, given that Django will convert it to UTC before storing to `event_time`) *or* if too difficult, simply remove
+    # TODO 2: once 1 is done, we can treat add migration which will treat empty event_source_datetime as "old content" and 1) copying `event_time` into `event_source_datetime` and 2) adjusting `event_time` to UTC assuming `event_source_timezone`
     event_source_datetime = models.CharField(max_length=255, blank=True)
+    # TODO: store SESSION_TIMEZONE (see then also event_source_datetime) *or* if too difficult, simply remove
     event_source_timezone = models.CharField(
         max_length=255, blank=True, validators=[validate_timezone]
     )
@@ -435,3 +441,11 @@ class ResourceImage(models.Model):
 
     def __str__(self):
         return repr(self.image)
+
+
+# TODO: Profile
+# - map to a user account
+# - add timezone setting
+# - initial value (when signing up) of timezone settings comes from SESSION_TIMEZONE
+# - when guessing tiemzone and user is logged in, use value from profile
+# - timezone selection form will still override (in display) override profile value but changing it will affect only display, (e.g. NOT saved in profile, that is reserved only for "edit profile")

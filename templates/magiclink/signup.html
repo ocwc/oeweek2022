@@ -1,13 +1,13 @@
 {% extends 'base.html' %}
 
 {# Hide the antispam field labels for the  Django's defailt form output #}
-{% block extra_css %}
+{% block extra_head %}
   <style type="text/css">
     label[for="id_url"], label[for="id_load_time"] {
       display: none;
     }
   </style>
-{% endblock extra_css %}
+{% endblock extra_head %}
 
 {% block content %}
 <h1>Create an account</h1>
