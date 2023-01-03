@@ -19,13 +19,13 @@
     <div class="bg-white border-gray-300 rounded-lg p-2 md:p-4 my-8">
 
     {% for day in days %}
-    <details {% if day.2 == today %}open{% endif %}>
+    <details {% if day.2|date:'Y-m-d' == current_time_utc|date:'Y-m-d' %}open{% endif %}>
 
     <summary class="text-2xl font-bold cursor-pointer mb-4">{{ day.1 }}</summary>
 
     <div class="grid gird-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 md:gap-x-4 gap-y-6">
     {% for event in event_list %}
-    {% if event.event_oeweekday == day.0 %}
+    {% if event.event_day_number == day.2 %}
 
         {# {{ forloop.counter }} # starting index 1 #}
         {# {{ forloop.counter0 }} # starting index 0 #}
