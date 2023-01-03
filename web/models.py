@@ -199,10 +199,6 @@ class Resource(TimeStampedModel, ReviewModel):
         # FYI: https://stackoverflow.com/questions/1345827/how-do-i-find-the-time-difference-between-two-datetime-objects-in-python
 
     @property
-    def event_day(self):
-        return self.event_time.strftime("%Y-%m-%d") if self.event_time else ""
-
-    @property
     def event_weekday(self):
         return self.event_time.strftime("%A") if self.event_time else ""
 
