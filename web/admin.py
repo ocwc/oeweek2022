@@ -31,7 +31,7 @@ class ResourceAdmin(ImportExportMixin, admin.ModelAdmin):
         "institution",
         "link",
     )
-    list_filter = ("post_status", "post_type", "event_type", "notified")
+    list_filter = ("post_status", "post_type", "event_type", "notified", "year")
 
     change_form_template = "web/admin/change_form.html"
 
