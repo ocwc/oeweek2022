@@ -39,7 +39,7 @@ from .serializers import (
     ResourceImageSerializer,
 )
 from .screenshot_utils import fetch_screenshot_async
-from .timezone_utils import SESSION_TIMEZONE, TIMEZONE_CHOICES
+from .timezone_utils import SESSION_TIMEZONE, TIMEZONE_CHOICES, get_timezone
 from .utils import contribution_period_is_now, days_to_go, guess_missing_activity_fields
 
 from mail_templated import send_mail
@@ -288,7 +288,7 @@ def show_events(request):
     )  # .exclude(post_status='trash')
 
     event_count = len(event_list)
-    tz = pytz.timezone(request.session[SESSION_TIMEZONE])
+    tz = pytz.timezone(get_timezone(request))
     for event in event_list:
         event.consolidated_image_url = event.get_image_url_for_list()
         _set_event_day_number(event, tz)

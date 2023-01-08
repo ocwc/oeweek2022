@@ -1,5 +1,6 @@
 import pytz
 
+from django.conf import settings
 import django.utils.timezone as djtz
 
 
@@ -24,3 +25,9 @@ class TimezoneMiddleware:
 
 def inject_timezones(request):
     return {"timezones": TIMEZONE_CHOICES}
+
+
+def get_timezone(request):
+    if SESSION_TIMEZONE in request.session:
+        return SESSION_TIMEZONE
+    return settings.TIME_ZONE
