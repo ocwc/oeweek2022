@@ -29,5 +29,5 @@ def inject_timezones(request):
 
 def get_timezone(request):
     if SESSION_TIMEZONE in request.session:
-        return SESSION_TIMEZONE
+        return request.session[SESSION_TIMEZONE]
     return settings.TIME_ZONE
