@@ -38,7 +38,7 @@ class Command(BaseCommand):
             )
             images[id] = resource_image
 
-        # images:
+        # resources:
         curr.execute(
             """SELECT
                 created, modified, status, post_type, post_status, post_id, title, slug, content,
@@ -53,6 +53,8 @@ class Command(BaseCommand):
                 image_id
             FROM web_resource"""
         )
+        # TODO 1: handle timezones like "(GMT -0:00) London, Western Europe, Lisbon, Casablanca"
+        # TODO 2: pass entries with emty lat+lon to async guessing
         results = curr.fetchall()
         for row in results:
             resource = Resource(
