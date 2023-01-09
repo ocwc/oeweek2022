@@ -88,7 +88,7 @@ def _set_location(resource, city):
     print("guessing for %d: lat/lon: %s/%s" % (resource.id, resource.lat, resource.lng))
 
 
-def guess_missing_location_async(resource_id):
+def guess_missing_location(resource_id):
     resource = Resource.objects.get(pk=resource_id)
     if _abort_needed(resource):
         print("guessing aborted (early): %d" % resource_id)
@@ -128,7 +128,7 @@ def guess_missing_location_async(resource_id):
     print("failed to guess lat/lon for %s" % resource.city)
 
 
-def guess_missing_activity_fields(resource):
+def guess_missing_activity_fields_async(resource):
     if _abort_needed(resource):
         return
-    async_task(guess_missing_location_async, resource.id)
+    async_task(guess_missing_location, resource.id)

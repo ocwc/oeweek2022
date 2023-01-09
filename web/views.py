@@ -40,7 +40,11 @@ from .serializers import (
 )
 from .screenshot_utils import fetch_screenshot_async
 from .timezone_utils import SESSION_TIMEZONE, TIMEZONE_CHOICES, get_timezone
-from .utils import contribution_period_is_now, days_to_go, guess_missing_activity_fields
+from .utils import (
+    contribution_period_is_now,
+    days_to_go,
+    guess_missing_activity_fields_async,
+)
 
 from mail_templated import send_mail
 
@@ -105,7 +109,7 @@ def contribute_activity(request, identifier=None):
             resource = form.save(commit=False)
             resource.content = bleach.clean(resource.content, tags=ALLOWED_TAGS)
             resource.save()
-            guess_missing_activity_fields(resource)
+            guess_missing_activity_fields_async(resource)
             fetch_screenshot_async(resource)
             # process the data in form.cleaned_data as required
             # user = CustomUser.objects.create_user(
