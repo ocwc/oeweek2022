@@ -242,6 +242,10 @@ class Resource(TimeStampedModel, ReviewModel):
     #     ),
     #     blank=True,
     # )
+    @property
+    def opentags(self):
+        """tem[porary workaround until we are back to PostgreSQL with opentags = ArrayField"""
+        return []
 
     notified = models.BooleanField(default=False)
     raw_post = models.TextField(blank=True)
