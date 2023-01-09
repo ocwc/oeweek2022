@@ -1,16 +1,22 @@
+import pytz
 import os
 
 import psycopg2
+
+from datetime import datetime
 
 from django.core.files import File
 from django.core.management.base import BaseCommand
 from django.conf import settings
 
 from web.models import Resource, ResourceImage
+from web.utils import get_gc_city_entry
 
 
 class Command(BaseCommand):
     help = "Imports resources from old PostgreSQL oerweek2016 database"
+
+    SERVER_TZ = pytz.timezone(settings.TIME_ZONE)
 
     def handle(self, *args, **options):
         conn = psycopg2.connect(settings.OERWEEK2016_DB_URL)
@@ -53,10 +59,18 @@ class Command(BaseCommand):
                 image_id
             FROM web_resource"""
         )
-        # TODO 1: handle timezones like "(GMT -0:00) London, Western Europe, Lisbon, Casablanca"
-        # TODO 2: pass entries with emty lat+lon to async guessing
         results = curr.fetchall()
         for row in results:
+            # handle/convert time info:
+            city = row[17]
+            country = row[18]
+            event_time = row[19]
+            event_source_timezone = row[21]
+            (event_time, event_source_timezone) = self.process_time(
+                event_time, event_source_timezone, city, country
+            )
+            # guess missing lat/lon: TODO
+            # store converted resouce
             resource = Resource(
                 created=row[0],
                 modified=row[1],
@@ -75,11 +89,11 @@ class Command(BaseCommand):
                 link=row[14],
                 reviewer_id=row[15],
                 image_url=row[16],
-                city=row[17],
-                country=row[18],
-                event_time=row[19],  # TODO: add timezone handling
+                city=city,
+                country=country,
+                event_time=event_time,
                 event_source_datetime=row[20],
-                event_source_timezone=row[21],
+                event_source_timezone=event_source_timezone,
                 event_type=row[22],
                 lat=row[23],
                 lng=row[24],
@@ -111,8 +125,24 @@ class Command(BaseCommand):
                 else:
                     print(
                         "WARNING, image id:%s NOT found (resource: %s) - SKIPPING image"
-                        % (old_image_id, ow[6])
+                        % (old_image_id, row[6])
                     )
 
             resource.save()
-            print("resource: %s migrated" % row[6])
+            print("resource: '%s' migrated" % row[6])
+
+    def process_time(self, event_time, event_source_timezone, city, country):
+        """Convert old values into something which fits into 2023 model."""
+
+        if event_source_timezone == "I don't know":
+            event_source_timezone = ""
+        if event_source_timezone is None or event_source_timezone == "":
+            gc_city_entry = get_gc_city_entry(country, city)
+            if gc_city_entry:
+                event_source_timezone = gc_city_entry["timezone"]
+
+        # we have datetime as "2016-03-09 13:00:00+01" in PostgreSQL => convert to UTC
+        if event_time:
+            event_time = event_time.astimezone(self.SERVER_TZ)
+
+        return (event_time, event_source_timezone)
