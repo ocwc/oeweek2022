@@ -333,7 +333,7 @@ def handle_old_event_detail(request, slug):
 
 # @login_required(login_url='/admin/')
 def show_event_detail(request, year, slug):
-    event = get_object_or_404(Resource, year=year, slug=slug)
+    event = get_object_or_404(Resource, year=year, slug=slug, post_type="event")
     # #todo -- check if event is "published" (throw 404 for drafts / trash)
     event.consolidated_image_url = event.get_image_url_for_detail()
     context = {
@@ -378,7 +378,7 @@ def handle_old_resource_detail(request, slug):
 
 # @login_required(login_url='/admin/')
 def show_resource_detail(request, year, slug):
-    resource = get_object_or_404(Resource, year=year, slug=slug)
+    resource = get_object_or_404(Resource, year=year, slug=slug, post_type="resource")
     resource.consolidated_image_url = resource.get_image_url_for_detail()
     context = {"obj": resource}
     return render(request, "web/resource_detail.html", context=context)
