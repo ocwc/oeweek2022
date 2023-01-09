@@ -10,7 +10,7 @@ from itertools import groupby
 from datetime import datetime, timezone
 
 from django.views.generic import View
-from django.http import HttpRequest, HttpResponse, HttpResponseRedirect
+from django.http import Http404, HttpRequest, HttpResponse, HttpResponseRedirect
 from django.db.models import Q
 from django.db.models.functions import Lower
 from django.conf import settings
@@ -322,9 +322,18 @@ def show_events(request):
     return render(request, "web/events.html", context=context)
 
 
+def handle_old_event_detail(request, slug):
+    resource = (
+        Resource.objects.filter(slug=slug, post_type="event").order_by("year").first()
+    )
+    if resource is None:
+        raise Http404("No event matches given query.")
+    return redirect("show_event_detail", year=resource.year, slug=resource.slug)
+
+
 # @login_required(login_url='/admin/')
 def show_event_detail(request, year, slug):
-    event = get_object_or_404(Resource, year=year, slug=slug)
+    event = get_object_or_404(Resource, year=year, slug=slug, post_type="event")
     # #todo -- check if event is "published" (throw 404 for drafts / trash)
     event.consolidated_image_url = event.get_image_url_for_detail()
     context = {
@@ -356,9 +365,20 @@ def show_resources(request):
     return render(request, "web/resources.html", context=context)
 
 
+def handle_old_resource_detail(request, slug):
+    resource = (
+        Resource.objects.filter(slug=slug, post_type="resource")
+        .order_by("year")
+        .first()
+    )
+    if resource is None:
+        raise Http404("No resource matches given query.")
+    return redirect("show_resource_detail", year=resource.year, slug=resource.slug)
+
+
 # @login_required(login_url='/admin/')
 def show_resource_detail(request, year, slug):
-    resource = get_object_or_404(Resource, year=year, slug=slug)
+    resource = get_object_or_404(Resource, year=year, slug=slug, post_type="resource")
     resource.consolidated_image_url = resource.get_image_url_for_detail()
     context = {"obj": resource}
     return render(request, "web/resource_detail.html", context=context)
