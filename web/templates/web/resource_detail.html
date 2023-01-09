@@ -27,20 +27,31 @@
             <p class="mb-2"><i class="fal fa-badge-check"></i> <span style="background-color: #ffffcc;">OEGlobal member<span></p>
         {% endif %}
 
+        {% if obj.country %}
         <p class="mb-2"><i class="fal fa-globe-asia"></i> {{ obj.country }}, {{ obj.city }}</p>
+        {% endif %}
 
         {% if obj.twitter_institution %}
             <p class="mb-2"><i class="fab fa-twitter"></i> <strong>Twitter</strong>: <a href="{{ obj.twitter_institution_url }}">@{{ obj.twitter_institution_username }}</a></p>
         {% endif %}
 
+        {% if obj.firstname or obj.lastname or obj.contact %}
         <p class="mb-2">
-            <i class="fal fa-user-circle"></i> <strong>Contributed by</strong>: {{ obj.firstname }} {{ obj.lastname }}
+            <i class="fal fa-user-circle"></i> <strong>Contributed by</strong>:
+            {% if obj.firstname or obj.lastname %}
+                {{ obj.firstname }} {{ obj.lastname }}
+            {% else %}
+                {{ obj.contact }}
+            {% endif %}
         {% if obj.twitter_personal %}
             (Twitter: <a href="{{ obj.twitter_personal_url }}">@{{ obj.twitter_personal_username }}</a>)
         {% endif %}
         </p>
+        {% endif %}
 
+        {% if obj.form_language %}
         <p class="mb-2"><i class="fal fa-globe"></i> <strong>Language</strong>: {{ obj.form_language }}</p>
+        {% endif %}
 
         <p><i class="fab fa-creative-commons"></i> <strong>License</strong>: {{ obj.license }}</p>
 
