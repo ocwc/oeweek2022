@@ -88,44 +88,50 @@ def _set_location(resource, city):
     print("guessing for %d: lat/lon: %s/%s" % (resource.id, resource.lat, resource.lng))
 
 
+def get_gc_city_entry(country, city):
+    # try fast(-er) matching ...
+    cities = []
+    if not __noneOrEmpty(city):
+        cities = GC.search_cities(city)
+        if len(cities) == 0:
+            # ... and if fails, try slower matching
+            cities = GC.search_cities(city, case_sensitive=False)
+
+    # easy case: we find just one city
+    if len(cities) == 1:
+        return cities[0]
+
+    # complicated case: we find more cities or no city given => we try to figure it out via country
+    if country is not None:
+        countries = GC.get_countries_by_names()
+        if country in countries:
+            country = countries[country]
+            if len(cities) > 0:
+                for city in cities:
+                    if city["countrycode"] == country["iso"]:
+                        return city
+            else:
+                cities = GC.get_cities_by_name(country["capital"])
+                if len(cities) == 1:
+                    city_dict = cities[0]
+                    city_key = next(iter(city_dict))
+                    return city_dict[city_key]
+
+    return None
+
+
 def guess_missing_location(resource_id):
     resource = Resource.objects.get(pk=resource_id)
     if _abort_needed(resource):
         print("guessing aborted (early): %d" % resource_id)
         return
 
-    # try fast(-er) matching ...
-    cities = []
-    if not __noneOrEmpty(resource.city):
-        cities = GC.search_cities(resource.city)
-        if len(cities) == 0:
-            # ... and if fails, try slower matching
-            cities = GC.search_cities(resource.city, case_sensitive=False)
-
-    # easy case: we find just one city
-    if len(cities) == 1:
-        _set_location(resource, cities[0])
+    gc_city_entry = get_gc_city_entry(resource.country, resource.city)
+    if gc_city_entry is None:
+        print("failed to guess lat/lon for %s" % resource.city)
         return
 
-    # complicated case: we find more cities or no city given => we try to figure it out via country
-    if resource.country is not None:
-        countries = GC.get_countries_by_names()
-        if resource.country in countries:
-            country = countries[resource.country]
-            if len(cities) > 0:
-                for city in cities:
-                    if city["countrycode"] == country["iso"]:
-                        _set_location(resource, city)
-                        return
-            else:
-                cities = GC.get_cities_by_name(country["capital"])
-                if len(cities) == 1:
-                    city_dict = cities[0]
-                    city_key = next(iter(city_dict))
-                    _set_location(resource, city_dict[city_key])
-                    return
-
-    print("failed to guess lat/lon for %s" % resource.city)
+    _set_location(resource, gc_city_entry)
 
 
 def guess_missing_activity_fields_async(resource):
