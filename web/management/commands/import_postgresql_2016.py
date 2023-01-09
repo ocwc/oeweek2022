@@ -61,16 +61,22 @@ class Command(BaseCommand):
         )
         results = curr.fetchall()
         for row in results:
-            # handle/convert time info:
+            # handle info which is missing or needs adjustment:
             city = row[17]
             country = row[18]
             event_time = row[19]
             event_source_timezone = row[21]
-            (event_time, event_source_timezone) = self.process_time(
-                event_time, event_source_timezone, city, country
+            lat = row[23]
+            lng = row[24]
+            (
+                event_time,
+                event_source_timezone,
+                lat,
+                lng,
+            ) = self.process_time_and_location(
+                event_time, event_source_timezone, lat, lng, city, country
             )
-            # guess missing lat/lon: TODO
-            # store converted resouce
+            # store converted resource
             resource = Resource(
                 created=row[0],
                 modified=row[1],
@@ -95,8 +101,8 @@ class Command(BaseCommand):
                 event_source_datetime=row[20],
                 event_source_timezone=event_source_timezone,
                 event_type=row[22],
-                lat=row[23],
-                lng=row[24],
+                lat=lat,
+                lng=lng,
                 address=row[25],
                 notified=row[26],
                 email=row[27],
@@ -131,8 +137,12 @@ class Command(BaseCommand):
             resource.save()
             print("resource: '%s' migrated" % row[6])
 
-    def process_time(self, event_time, event_source_timezone, city, country):
+    def process_time_and_location(
+        self, event_time, event_source_timezone, lat, lng, city, country
+    ):
         """Convert old values into something which fits into 2023 model."""
+
+        gc_city_entry = None
 
         if event_source_timezone == "I don't know":
             event_source_timezone = ""
@@ -145,4 +155,11 @@ class Command(BaseCommand):
         if event_time:
             event_time = event_time.astimezone(self.SERVER_TZ)
 
-        return (event_time, event_source_timezone)
+        if lat is None and lng is None:
+            if gc_city_entry is None:
+                gc_city_entry = get_gc_city_entry(country, city)
+            if gc_city_entry:
+                lat = gc_city_entry["latitude"]
+                lng = gc_city_entry["longitude"]
+
+        return (event_time, event_source_timezone, lat, lng)
