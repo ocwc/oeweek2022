@@ -80,3 +80,10 @@ upload.sh
 
 ansible/inventory/dev
 ansible/inventory/prod
+
+# MacOS stuff
+._.DS_Store
+._*
+.DS_Store
+.AppleDouble
+.LSOverride
