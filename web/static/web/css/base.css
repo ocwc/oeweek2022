@@ -468,6 +468,10 @@ svg {
   margin-bottom: 0;
 }
 
+.prose.max-w-none {
+  max-width: none;
+}
+
 .bg-white {
   --tw-bg-opacity: 1;
   background-color: rgba(255, 255, 255, var(--tw-bg-opacity));
@@ -728,21 +732,49 @@ svg {
   font-weight: bold;
 }
 
-/* .content h2 {
-  font-weight: 700;
-  font-size: 1.5rem;
-  line-height: 2.0rem;
-  letter-spacing: -0.1px;
-  margin-bottom: 2.1rem;
-} */
+.content h2,
+.content h3,
+.content h4 {
+  margin-top: 2em;
+}
 
-/* TODO: adjust H2, add H3 and H3 */
+.content h2 {
+  font-size: 1.65rem;
+}
+.content h3 {
+  font-size: 1.45rem;
+}
+.content h4 {
+  font-size: 1.25rem;
+}
+
+.content ul,
+.content ol {
+  padding-left: 0.5em;
+  margin-left: 1em;
+}
+
+.content ul {
+  list-style: disc;
+}
+.content ol {
+  list-style: decimal;
+}
 
 @media (min-width: 1024px) {
   .content h1 {
     font-size: 2.75rem;
     line-height: 3.3rem;
     letter-spacing: -0.35px;
+  }
+  .content h2 {
+    font-size: 2.15rem;
+  }
+  .content h3 {
+    font-size: 1.8rem;
+  }
+  .content h4 {
+    font-size: 1.45rem;
   }
 }
 
