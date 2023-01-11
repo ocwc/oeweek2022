@@ -1,3 +1,74 @@
+:root {
+	--color-orange: #ff9533;
+	--color-gray-gray-900: #1a1a1a;
+	--color-gray-gray-800: #333333;
+	--color-gray-gray-700: #4d4d4d;
+	--color-gray-gray-600: #666666;
+	--color-gray-gray-500: #808080;
+	--color-gray-gray-400: #999999;
+	--color-gray-gray-300: #b3b3b3;
+	--color-gray-gray-200: #d9d9d9;
+	--color-gray-gray-100: #f5f5f5;
+	--color-gray-white: #ffffff;
+	--color-secondary-fucsia-900: #3d0e49;
+	--color-secondary-fucsia-800: #561467;
+	--color-secondary-fucsia-700: #7c1b8d;
+	--color-secondary-fucsia-600: #aa22b4;
+	--color-secondary-fucsia-500: #db43db;
+	--color-secondary-fucsia-400: #e05cdc;
+	--color-secondary-fucsia-300: #e77ee3;
+	--color-secondary-fucsia-200: #f0b2ec;
+	--color-secondary-fucsia-100: #f7d4f2;
+	--color-secondary-turq-900: #0d454a;
+	--color-secondary-turq-800: #115e5f;
+	--color-secondary-turq-700: #1a8f83;
+	--color-secondary-turq-600: #1fad98;
+	--color-secondary-turq-500: #26d7b2;
+	--color-secondary-turq-400: #4be7c5;
+	--color-secondary-turq-300: #80e5cf;
+	--color-secondary-turq-200: #a4eadc;
+	--color-secondary-turq-100: #cef8ef;
+	--color-secondary-yellow-900: #5d3209;
+	--color-secondary-yellow-800: #8e6106;
+	--color-secondary-yellow-700: #be9304;
+	--color-secondary-yellow-600: #e6c805;
+	--color-secondary-yellow-500: #ffe525;
+	--color-secondary-yellow-400: #fce95a;
+	--color-secondary-yellow-300: #fcec83;
+	--color-secondary-yellow-200: #fcf1a1;
+	--color-secondary-yellow-100: #fdf5ce;
+	--color-secondary-red-900: #600623;
+	--color-secondary-red-800: #7d081f;
+	--color-secondary-red-700: #af0821;
+	--color-secondary-red-600: #ce1222;
+	--color-secondary-red-500: #e51a1a;
+	--color-secondary-red-400: #ff5547;
+	--color-secondary-red-300: #ff8670;
+	--color-secondary-red-200: #ffaa99;
+	--color-secondary-red-100: #ffdacc;
+	--color-secondary-transparent: #ffffff;
+	--color-oeweek-green-900: #134912;
+	--color-oeweek-green-800: #1e721d;
+	--color-oeweek-green-700: #268f24;
+	--color-oeweek-green-600: #2daa2a;
+	--color-oeweek-green-500: #34c431;
+	--color-oeweek-green-400: #4ed24b;
+	--color-oeweek-green-300: #8be085;
+	--color-oeweek-green-200: #b9edb6;
+	--color-oeweek-green-100: #dbf5d6;
+	--color-oeweek-purple-800: #221155;
+	--color-oeweek-purple-500: #664bda;
+	--color-oeweek-purple-100: #dbd5f6;
+	--color-brand-blue-900: #0d1530;
+	--color-brand-blue-800: #1c2b5a;
+	--color-brand-blue-700: #1f377a;
+	--color-brand-blue-600: #1a52b2;
+	--color-brand-blue-500: #0d59f2;
+	--color-brand-blue-400: #3b80f7;
+	--color-brand-blue-300: #6ca0f9;
+	--color-brand-blue-200: #9ec1fa;
+	--color-brand-blue-100: #d8e7fd;
+}
 .oegcontent label {
   font-weight: bold;
 }
@@ -327,8 +398,37 @@ svg {
   }
 }
 
-.site--footer .sub-menu a {
+.site--footer {
+  background-color: var(--color-brand-blue-100);
+}
+
+.site--footer .sub-menu li {
+  margin: 0!important;
+}
+
+.site--footer .sub-menu a,
+.site--footer .sub-menu a:visited {
+  --tw-bg-opacity: 1;
+  color: var(--color-brand-blue-600);
+  background-color: transparent;
+  border-radius: 0.25rem;
+  display: block;
+  transition-property: all;
+  transition-duration: 250ms;
+  padding: 0.25rem 0.5rem;
+  padding-left: 0;
+  margin: 0;
+}
+
+.site--footer .sub-menu a:hover,
+.site--footer .sub-menu a:active {
+  background-color: var(--color-brand-blue-200);
+  padding-left: 0.5rem;
+}
+
+.site--footer .sub-menu a  {
   transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+  
 }
 
 .prose {
@@ -461,10 +561,6 @@ svg {
 .text-sm {
   font-size: 0.85rem;
   line-height: 1.19rem;
-}
-
-.site--footer .sub-menu li {
-  margin-bottom: 0.5rem;
 }
 
 .mb-4 {
@@ -623,19 +719,22 @@ svg {
   line-height: 2.1rem;
   letter-spacing: -0.1px;
   margin-bottom: 2.5rem;
-  --tw-text-opacity: 1;
-  color: rgba(51, 51, 51, var(--tw-text-opacity));
 }
 
-.content h2 {
+.content h1,
+.content h2,
+.content h3,
+.content h4 {
+  font-weight: bold;
+}
+
+/* .content h2 {
   font-weight: 700;
   font-size: 1.5rem;
   line-height: 2.0rem;
   letter-spacing: -0.1px;
   margin-bottom: 2.1rem;
-  --tw-text-opacity: 1;
-  color: rgba(51, 51, 51, var(--tw-text-opacity));
-}
+} */
 
 /* TODO: adjust H2, add H3 and H3 */
 
@@ -643,11 +742,6 @@ svg {
   .content h1 {
     font-size: 2.75rem;
     line-height: 3.3rem;
-    letter-spacing: -0.35px;
-  }
-  .content h2 {
-    font-size: 2.5rem;
-    line-height: 3.0rem;
     letter-spacing: -0.35px;
   }
 }
@@ -720,16 +814,6 @@ svg {
 
 .button-outline {
   font-size: 1rem;
-}
-
-.site--footer .sub-menu a {
-  --tw-bg-opacity: 1;
-  background-color: rgba(26, 82, 178, var(--tw-bg-opacity));
-  border-radius: 0.25rem;
-  display: block;
-  transition-property: all;
-  transition-duration: 150ms;
-  padding: 0.25rem 0.5rem;
 }
 
 .button-outline {
