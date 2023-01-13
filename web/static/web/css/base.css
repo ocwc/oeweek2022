@@ -754,10 +754,10 @@ svg {
   margin-left: 1em;
 }
 
-.content ul {
+.content ul:not(.list-none) {
   list-style: disc;
 }
-.content ol {
+.content ol:not(.list-none) {
   list-style: decimal;
 }
 
@@ -1001,6 +1001,12 @@ svg {
 }
 .button-main:hover {
   opacity: 0.8;
+}
+
+.social-list {
+  list-style-type: none;
+  padding-left: 0!important;
+  margin-left: 0!important;
 }
 
 /* Banner after party */
