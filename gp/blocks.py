@@ -10,6 +10,19 @@ from wagtail.embeds.blocks import EmbedBlock
 from wagtail.images.blocks import ImageChooserBlock
 
 
+class BannerImageBlock(StructBlock):
+    """
+    Custom `StructBlock` for utilizing banner images
+    like home-banner-sm.svg in web/templates/web/home.html .
+    """
+
+    image = ImageChooserBlock(required=True)
+
+    class Meta:
+        icon = "banner image"
+        template = "blocks/banner_image_block.html"
+
+
 class ImageBlock(StructBlock):
     """
     Custom `StructBlock` for utilizing images with associated caption and
@@ -70,6 +83,7 @@ class BaseStreamBlock(StreamBlock):
     paragraph_block = RichTextBlock(
         icon="fa-paragraph", template="blocks/paragraph_block.html"
     )
+    banner_image_block = BannerImageBlock()
     image_block = ImageBlock()
     block_quote = BlockQuote()
     embed_block = EmbedBlock(
