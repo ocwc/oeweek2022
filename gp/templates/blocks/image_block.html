@@ -2,5 +2,7 @@
 
 <figure>
     {% image self.image fill-600x338 loading="lazy" %}
+    {% if self.caption or self.attribution %}
     <figcaption>{{ self.caption }} - {{ self.attribution }}</figcaption>
+    {% endif %}
 </figure>
