@@ -88,16 +88,6 @@
         </p>
         <div class="hidden" id="timezone_result">/{{ current_timezone }}/</div>
 
-        <!--
-        {% if obj.event_time %}
-            <span style="color: #999999;">
-                <p class="mb-2"><i class="fal fa-calendar-check"></i> <strong>Date and Time (local)</strong>: {{ obj.event_time|date:'M d, Y | H:i' }} <em>({{ obj.event_source_timezone }})</em></p>
-            </span>
-        {% else %}
-            <p class="mb-2">(no time specified)</p>
-        {% endif %}
-        -->
-
         {% if obj.facilitator %}
             <p class="mb-2"><i class="fal fa-user-chart"></i> <strong>Facilitator</strong>: {{ obj.event_facilitator }}</p>
         {% endif %}
