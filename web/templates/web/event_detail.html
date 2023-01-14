@@ -1,6 +1,10 @@
 {% extends 'base.html' %}
 
-{% load tz %}
+{% load static tz %}
+
+{% block extra_head %}
+<script src="{% static 'web/js/htmx.min.js' %}" defer></script>
+{% endblock extra_head %}
 
 {% block content %}
 {% get_current_timezone as current_timezone %}
@@ -59,7 +63,15 @@
         {% endif %}
 
         <p class="mb-2">
-        <i class="fal fa-calendar-star"></i> <strong>Date and Time</strong>: {{ obj.event_time|date:'M d, Y H:i' }} <em>({{ current_timezone }})</em>
+          <form hx-post="{% if reload_after_timezone_change %}{% url 'set_timezone_reload' %}{% else %}{% url 'set_timezone' %}{% endif %}"
+                hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}'
+                hx-trigger="change" hx-target="#timezone_result">
+            <i class="fal fa-calendar-star"></i> <strong>Date and Time</strong>: {{ obj.event_time|date:'M d, Y H:i' }}
+            <select name="timezone" xxx-class="w-full lg:w-1/4">
+                {% for tz in timezones %}
+                <option value="{{ tz }}"{% if tz == current_timezone %} selected{% endif %}>{{ tz }}</option>
+                {% endfor %}
+            </select>
         {% if obj.event_offset_in_hours %}
             <span style="color: #cc0000;">&nbsp;
             {{ obj.event_offset_in_hours }}
@@ -67,21 +79,14 @@
         {% endif %}
 
         {% if obj.event_time_link_to_everytimezone %}
+            <br />
             <span style="color: #999999;">&nbsp;
             <em><a href="{{ obj.event_time_link_to_everytimezone }}" target="_blank">(view in other timezones)</a></em>
             </span>
         {% endif %}
+          </form>
         </p>
-
-        <!--
-        {% if obj.event_time %}
-            <span style="color: #999999;">
-                <p class="mb-2"><i class="fal fa-calendar-check"></i> <strong>Date and Time (local)</strong>: {{ obj.event_time|date:'M d, Y | H:i' }} <em>({{ obj.event_source_timezone }})</em></p>
-            </span>
-        {% else %}
-            <p class="mb-2">(no time specified)</p>
-        {% endif %}
-        -->
+        <div class="hidden" id="timezone_result">/{{ current_timezone }}/</div>
 
         {% if obj.facilitator %}
             <p class="mb-2"><i class="fal fa-user-chart"></i> <strong>Facilitator</strong>: {{ obj.event_facilitator }}</p>
