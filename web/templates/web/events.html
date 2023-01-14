@@ -1,6 +1,10 @@
 {% extends 'base.html' %}
 
-{% load tz %}
+{% load static tz %}
+
+{% block extra_head %}
+<script src="{% static 'web/js/htmx.min.js' %}" defer></script>
+{% endblock extra_head %}
 
 {% block content %}
 {% get_current_timezone as current_timezone %}
@@ -12,7 +16,20 @@
 {% if event_count %}
   <p><i class="fal fa-hand-pointer"></i> <strong>Please click on a date to expand the details.</strong></p>
 
-  <p><i class="fal fa-clock"></i> <strong>current time: <span style='background-color: #ffffcc;'>{{ current_time_utc | date:'M d, Y H:i' }} ({{ current_timezone }})</span>, UTC: {{ current_time_utc | utc | date:'M d, Y H:i' }}</strong></p>
+  <p>
+    <form hx-post="{% if reload_after_timezone_change %}{% url 'set_timezone_reload' %}{% else %}{% url 'set_timezone' %}{% endif %}"
+          hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}'
+          hx-trigger="change" hx-target="#timezone_result">
+        <i class="fal fa-clock"></i> <strong>current time: <span style='background-color: #ffffcc;'>{{ current_time_utc | date:'M d, Y H:i' }}</span></strong>
+        <select name="timezone" xxx-class="w-full lg:w-1/4">
+            {% for tz in timezones %}
+            <option value="{{ tz }}"{% if tz == current_timezone %} selected{% endif %}>{{ tz }}</option>
+            {% endfor %}
+        </select>
+        (UTC time: {{ current_time_utc | utc | date:'M d, Y H:i' }})
+    </form>
+  </p>
+  <div class="hidden" id="timezone_result">/{{ current_timezone }}/</div>
 
   <p><i class="fal fa-calculator"></i> <strong>Showing {{ event_count }} events</strong></p>
 
