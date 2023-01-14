@@ -244,7 +244,7 @@ class Resource(TimeStampedModel, ReviewModel):
     # )
     @property
     def opentags(self):
-        """tem[porary workaround until we are back to PostgreSQL with opentags = ArrayField"""
+        """temporary workaround until we are back to PostgreSQL with opentags = ArrayField"""
         return []
 
     notified = models.BooleanField(default=False)
