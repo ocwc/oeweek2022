@@ -1,4 +1,5 @@
 from django.apps import AppConfig
+from sqlite3 import OperationalError
 
 
 class WebConfig(AppConfig):
@@ -10,7 +11,6 @@ class WebConfig(AppConfig):
     def ready(self):
         from django_q.tasks import schedule, Schedule
 
-        # FYI: try-except exists to avoid "sqlite3.OperationalError: no such table: django_q_schedule" during initial setup
         try:
             if Schedule.objects.filter(name=self.CLEANUP_TASK_NAME_V1).exists():
                 return
@@ -20,5 +20,6 @@ class WebConfig(AppConfig):
                 name=self.CLEANUP_TASK_NAME_V1,
                 schedule_type=Schedule.DAILY,
             )
-        except:
+        except OperationalError:
+            # to avoid "sqlite3.OperationalError: no such table: django_q_schedule" during initial setup
             pass
