@@ -7,6 +7,7 @@ from django.template.loader import get_template
 from web.models import Resource
 
 
+# TODO: since those works only for 2022, remove once 2023 submissions period is in progress
 class Command(BaseCommand):
     help = "Notifies submitters that they got accepted"
 
