@@ -702,6 +702,9 @@ class HtmxHttpRequest(HttpRequest):
     htmx: HtmxDetails
 
 
+# Used for pages which do NOT need to refresh their content when user chooses different timezone (e.g. anything but events pages).
+# This is default behavior, e.g. relies on `reload_after_timezone_change` NOT being is set in the context or set to `False`.
+# TODO: Currently not used (since selection was moved from footer to only events pages). For now kept, but if it stays that way, remove later.
 @require_POST
 def set_timezone(request: HtmxHttpRequest) -> HttpResponse:
     timezone = request.POST["timezone"]
@@ -717,6 +720,7 @@ def set_timezone(request: HtmxHttpRequest) -> HttpResponse:
     )
 
 
+# Used for events pages (of wherever `reload_after_timezone_change:True` is set to context).
 @require_POST
 def set_timezone_and_reload(request: HtmxHttpRequest) -> HttpResponse:
     response = set_timezone(request)
