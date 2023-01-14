@@ -1,6 +1,7 @@
 from wagtail.blocks import (
     CharBlock,
     ChoiceBlock,
+    RawHTMLBlock,
     RichTextBlock,
     StreamBlock,
     StructBlock,
@@ -19,6 +20,7 @@ class ImageBlock(StructBlock):
     image = ImageChooserBlock(required=True)
     caption = CharBlock(required=False)
     attribution = CharBlock(required=False)
+    css_class = CharBlock(required=False)
 
     class Meta:
         icon = "image"
@@ -77,3 +79,4 @@ class BaseStreamBlock(StreamBlock):
         icon="fa-s15",
         template="blocks/embed_block.html",
     )
+    raw_html_block = RawHTMLBlock()
