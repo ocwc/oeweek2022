@@ -477,8 +477,7 @@ def send_email_async(
     priority: 0 = notifications for staff, 1 = notifications for users
     """
     queue_item = EmailQueueItem.objects.create(
-        template_name=template_name,
-        from_email=from_email,
+        template_name=template_name, from_email=from_email, priority=priority
     )
     queue_item.set_context(context)
     queue_item.set_recipient_list(recipient_list)
