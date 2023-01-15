@@ -448,7 +448,7 @@ class EmailQueueItem(models.Model):
     def get_context(self):
         if self.context:
             return json.loads(self.context)
-        return None
+        return {}
 
     def set_context(self, context):
         self.context = json.dumps(context)
@@ -456,7 +456,7 @@ class EmailQueueItem(models.Model):
     def get_recipient_list(self):
         if self.recipient_list:
             return json.loads(self.recipient_list)
-        return None
+        return []
 
     def set_recipient_list(self, recipients):
         self.recipient_list = json.dumps(recipients)
