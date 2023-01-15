@@ -446,13 +446,17 @@ class EmailQueueItem(models.Model):
     cc = models.CharField(max_length=512, blank=True)
 
     def get_context(self):
-        return json.loads(self.context)
+        if self.context:
+            return json.loads(self.context)
+        return None
 
     def set_context(self, context):
         self.context = json.dumps(context)
 
     def get_recipient_list(self):
-        return json.loads(self.recipient_list)
+        if self.recipient_list:
+            return json.loads(self.recipient_list)
+        return None
 
     def set_recipient_list(self, recipients):
         self.recipient_list = json.dumps(recipients)
