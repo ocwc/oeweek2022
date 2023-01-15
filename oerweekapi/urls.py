@@ -95,11 +95,11 @@ urlpatterns = (
         ),
         path("edit/<uuid:identifier>/", views.edit_resource),
         url(r"^thanks/$", views.thanks),
-        url(r"^schedule$", RedirectView.as_view(url="/events/", permanent=False)),
-        url(r"^schedule/$", RedirectView.as_view(url="/events/", permanent=False)),
-        url(r"^events$", RedirectView.as_view(url="/events/", permanent=False)),
+        url(r"^schedule$", RedirectView.as_view(url="/events/", permanent=True)),
+        url(r"^schedule/$", RedirectView.as_view(url="/events/", permanent=True)),
+        url(r"^events$", RedirectView.as_view(url="/events/", permanent=True)),
         url(r"^events/$", views.show_events),
-        url(r"^resources$", RedirectView.as_view(url="/resources/", permanent=False)),
+        url(r"^resources$", RedirectView.as_view(url="/resources/", permanent=True)),
         url(r"^resources/$", views.show_resources),
         path("events/<str:slug>/", views.handle_old_event_detail),
         path(
@@ -116,11 +116,11 @@ urlpatterns = (
         path("cms/", include(wagtailadmin_urls)),
         path("documents/", include(wagtaildocs_urls)),
         # redirect from legacy URL path to new URLs
-        url(r"^about$", RedirectView.as_view(url="/pages/", permanent=False)),
-        url(r"^about/$", RedirectView.as_view(url="/pages/", permanent=False)),
-        url(r"^about/faq/$", RedirectView.as_view(url="/pages/faq/", permanent=False)),
+        url(r"^about$", RedirectView.as_view(url="/pages/", permanent=True)),
+        url(r"^about/$", RedirectView.as_view(url="/pages/", permanent=True)),
+        url(r"^about/faq/$", RedirectView.as_view(url="/pages/faq/", permanent=True)),
         url(
-            r"^about/2023/$", RedirectView.as_view(url="/pages/2023/", permanent=False)
+            r"^about/2023/$", RedirectView.as_view(url="/pages/2023/", permanent=True)
         ),
         path("pages/", include(wagtail_urls)),
         path("profile/", include("contributor_profile.urls", namespace="c_profile")),
