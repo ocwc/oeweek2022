@@ -43,7 +43,6 @@ router.register(r"email-templates", EmailTemplateView)
 urlpatterns = (
     [
         url(r"^api/", include(router.urls)),
-        # url(r'^api/submission/', SubmissionView.as_view()),
         url(r"^api/events-summary/", EventSummaryView.as_view()),
         url(r"^api/twitter/", TwitterSearchResults.as_view()),
         url(r"^api/request-access/", RequestAccessView.as_view()),
@@ -54,10 +53,6 @@ urlpatterns = (
         path("auth/", include("magiclink.urls", namespace="magiclink")),
         url(r"^export/resources/$", ExportResources.as_view(), name="resource_export"),
         url(r"^$", views.index, name="web_index"),
-        # url(r'^$', RedirectView.as_view(url='https://www.oeglobal.org/activities/open-education-week/', permanent=False), name='root_redirect'),
-        # url(r'^page/what-is-open-education-week/$', views.page__what_is_open_education_week),
-        # url(r'^page/faq/$', views.page__faq),
-        # url(r'^page/contribute/$', views.page__contribute),
         url(r"^submit$", RedirectView.as_view(url="/contribute/", permanent=False)),
         url(r"^submit/$", RedirectView.as_view(url="/contribute/", permanent=False)),
         url(
@@ -99,8 +94,6 @@ urlpatterns = (
             name="contribute-asset",
         ),
         path("edit/<uuid:identifier>/", views.edit_resource),
-        # OLD: url(r'^edit/$', views.edit_resource),
-        # url(r'^page/materials/$', views.page__materials),
         url(r"^thanks/$", views.thanks),
         url(r"^schedule$", RedirectView.as_view(url="/events/", permanent=False)),
         url(r"^schedule/$", RedirectView.as_view(url="/events/", permanent=False)),
@@ -120,7 +113,6 @@ urlpatterns = (
             views.show_resource_detail,
             name="show_resource_detail",
         ),
-        # url(r'^page/home/$', views.index, name='web_index'),
         path("cms/", include(wagtailadmin_urls)),
         path("documents/", include(wagtaildocs_urls)),
         # redirect from legacy URL path to new URLs
