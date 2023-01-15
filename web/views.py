@@ -115,7 +115,7 @@ def contribute_activity(request, identifier=None):
             #     form.cleaned_data['full_name'],
             # )
             context = {
-                "uuid": resource.uuid,
+                "uuid": str(resource.uuid),
                 "title": resource.title,
                 "contribute_similar": reverse(
                     "contribute-activity", args=[resource.uuid]
@@ -130,8 +130,8 @@ def contribute_activity(request, identifier=None):
                     [resource.email],
                     cc=["openeducationweek@oeglobal.org"],
                 )
-            except:
-                print("Failed to send email to " + resource.email)
+            except Exception as ex:
+                print("Failed to send email to %s: %s" % (resource.email, ex))
 
             return render(request, "web/thanks.html", context=context)
     elif identifier is not None:  # => GET ...
