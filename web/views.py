@@ -29,7 +29,7 @@ from rest_framework.response import Response
 from rest_framework.pagination import PageNumberPagination
 
 from .forms import ActivityForm, AssetForm
-from .models import Page, Resource, ResourceImage, EmailTemplate
+from .models import Page, Resource, ResourceImage, EmailTemplate, send_email_async
 from .serializers import (
     PageSerializer,
     ResourceSerializer,
@@ -45,8 +45,6 @@ from .utils import (
     days_to_go,
     guess_missing_activity_fields_async,
 )
-
-from mail_templated import send_mail
 
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import get_object_or_404, render
@@ -125,7 +123,7 @@ def contribute_activity(request, identifier=None):
             }
 
             try:
-                send_mail(
+                send_email_async(
                     "emails/submission_received.tpl",
                     context,  # {}, # {"user": user, "key": key},
                     "info@openeducationweek.org",
