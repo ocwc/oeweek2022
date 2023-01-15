@@ -332,7 +332,8 @@ def handle_old_event_detail(request, slug):
 # @login_required(login_url='/admin/')
 def show_event_detail(request, year, slug):
     event = get_object_or_404(Resource, year=year, slug=slug, post_type="event")
-    # #todo -- check if event is "published" (throw 404 for drafts / trash)
+    # #todo -- check if event is "published" (redirect to staff login for non-published, show also status info if already logged in)
+    # #toto -- filter out trash
     event.consolidated_image_url = event.get_image_url_for_detail()
     context = {
         "obj": event,
@@ -377,9 +378,70 @@ def handle_old_resource_detail(request, slug):
 # @login_required(login_url='/admin/')
 def show_resource_detail(request, year, slug):
     resource = get_object_or_404(Resource, year=year, slug=slug, post_type="resource")
+    # #todo -- check if event is "published" (redirect to staff login for non-published, show also status info if already logged in)
+    # #toto -- filter out trash
     resource.consolidated_image_url = resource.get_image_url_for_detail()
     context = {"obj": resource}
     return render(request, "web/resource_detail.html", context=context)
+
+
+@login_required(login_url="/admin/")
+def staff_view(request):
+    """
+    for now mainly "approval list"
+    """
+    if not request.user.is_staff:
+        return HttpResponseRedirect(reverse("web_index"))
+
+    request_timezone = request.GET.get("timezone", "local")
+    resource_list = (
+        Resource.objects.all()
+        .filter(post_status__in=["draft", ""], year=settings.OEW_YEAR)
+        .order_by("modified")
+    )
+
+    resource_count = len(resource_list)
+    for resource in resource_list:
+        resource.consolidated_image_url = resource.get_image_url_for_list()
+        url_args = [resource.year, resource.slug]
+        if resource.post_type == "event":
+            resource.detail_url = reverse("show_event_detail", args=url_args)
+        else:
+            resource.detail_url = reverse("show_resource_detail", args=url_args)
+
+    current_time_utc = djtz.now()
+    context = {
+        "resource_list": resource_list,
+        "current_time_utc": current_time_utc,
+        "resource_count": resource_count,
+        "reload_after_timezone_change": True,
+        "oew_year": settings.OEW_YEAR,  # TODO: add also to other resource views, etc. to get rid of hard-coded "2023" in various templates
+    }
+    return render(request, "web/staff.html", context=context)
+
+
+@login_required(login_url="/admin/")
+def approve_resource(request, id):
+    if not request.user.is_staff:
+        return HttpResponseRedirect(reverse("web_index"))
+
+    pass
+
+
+@login_required(login_url="/admin/")
+def send_resource_feedback(request, id):
+    if not request.user.is_staff:
+        return HttpResponseRedirect(reverse("web_index"))
+
+    pass
+
+
+@login_required(login_url="/admin/")
+def reject_resource(request, id):
+    if not request.user.is_staff:
+        return HttpResponseRedirect(reverse("web_index"))
+
+    pass
 
 
 class LargeResultsSetPagination(PageNumberPagination):

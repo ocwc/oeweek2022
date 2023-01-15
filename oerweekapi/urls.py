@@ -113,6 +113,22 @@ urlpatterns = (
             views.show_resource_detail,
             name="show_resource_detail",
         ),
+        path("staff/", views.staff_view, name="staff_view"),
+        path(
+            "staff/approve/<int:id>/",
+            views.approve_resource,
+            name="staff_approve",
+        ),
+        path(
+            "staff/reject/<int:id>/",
+            views.reject_resource,
+            name="staff_reject",
+        ),
+        path(
+            "staff/send_feedback/<int:id>/",
+            views.send_resource_feedback,
+            name="staff_send_feedback",
+        ),
         path("cms/", include(wagtailadmin_urls)),
         path("documents/", include(wagtaildocs_urls)),
         # redirect from legacy URL path to new URLs

@@ -57,8 +57,15 @@
 
         <p class="my-6"><a href="{{ obj.link }}" class="bg-purple-500 text-white p-2 rounded hover:bg-purple-800 block"><i class="fal fa-external-link-alt"></i> {{ obj.link }}</a></p>
 
-        {% if user.is_authenticated %}
-            <div style="color: white; background-color:red; font-weight: bold;">Hello {{ user.get_username }}! <a href="/admin/web/resource/{{ obj.id }}/change/">Click to edit this resource.</a></div>
+        {% if user.is_staff %}
+            <p class="my-6">
+                As staff, you can:
+                <a href="{% url 'staff_reject' obj.id %}" class="bg-red-500 rounded px-2 py-1">reject</a>
+                <a href="{% url 'staff_send_feedback' obj.id %}" class="bg-yellow-500 rounded px-2 py-1">send feedback</a>
+                <a href="{% url 'staff_approve' obj.id %}" class="bg-green-500 rounded px-2 py-1">approve</a> this resource.
+            </p>
+            <p class="my-6">Or <a href="/admin/web/resource/{{ obj.id }}/change/" class="bg-yellow-500 rounded px-2 py-1">edit this resource</a>.</p>
+            <p class="my-6"><a href="{% url 'staff_view' %}">&#8592;Back to approval list</a><p class="my-6">
         {% endif %}
 
     </div>

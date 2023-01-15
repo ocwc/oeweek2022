@@ -99,9 +99,15 @@
             <br>
         {% endif %}
 
-        {% if user.is_authenticated %}
-            <br>
-            <div style="color: white; background-color:red; font-weight: bold;">Hello {{ user.get_username }}! <a href="/admin/web/resource/{{ obj.id }}/change/">Click to edit this event.</a></div>
+        {% if user.is_staff %}
+            <p class="my-6">
+                As staff, you can:
+                <a href="{% url 'staff_reject' obj.id %}" class="bg-red-500 rounded px-2 py-1">reject</a>
+                <a href="{% url 'staff_send_feedback' obj.id %}" class="bg-yellow-500 rounded px-2 py-1">send feedback</a>
+                <a href="{% url 'staff_approve' obj.id %}" class="bg-green-500 rounded px-2 py-1">approve</a> this resource.
+            </p>
+            <p class="my-6">Or <a href="/admin/web/resource/{{ obj.id }}/change/" class="bg-yellow-500 rounded px-2 py-1">edit this resource</a>.</p>
+            <p class="my-6"><a href="{% url 'staff_view' %}">&#8592;Back to approval list</a><p class="my-6">
         {% endif %}
 
     </div>

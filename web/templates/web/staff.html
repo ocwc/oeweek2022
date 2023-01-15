@@ -1,0 +1,73 @@
+{% extends 'base.html' %}
+
+{% load static tz %}
+
+{% block extra_head %}
+<script src="{% static 'web/js/htmx.min.js' %}" defer></script>
+{% endblock extra_head %}
+
+{% block content %}
+{% get_current_timezone as current_timezone %}
+
+<br>
+
+<h1><!--<i class="fad fa-calendar-alt"></i>--> OE Week {{ oew_year }} Event Approval</h1>
+
+{% if resource_count %}
+  <p>
+    <form hx-post="{% if reload_after_timezone_change %}{% url 'set_timezone_reload' %}{% else %}{% url 'set_timezone' %}{% endif %}"
+          hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}'
+          hx-trigger="change" hx-target="#timezone_result">
+        <i class="fal fa-clock"></i> <strong>current time: <span style='background-color: #ffffcc;'>{{ current_time_utc | date:'M d, Y H:i' }}</span></strong>
+        <select name="timezone" xxx-class="w-full lg:w-1/4">
+            {% for tz in timezones %}
+            <option value="{{ tz }}"{% if tz == current_timezone %} selected{% endif %}>{{ tz }}</option>
+            {% endfor %}
+        </select>
+        (UTC time: {{ current_time_utc | utc | date:'M d, Y H:i' }})
+    </form>
+  </p>
+  <div class="hidden" id="timezone_result">/{{ current_timezone }}/</div>
+
+  <p><i class="fal fa-calculator"></i> <strong>Showing {{ resource_count }} resources</strong></p>
+
+  {% for resource in resource_list %}
+  <div class="card bg-white p-4 lg:p-8 rounded grid lg:grid-cols-3 gap-4">
+    <div class="lg:col-span-2 p-4">
+      <strong>Title:</strong> <a href="{{ resource.detail_url }}">{{ resource.title }}</a><br />
+      {% if resource.post_type == 'event' %}
+      <strong>Event time:</strong> {{ resource.event_time }}<br />
+      {% endif %}
+      <strong>Contact:</strong> <a href="mailto:{{ resource.email }}">{{ resource.firstname }} {{ resource.lastname }}</a><br />
+      <strong>Institution:</strong> {{ resource.institution }}<br />
+      Submitted: {{ resource.created }} (last changed: {{ resource.modified }})<br />
+      <a href="{% url 'staff_reject' resource.id %}" class="bg-red-500 rounded px-2 py-1">reject</a>
+      <a href="{% url 'staff_send_feedback' resource.id %}" class="bg-yellow-500 rounded px-2 py-1">send feedback</a>
+      <a href="{% url 'staff_approve' resource.id %}" class="bg-green-500 rounded px-2 py-1">approve</a>
+    </div>
+    <div class="detail-media">
+        {% if resour_ce.consolidated_image_url %}
+        <a href="resource.detail_url"><img src="{{ resource.consolidated_image_url }}" class="object-cover h-150px md:h-120px"></a>
+        {% else %}
+          {% load static %}
+          <a href="resource.detail_url">
+            {% if resource.post_type == 'event' %}
+            <img rel="stylesheet" src="{% static 'web/images/placeholder-event-sm.png' %}" class="mb-4 w-full">
+            {% else %}
+            <img rel="stylesheet" src="{% static 'web/images/placeholder-asset.png' %}" class="mb-4 w-full">
+            {% endif %}
+          </a>
+        {% endif %}
+    </div>
+  </div>
+  {% endfor %}
+
+  </div>
+
+{% else %}
+  <p>No resources in "draft" state.</p>
+{% endif %}
+
+  <p>More operations and complete list of resources is available in the <a href="/admin/web/resource/">admin GUI</a>.</p>
+
+{% endblock %}
