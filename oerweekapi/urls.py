@@ -119,9 +119,7 @@ urlpatterns = (
         url(r"^about$", RedirectView.as_view(url="/pages/", permanent=True)),
         url(r"^about/$", RedirectView.as_view(url="/pages/", permanent=True)),
         url(r"^about/faq/$", RedirectView.as_view(url="/pages/faq/", permanent=True)),
-        url(
-            r"^about/2023/$", RedirectView.as_view(url="/pages/2023/", permanent=True)
-        ),
+        url(r"^about/2023/$", RedirectView.as_view(url="/pages/2023/", permanent=True)),
         path("pages/", include(wagtail_urls)),
         path("profile/", include("contributor_profile.urls", namespace="c_profile")),
         # path("search/", search_views.search, name="search"),
