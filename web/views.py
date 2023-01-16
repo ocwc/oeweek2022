@@ -46,7 +46,7 @@ from .utils import (
     guess_missing_activity_fields_async,
 )
 
-from django.contrib.auth.decorators import login_required
+from django.contrib.auth.decorators import user_passes_test
 from django.shortcuts import get_object_or_404, render
 
 import django.utils.timezone as djtz
@@ -54,6 +54,10 @@ import django.utils.timezone as djtz
 
 ALLOWED_TAGS = bleach.sanitizer.ALLOWED_TAGS
 ALLOWED_TAGS += ["p"]
+
+
+def is_staff(user):
+    return user.is_staff
 
 
 def index(request):
@@ -385,14 +389,11 @@ def show_resource_detail(request, year, slug):
     return render(request, "web/resource_detail.html", context=context)
 
 
-@login_required(login_url="/admin/")
+@user_passes_test(is_staff, login_url="/admin/")
 def staff_view(request):
     """
     for now mainly "approval list"
     """
-    if not request.user.is_staff:
-        return HttpResponseRedirect(reverse("web_index"))
-
     request_timezone = request.GET.get("timezone", "local")
     resource_list = (
         Resource.objects.all()
@@ -420,27 +421,18 @@ def staff_view(request):
     return render(request, "web/staff.html", context=context)
 
 
-@login_required(login_url="/admin/")
+@user_passes_test(is_staff, login_url="/admin/")
 def approve_resource(request, id):
-    if not request.user.is_staff:
-        return HttpResponseRedirect(reverse("web_index"))
-
     pass
 
 
-@login_required(login_url="/admin/")
+@user_passes_test(is_staff, login_url="/admin/")
 def send_resource_feedback(request, id):
-    if not request.user.is_staff:
-        return HttpResponseRedirect(reverse("web_index"))
-
     pass
 
 
-@login_required(login_url="/admin/")
+@user_passes_test(is_staff, login_url="/admin/")
 def reject_resource(request, id):
-    if not request.user.is_staff:
-        return HttpResponseRedirect(reverse("web_index"))
-
     pass
 
 
