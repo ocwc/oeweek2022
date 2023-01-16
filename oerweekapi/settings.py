@@ -98,6 +98,7 @@ TEMPLATES = [
                 "django.template.context_processors.request",
                 "django.contrib.auth.context_processors.auth",
                 "django.contrib.messages.context_processors.messages",
+                "web.signup_utils.inject_signup_switch",
                 "web.timezone_utils.inject_timezones",
             ],
         },
@@ -237,7 +238,9 @@ Q_CLUSTER = {
     "bulk": 10,
 }
 
-# magiclink
+SIGNUP_ENABLED = True
+
+# magiclink (note: not used if SIGNUP_ENABLED = False)
 LOGIN_URL = "magiclink:login"
 LOGIN_REDIRECT_URL = "/profile/"
 

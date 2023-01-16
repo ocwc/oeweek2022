@@ -137,7 +137,7 @@
                                 </div>
                             </div>
 
-                            {% if user.is_authenticated %}
+                            {% if signup_enabled and user.is_authenticated %}
                             <div class="ember-basic-dropdown">
                                 <div id="ember6"
                                     class="ember-view ember-basic-dropdown-trigger ember-basic-dropdown-trigger--in-place"
@@ -251,13 +251,12 @@
                                 rel="noopener noreferrer">OEG Connect</a>
                         </li>
                         {% if user.is_authenticated %}
-                            {# TODO: find a better place for logout link - it is usually expected at top-right where "profile" link is #}
                             {% if user.is_staff %}
                                 <li><a href="{% url 'admin:logout' %}?next=/">Log out</a></li>
-                            {% else %}
+                            {% elif signup_enabled  %}
                                 <li><a href="{% url 'magiclink:logout' %}?next=/">Log out</a></li>
                             {% endif %}
-                        {% else %}
+                        {% elif signup_enabled %}
                             <li><a href="{% url 'magiclink:signup' %}">Sign up</a></li>
                             <li><a href="{% url 'magiclink:login' %}">Log in</a></li>
                         {% endif %}
