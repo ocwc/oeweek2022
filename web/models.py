@@ -376,7 +376,7 @@ class Resource(TimeStampedModel, ReviewModel):
         super().save(*args, **kwargs)
 
     def send_new_submission_email(self):
-        send_email_async(
+        send_email_async(  # TODO: migrate away from django-mail-templated
             "emails/submission_received.tpl",
             {},
             "info@openeducationweek.org",
@@ -384,7 +384,7 @@ class Resource(TimeStampedModel, ReviewModel):
         )
 
     def send_new_account_email(self, force=False):
-        # TODO: chek and possibly adjust how that should relate to magiclink accounts
+        # TODO: check and possibly adjust how that should relate to magiclink accounts
         email = self.email.lower()
         if force or not User.objects.filter(email=email).exists():
             user, is_created = User.objects.get_or_create(
@@ -400,7 +400,7 @@ class Resource(TimeStampedModel, ReviewModel):
             user.set_password(key)
             user.save()
 
-            send_email_async(
+            send_email_async(  # TODO: migrate away from django-mail-templated
                 "emails/account_created.tpl",
                 {"user": user, "key": key},
                 "info@openeducationweek.org",
@@ -432,7 +432,8 @@ class EmailQueueItem(models.Model):
     STATUS_SENT = "s"
     STATUS_CHOICES = Choices((STATUS_SENT, "sent"), (STATUS_UNSENT, "not sent yet"))
 
-    template_name = models.CharField(max_length=128)
+    subject = models.CharField(max_length=128)
+    body = models.TextField()
     from_email = models.EmailField()
     created = models.DateTimeField(auto_now_add=True)
     modified = models.DateTimeField(auto_now=True)
@@ -440,23 +441,12 @@ class EmailQueueItem(models.Model):
     status = models.CharField(
         max_length=1, choices=STATUS_CHOICES, default=STATUS_UNSENT
     )
-    # special case: we need to store dictionary -> use json to serialize/deserialize into/from model
-    # TODO: change to JSONField once we migrate back to PostgreSQL
-    context = models.CharField(max_length=512)
     # special case: we need to store list -> use json to serialize/deserialize into/from model
     # TODO: change to JSONField once we migrate back to PostgreSQL
     recipient_list = models.CharField(max_length=512)
     # special case: we need to store list -> use json to serialize/deserialize into/from model
     # TODO: change to JSONField once we migrate back to PostgreSQL
     cc = models.CharField(max_length=512, blank=True)
-
-    def get_context(self):
-        if self.context:
-            return json.loads(self.context)
-        return {}
-
-    def set_context(self, context):
-        self.context = json.dumps(context)
 
     def get_recipient_list(self):
         if self.recipient_list:
@@ -475,16 +465,13 @@ class EmailQueueItem(models.Model):
         self.cc = json.dumps(cc)
 
 
-def send_email_async(
-    template_name, context, from_email, recipient_list, cc=[], priority=1
-):
+def send_email_async(subject, body, from_email, recipient_list, cc=[], priority=1):
     """
     priority: 0 = notifications for staff, 1 = notifications for users
     """
     queue_item = EmailQueueItem.objects.create(
-        template_name=template_name, from_email=from_email, priority=priority
+        subject=subject, body=body, from_email=from_email, priority=priority
     )
-    queue_item.set_context(context)
     queue_item.set_recipient_list(recipient_list)
     queue_item.set_cc(cc)
     queue_item.save()

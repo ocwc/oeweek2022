@@ -132,7 +132,7 @@ def contribute_activity(request, identifier=None):
             }
 
             try:
-                send_email_async(
+                send_email_async(  # TODO: migrate away from django-mail-templated
                     "emails/submission_received.tpl",
                     context,  # {}, # {"user": user, "key": key},
                     "info@openeducationweek.org",
@@ -495,7 +495,13 @@ def submit_resource_feedback(request):
     resource = get_object_or_404(Resource, pk=resource_id)
     if form.is_valid():
         if form.cleaned_data["body"]:
-            # TODO: send email
+            send_email_async(
+                form.cleaned_data["subject"],
+                form.cleaned_data["body"],
+                "info@openeducationweek.org",  # TODO: put into settings
+                [resource.email],
+                cc=["openeducationweek@oeglobal.org"],  # TODO: put into settings
+            )
             return render(request, "web/resource-feedback-sent.html")
         # empty body => nothing to send => go straight back to ...
         return redirect("staff_view")

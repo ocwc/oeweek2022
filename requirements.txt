@@ -21,9 +21,6 @@ django-cors-headers
 # DONOTDELETE -- used in multiple places
 django-filter
 
-# TODO: double-check, that no longet used; then remove
-#django-mail-templated
-
 # DONOTDELETE -- used in web/models.py
 django-model-utils
 
