@@ -105,8 +105,13 @@ class Resource(TimeStampedModel, ReviewModel):
         ("resource", "Resource"), ("project", "Project"), ("event", "Event")
     )
 
+    POST_STATUS_DRAFT = "draft"
+    POST_STATUS_PUBLISH = "publish"
+    POST_STATUS_TRASH = "trash"
     POST_STATUS_TYPES = Choices(
-        ("publish", "Publish"), ("draft", "Draft"), ("trash", "Trash")
+        (POST_STATUS_PUBLISH, "Publish"),
+        (POST_STATUS_DRAFT, "Draft"),
+        (POST_STATUS_TRASH, "Trash"),
     )
 
     EVENT_TYPES = Choices(

@@ -41,9 +41,13 @@
       <strong>Contact:</strong> <a href="mailto:{{ resource.email }}">{{ resource.firstname }} {{ resource.lastname }}</a><br />
       <strong>Institution:</strong> {{ resource.institution }}<br />
       Submitted: {{ resource.created }} (last changed: {{ resource.modified }})<br />
-      <a href="{% url 'staff_reject' resource.id %}" class="bg-red-500 rounded px-2 py-1">reject</a>
-      <a href="{% url 'staff_send_feedback' resource.id %}" class="bg-yellow-500 rounded px-2 py-1">send feedback</a>
-      <a href="{% url 'staff_approve' resource.id %}" class="bg-green-500 rounded px-2 py-1">approve</a>
+
+      <form action="{% url 'staff_approve_action' resource.id %}" method="post">
+        {% csrf_token %}
+        <input type="submit" name="action" value="reject" class="bg-red-500 rounded px-2 py-1">
+        <input type="submit" name="action" value="send feedback" class="bg-yellow-500 rounded px-2 py-1">
+        <input type="submit" name="action" value="approve" class="bg-green-500 rounded px-2 py-1">
+      </form>
     </div>
     <div class="detail-media">
         {% if resour_ce.consolidated_image_url %}

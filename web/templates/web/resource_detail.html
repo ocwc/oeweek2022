@@ -60,9 +60,12 @@
         {% if user.is_staff %}
             <p class="my-6">
                 As staff, you can:
-                <a href="{% url 'staff_reject' obj.id %}" class="bg-red-500 rounded px-2 py-1">reject</a>
-                <a href="{% url 'staff_send_feedback' obj.id %}" class="bg-yellow-500 rounded px-2 py-1">send feedback</a>
-                <a href="{% url 'staff_approve' obj.id %}" class="bg-green-500 rounded px-2 py-1">approve</a> this resource.
+                <form action="{% url 'staff_approve_action' obj.id %}" method="post">
+                  {% csrf_token %}
+                  <input type="submit" name="action" value="reject" class="bg-red-500 rounded px-2 py-1">
+                  <input type="submit" name="action" value="send feedback" class="bg-yellow-500 rounded px-2 py-1">
+                  <input type="submit" name="action" value="approve" class="bg-green-500 rounded px-2 py-1">
+                </form>
             </p>
             <p class="my-6">Or <a href="/admin/web/resource/{{ obj.id }}/change/" class="bg-yellow-500 rounded px-2 py-1">edit this resource</a>.</p>
             <p class="my-6"><a href="{% url 'staff_view' %}">&#8592;Back to approval list</a></p>

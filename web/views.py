@@ -31,8 +31,15 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.pagination import PageNumberPagination
 
-from .forms import ActivityForm, AssetForm
-from .models import Page, Resource, ResourceImage, EmailTemplate, send_email_async
+from .forms import ActivityForm, AssetForm, ResourceFeedbackForm
+from .models import (
+    Page,
+    Resource,
+    ResourceImage,
+    EmailNotificationText,
+    EmailTemplate,
+    send_email_async,
+)
 from .serializers import (
     PageSerializer,
     ResourceSerializer,
@@ -414,19 +421,90 @@ def staff_view(request):
     return render(request, "web/staff.html", context=context)
 
 
-@user_passes_test(is_staff, login_url="/admin/")
-def approve_resource(request, id):
-    pass
+def _fill_email_notification_template(template, resource):
+    initial = {}
+    initial["resource_id"] = resource.id
+    initial["subject"] = template.subject
+
+    args = {}
+    args["firstname"] = resource.firstname
+    args["lastname"] = resource.lastname
+    args["slug2"] = resource.slug
+    args["title"] = resource.title
+    args["uuid"] = resource.uuid
+    args["year"] = resource.year
+    if resource.post_type == "event":
+        args["slug1"] = "event"
+    else:
+        args["slug1"] = "resource"
+    initial["body"] = template.body.format(**args)
+
+    return initial
+
+
+# see staff.html (and some others)
+ACTION_BUTTON_NAME = "action"
+APPROVE_ACTION_BUTTONS = {
+    "approve": EmailNotificationText.ACTION_RES_APPROVED,
+    "send feedback": EmailNotificationText.ACTION_RES_FEEDBACK,
+    "reject": EmailNotificationText.ACTION_RES_REJECTED,
+}
+
+
+def _change_state(resource, action):
+    if action == EmailNotificationText.ACTION_RES_APPROVED:
+        resource.post_status = Resource.POST_STATUS_PUBLISH
+    elif action == EmailNotificationText.ACTION_RES_FEEDBACK:
+        resource.post_status = Resource.POST_STATUS_DRAFT
+    elif action == EmailNotificationText.ACTION_RES_REJECTED:
+        resource.post_status = Resource.POST_STATUS_TRASH
+    else:
+        raise ValueError("unknown action")
+    resource.save()
 
 
 @user_passes_test(is_staff, login_url="/admin/")
-def send_resource_feedback(request, id):
-    pass
+@require_POST
+def approve_action(request, id):
+    if ACTION_BUTTON_NAME not in request.POST:
+        raise ValueError("missing action")
+    action = request.POST["action"]
+    if action not in APPROVE_ACTION_BUTTONS:
+        raise ValueError("unknown action")
+    action = APPROVE_ACTION_BUTTONS[action]
+
+    resource = get_object_or_404(Resource, pk=id)
+    template = get_object_or_404(EmailNotificationText, action=action)
+
+    _change_state(resource, action)
+
+    initial = _fill_email_notification_template(template, resource)
+    form = ResourceFeedbackForm(initial=initial)
+    context = {
+        "form": form,
+        "resource": resource,
+    }
+    return render(request, "web/send-resource-feedback.html", context)
 
 
 @user_passes_test(is_staff, login_url="/admin/")
-def reject_resource(request, id):
-    pass
+@require_POST
+def submit_resource_feedback(request):
+    form = ResourceFeedbackForm(request.POST)
+    resource_id = request.POST.get("resource_id")
+    resource = get_object_or_404(Resource, pk=resource_id)
+    if form.is_valid():
+        if form.cleaned_data["body"]:
+            # TODO: send email
+            return render(request, "web/resource-feedback-sent.html")
+        # empty body => nothing to send => go straight back to ...
+        return redirect("staff_view")
+
+    context = {
+        "form": form,
+        "resource": resource,
+    }
+    return render(request, "web/send-resource-feedback.html", context)
 
 
 class LargeResultsSetPagination(PageNumberPagination):

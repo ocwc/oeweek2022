@@ -1,0 +1,55 @@
+{% extends 'base.html' %}
+
+
+{% block content %}
+
+<h1>Send feedback</h1>
+<div class="card bg-white p-8 lg:p-16 rounded shadow-lg prose">
+    <h2>{{ resource.title }}</h2>
+    <p>Contribution status was set to '{{ resource.post_status }}'.</p>
+    <p>Now you can send the message to the contributor. If you not wish to send a message, then clear the body or simply leave
+    (for example back to <a href="{% url 'staff_view' %}">approval list</a>).</p>
+
+    <form action="{% url 'staff_submit_feedback' %}" method="post" enctype="multipart/form-data">
+    {% csrf_token %}
+
+    {% if form.errors %}
+        <div class="alert alert-error">
+            <p style="background-color: red; color: white;"><strong>This form contains errors. Please scroll down to fix them and submit again.</strong></p>
+            <ul>
+                {% for field in form %}
+                    {% if field.errors %}
+                        {% for error in field.errors %}
+                            <li><a href="#id_{{ field.name }}" class="error">{{ error|escape }}</a></li>
+                        {% endfor %}
+                    {% endif %}
+                {% endfor %}
+            </ul>
+            {% if form.non_field_errors %}
+                {{ form.non_field_errors }}
+            {% endif %}
+        </div>
+    {% endif %}
+
+    <hr class="my-8">
+    <br>
+
+    <p>
+        {{ form.subject.label_tag }}
+        {{ form.subject.errors }}
+        {{ form.subject }}
+    </p>
+
+    <p>
+        {{ form.body.label_tag }}
+        {{ form.body.errors }}
+        {{ form.body }}
+    </p>
+
+    {{ form.resource_id }}
+    <input type="submit" value="Submit" class="button-outline font-bold my-8">
+    </form>
+
+    <p class="my-6"><a href="{% url 'staff_view' %}">&#8592;Back to approval list</a></p>
+</div>
+{% endblock %}
