@@ -280,7 +280,6 @@ def _set_event_day_number(event, tz):
     return event
 
 
-# @login_required(login_url='/admin/')
 def show_events(request):
     request_timezone = request.GET.get("timezone", "local")  # "local" = default
     event_list = (
@@ -331,7 +330,6 @@ def handle_old_event_detail(request, slug):
     return redirect("show_event_detail", year=resource.year, slug=resource.slug)
 
 
-# @login_required(login_url='/admin/')
 def show_event_detail(request, year, slug):
     event = get_object_or_404(Resource, year=year, slug=slug, post_type="event")
     # #todo -- check if event is "published" (redirect to staff login for non-published, show also status info if already logged in)
@@ -344,15 +342,13 @@ def show_event_detail(request, year, slug):
     return render(request, "web/event_detail.html", context=context)
 
 
-# @login_required(login_url='/admin/')
 def show_resources(request):
     resource_list = (
         Resource.objects.all()
         .filter(post_type="resource", year=settings.OEW_YEAR)
-        .order_by(Lower("title"))
+        .order_by(Lower("title"))  # "Lower" = for case-insensitive sorting
         .filter(post_status="publish")
-    )  # .exclude(post_status='trash')
-    # "Lower" = for case-insensitive sorting
+    )
     resource_count = len(resource_list)
 
     for resource in resource_list:
@@ -377,7 +373,6 @@ def handle_old_resource_detail(request, slug):
     return redirect("show_resource_detail", year=resource.year, slug=resource.slug)
 
 
-# @login_required(login_url='/admin/')
 def show_resource_detail(request, year, slug):
     resource = get_object_or_404(Resource, year=year, slug=slug, post_type="resource")
     # #todo -- check if event is "published" (redirect to staff login for non-published, show also status info if already logged in)
