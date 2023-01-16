@@ -3,13 +3,12 @@ import uuid
 
 from django.db import models
 from django.conf import settings
-from django.core.exceptions import ValidationError
+from django.core.exceptions import ObjectDoesNotExist, ValidationError
 from django.core.files.base import ContentFile
 from django.utils.deconstruct import deconstructible
 from django.utils.text import slugify
 from django.contrib.postgres.fields import ArrayField
 from django.contrib.auth import get_user_model
-
 from taggit.managers import TaggableManager
 
 from model_utils import Choices
@@ -375,13 +374,21 @@ class Resource(TimeStampedModel, ReviewModel):
 
         super().save(*args, **kwargs)
 
+    # TODO: duplicate of send_email_async() in contribute_activity() but used in serialized => find out what/why/... and clean-up/de-duplicate
     def send_new_submission_email(self):
-        send_email_async(  # TODO: migrate away from django-mail-templated
-            "emails/submission_received.tpl",
-            {},
-            "info@openeducationweek.org",
-            [self.email],
-        )
+        try:
+            template = EmailNotificationText.objects.get(
+                action=EmailNotificationText.ACTION_RES_NEW
+            )
+            filled = template.fill_from_resource(resource)
+            send_email_async(
+                filled["subject"],
+                filled["body"],
+                "info@openeducationweek.org",
+                [self.email],
+            )
+        except ObjectDoesNotExist as ex:
+            print("WARNING failed to load template for email: %s" % ex)
 
     def send_new_account_email(self, force=False):
         # TODO: check and possibly adjust how that should relate to magiclink accounts
@@ -400,12 +407,19 @@ class Resource(TimeStampedModel, ReviewModel):
             user.set_password(key)
             user.save()
 
-            send_email_async(  # TODO: migrate away from django-mail-templated
-                "emails/account_created.tpl",
-                {"user": user, "key": key},
-                "info@openeducationweek.org",
-                [self.email],
-            )
+            try:
+                template = EmailNotificationText.objects.get(
+                    action=EmailNotificationText.ACTION_ACCOUNT_NEW
+                )
+                # TODO: filling of values into template: {user}, {key}
+                send_email_async(
+                    filled["subject"],
+                    filled["body"],
+                    "info@openeducationweek.org",
+                    [self.email],
+                )
+            except models.Model.DoesNotExist as ex:
+                print("WARNING failed to load template for email: %s" % ex)
 
 
 # TODO: no longer being used, but some code references remain => resolve / remove
@@ -480,21 +494,48 @@ def send_email_async(subject, body, from_email, recipient_list, cc=[], priority=
 
 
 class EmailNotificationText(models.Model):
+    ACTION_ACCOUNT_NEW = "a_n"
+    ACTION_RES_NEW = "r_n"
     ACTION_RES_APPROVED = "r_a"
     ACTION_RES_FEEDBACK = "r_f"
     ACTION_RES_REJECTED = "r_r"
     ACTION_CHOICES = Choices(
+        (ACTION_ACCOUNT_NEW, "account: new"),
+        (ACTION_RES_NEW, "resource: new"),
         (ACTION_RES_APPROVED, "resource: approved"),
         (ACTION_RES_FEEDBACK, "resource: feedback sent"),
         (ACTION_RES_REJECTED, "resource: rejected"),
     )
 
-    action = models.CharField(max_length=3, choices=ACTION_CHOICES)
+    action = models.CharField(max_length=3, choices=ACTION_CHOICES, unique=True)
     subject = models.CharField(max_length=128)
     body = models.TextField(
         blank=True,
         help_text="You can use the following variables in body and title: {firstname}, {lastname}, {title}, {slug1}, {slug2}, {uuid} and {year}. HTML is not allowed.",
     )
+
+    def fill_from_resource(self, resource):
+        """
+        returns dictionary usable for initialization of ResourceFeedbackForm
+        """
+        initial = {}
+        initial["resource_id"] = resource.id
+        initial["subject"] = self.subject
+
+        args = {}
+        args["firstname"] = resource.firstname
+        args["lastname"] = resource.lastname
+        args["slug2"] = resource.slug
+        args["title"] = resource.title
+        args["uuid"] = resource.uuid
+        args["year"] = resource.year
+        if resource.post_type == "event":
+            args["slug1"] = "event"
+        else:
+            args["slug1"] = "resource"
+        initial["body"] = self.body.format(**args)
+
+        return initial
 
 
 # TODO: Profile

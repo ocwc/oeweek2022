@@ -44,3 +44,38 @@
       https://oeweek.oeglobal.org/edit/{uuid}/\r\n\r\nAfter the changes, it will be
       evaluated again and you will be notified.\r\n\r\nMany thanks,\r\n\r\nThe Open
       Education Week Planning Committee\r\n#oeweek"
+- model: web.emailnotificationtext
+  pk: 4
+  fields:
+    action: r_n
+    subject: OE Week submission received
+    body: "Dear Open Education Week Collaborator,\r\n\r\nWe appreciate your
+      contribution to Open Education Week (OE Week).  Your entry has been
+      received and will be reviewed shortly by the OE Week Planning Committee.
+      We will notify you when your submission is approved and posted to the
+      website. If you have questions, please reply to this message.\r\n\r\n
+      If you'd like to edit your entry, \"{title}\", you can do so here:
+      https://oeweek.oeglobal.org/edit/{uuid}/\r\n\r\nOpen Education Week is
+      a global effort built on everyone's contributions.  Please visit the
+      website ( https://www.openeducationweek.org ) regularly for the latest
+      updates and additions to the event.  Take advantage of the promotional
+      materials available for you to download, reuse, remix, and redistribute
+      to promote your own activities and events.\r\n\r\nThis year we invite
+      you to share your OE Week experiences, curate resources, and participate
+      in discussions in our OEG Connect community space for the event at
+      https://connect.oeglobal.org/c/oeweek/33\r\n\r\nIf you have not created
+      an account here we offer a unique invitation link so you can join
+      https://connect.oeglobal.org/invites/jTtdVe5Qsx\r\n\r\nOnce again thank
+      you for helping us make this event a global celebration of the Open
+      Education movement. We look forward to seeing your participation
+      throughout the week.\r\n\r\nMany thanks,\r\n\r\nOpen Education Week
+      Planning Committee\r\n#OEWeek"
+- model: web.emailnotificationtext
+  pk: 5
+  fields:
+    action: a_n
+    subject: 'OEW: Your account to edit submission(s)'
+    body: "Dear OEW Collaborator,\r\n\r\nPlease click on the following link
+      to login and edit your submissions to Open Education Week:\r\n\r\n
+      https://www.openeducationweek.org/user-login/?user={user.username}&key={key}
+      \r\n\r\nMany thanks,\r\nOEW Planning Committee"

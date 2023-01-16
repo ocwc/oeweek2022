@@ -14,6 +14,8 @@ import django.utils.timezone as djtz
 from django.conf import settings
 from django.contrib.auth.decorators import user_passes_test
 from django.core.cache import cache
+from django.core.exceptions import ObjectDoesNotExist
+from django.db import models
 from django.db.models import Q
 from django.db.models.functions import Lower
 from django.http import Http404, HttpRequest, HttpResponse, HttpResponseRedirect
@@ -132,13 +134,19 @@ def contribute_activity(request, identifier=None):
             }
 
             try:
-                send_email_async(  # TODO: migrate away from django-mail-templated
-                    "emails/submission_received.tpl",
-                    context,  # {}, # {"user": user, "key": key},
+                template = EmailNotificationText.objects.get(
+                    action=EmailNotificationText.ACTION_RES_NEW
+                )
+                filled = template.fill_from_resource(resource)
+                send_email_async(
+                    filled["subject"],
+                    filled["body"],
                     "info@openeducationweek.org",
                     [resource.email],
                     cc=["openeducationweek@oeglobal.org"],
                 )
+            except ObjectDoesNotExist as ex:
+                print("WARNING failed to load template for email: %s" % ex)
             except Exception as ex:
                 print("Failed to send email to %s: %s" % (resource.email, ex))
 
@@ -421,27 +429,6 @@ def staff_view(request):
     return render(request, "web/staff.html", context=context)
 
 
-def _fill_email_notification_template(template, resource):
-    initial = {}
-    initial["resource_id"] = resource.id
-    initial["subject"] = template.subject
-
-    args = {}
-    args["firstname"] = resource.firstname
-    args["lastname"] = resource.lastname
-    args["slug2"] = resource.slug
-    args["title"] = resource.title
-    args["uuid"] = resource.uuid
-    args["year"] = resource.year
-    if resource.post_type == "event":
-        args["slug1"] = "event"
-    else:
-        args["slug1"] = "resource"
-    initial["body"] = template.body.format(**args)
-
-    return initial
-
-
 # see staff.html (and some others)
 ACTION_BUTTON_NAME = "action"
 APPROVE_ACTION_BUTTONS = {
@@ -478,7 +465,7 @@ def approve_action(request, id):
 
     _change_state(resource, action)
 
-    initial = _fill_email_notification_template(template, resource)
+    initial = template.fill_from_resource(resource)
     form = ResourceFeedbackForm(initial=initial)
     context = {
         "form": form,
