@@ -50,7 +50,6 @@ urlpatterns = (
         url(r"^api-auth/", include("rest_framework.urls", namespace="rest_framework")),
         url(r"^api-token-auth/", rest_framework_jwt.views.obtain_jwt_token),
         url(r"^api-token-refresh/", rest_framework_jwt.views.refresh_jwt_token),
-        path("auth/", include("magiclink.urls", namespace="magiclink")),
         url(r"^export/resources/$", ExportResources.as_view(), name="resource_export"),
         url(r"^$", views.index, name="web_index"),
         url(r"^submit$", RedirectView.as_view(url="/contribute/", permanent=False)),
@@ -137,7 +136,6 @@ urlpatterns = (
         url(r"^about/faq/$", RedirectView.as_view(url="/pages/faq/", permanent=True)),
         url(r"^about/2023/$", RedirectView.as_view(url="/pages/2023/", permanent=True)),
         path("pages/", include(wagtail_urls)),
-        path("profile/", include("contributor_profile.urls", namespace="c_profile")),
         # path("search/", search_views.search, name="search"),
         url(r"^set-timezone/$", views.set_timezone, name="set_timezone"),
         url(
@@ -149,3 +147,9 @@ urlpatterns = (
     + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
     + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
 )
+
+if settings.SIGNUP_ENABLED:
+    urlpatterns += [
+        path("auth/", include("magiclink.urls", namespace="magiclink")),
+        path("profile/", include("contributor_profile.urls", namespace="c_profile")),
+    ]
