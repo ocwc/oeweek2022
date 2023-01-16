@@ -50,7 +50,7 @@
         <a href="resource.detail_url"><img src="{{ resource.consolidated_image_url }}" class="object-cover h-150px md:h-120px"></a>
         {% else %}
           {% load static %}
-          <a href="resource.detail_url">
+          <a href="{{ resource.detail_url }}">
             {% if resource.post_type == 'event' %}
             <img rel="stylesheet" src="{% static 'web/images/placeholder-event-sm.png' %}" class="mb-4 w-full">
             {% else %}
