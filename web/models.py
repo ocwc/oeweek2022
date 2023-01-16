@@ -384,7 +384,7 @@ class Resource(TimeStampedModel, ReviewModel):
             send_email_async(
                 filled["subject"],
                 filled["body"],
-                "info@openeducationweek.org",
+                settings.EMAIL_NOTIF_FROM,
                 [self.email],
             )
         except ObjectDoesNotExist as ex:
@@ -415,7 +415,7 @@ class Resource(TimeStampedModel, ReviewModel):
                 send_email_async(
                     filled["subject"],
                     filled["body"],
-                    "info@openeducationweek.org",
+                    settings.EMAIL_NOTIF_FROM,
                     [self.email],
                 )
             except models.Model.DoesNotExist as ex:

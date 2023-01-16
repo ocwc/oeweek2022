@@ -108,6 +108,8 @@ TEMPLATES = [
 WSGI_APPLICATION = "oerweekapi.wsgi.application"
 
 EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
+EMAIL_NOTIF_FROM = "info@openeducationweek.org"
+EMAIL_NOTIF_CC = ["openeducationweek@oeglobal.org"]
 
 # Internationalization
 # https://docs.djangoproject.com/en/1.8/topics/i18n/

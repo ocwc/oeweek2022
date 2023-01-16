@@ -141,9 +141,9 @@ def contribute_activity(request, identifier=None):
                 send_email_async(
                     filled["subject"],
                     filled["body"],
-                    "info@openeducationweek.org",
+                    settings.EMAIL_NOTIF_FROM,
                     [resource.email],
-                    cc=["openeducationweek@oeglobal.org"],
+                    cc=settings.EMAIL_NOTIF_CC,
                 )
             except ObjectDoesNotExist as ex:
                 print("WARNING failed to load template for email: %s" % ex)
@@ -485,9 +485,9 @@ def submit_resource_feedback(request):
             send_email_async(
                 form.cleaned_data["subject"],
                 form.cleaned_data["body"],
-                "info@openeducationweek.org",  # TODO: put into settings
+                settings.EMAIL_NOTIF_FROM,
                 [resource.email],
-                cc=["openeducationweek@oeglobal.org"],  # TODO: put into settings
+                cc=settings.EMAIL_NOTIF_CC,
             )
             return render(request, "web/resource-feedback-sent.html")
         # empty body => nothing to send => go straight back to ...
