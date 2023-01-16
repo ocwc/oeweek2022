@@ -408,6 +408,7 @@ class Resource(TimeStampedModel, ReviewModel):
             )
 
 
+# TODO: no longer being used, but some code references remain => resolve / remove
 class EmailTemplate(models.Model):
     name = models.CharField(max_length=128)
     subject = models.CharField(max_length=255)
@@ -490,7 +491,10 @@ class EmailNotificationText(models.Model):
 
     action = models.CharField(max_length=3, choices=ACTION_CHOICES)
     subject = models.CharField(max_length=128)
-    body = models.TextField(blank=True)
+    body = models.TextField(
+        blank=True,
+        help_text="You can use the following variables in body and title: {firstname}, {lastname}, {title}, {slug1}, {slug2}, {uuid} and {year}. HTML is not allowed.",
+    )
 
 
 # TODO: Profile
