@@ -6,9 +6,9 @@ from .models import (
     Page,
     Resource,
     Category,
-    EmailTemplate,
     ResourceImage,
     EmailQueueItem,
+    EmailNotificationText,
 )
 
 
@@ -54,10 +54,6 @@ class CategoryAdmin(admin.ModelAdmin):
     pass
 
 
-class EmailTemplateAdmin(admin.ModelAdmin):
-    pass
-
-
 class ResourceImageAdmin(admin.ModelAdmin):
     pass
 
@@ -66,9 +62,13 @@ class EmailQueueItemAdmin(admin.ModelAdmin):
     pass
 
 
+class EmailNotificationTextAdmin(admin.ModelAdmin):
+    pass
+
+
 admin.site.register(Resource, ResourceAdmin)
 admin.site.register(Page, PageAdmin)
 admin.site.register(Category, CategoryAdmin)
-admin.site.register(EmailTemplate, EmailTemplateAdmin)
 admin.site.register(ResourceImage, ResourceImageAdmin)
 admin.site.register(EmailQueueItem, EmailQueueItemAdmin)
+admin.site.register(EmailNotificationText, EmailNotificationTextAdmin)

@@ -302,3 +302,30 @@ class AssetForm(ModelForm):
         label="Event time zone",
         widget=forms.TextInput(attrs={"class": "w-full"}),
     )
+
+
+class ResourceFeedbackForm(ModelForm):
+    class Meta:
+        model = Resource
+        fields = [
+            "resource_id",  # event vs. resource
+            "subject",
+            "body",
+        ]
+
+    subject = forms.CharField(
+        required=False,
+        label="Subject",
+        widget=forms.TextInput(attrs={"class": "w-full"}),
+    )
+
+    body = forms.CharField(
+        required=False,
+        label="Body",
+        widget=forms.Textarea(attrs={"class": "w-full"}),
+    )
+
+    resource_id = forms.CharField(
+        required=True,
+        widget=forms.HiddenInput(),
+    )

@@ -3,8 +3,7 @@ import pytz
 from datetime import datetime, timedelta
 
 from django.conf import settings
-
-from mail_templated import send_mail as send_templated_mail
+from django.core.mail import EmailMessage
 
 from .models import EmailQueueItem
 
@@ -13,20 +12,15 @@ from .models import EmailQueueItem
 SEND_EMAIL_BATCH_SIZE = 10
 
 
-def send_email(template_name, context, from_email, recipient_list, cc):
-    return send_templated_mail(
-        template_name, context, from_email, recipient_list, cc=cc
-    )
-
-
 def __process_email_queue_item(queue_item):
-    count = send_email(
-        queue_item.template_name,
-        queue_item.get_context(),
+    email = EmailMessage(
+        queue_item.subject,
+        queue_item.body,
         queue_item.from_email,
         queue_item.get_recipient_list(),
-        queue_item.get_cc(),
+        cc=queue_item.get_cc(),
     )
+    count = email.send()
     if count > 0:
         print("email %d sent" % queue_item.id)
         queue_item.status = EmailQueueItem.STATUS_SENT

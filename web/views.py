@@ -9,15 +9,20 @@ import xlwt
 from itertools import groupby
 from datetime import datetime, timezone
 
-from django.views.generic import View
-from django.http import Http404, HttpRequest, HttpResponse, HttpResponseRedirect
+import django.utils.timezone as djtz
+
+from django.conf import settings
+from django.contrib.auth.decorators import user_passes_test
+from django.core.cache import cache
+from django.core.exceptions import ObjectDoesNotExist
+from django.db import models
 from django.db.models import Q
 from django.db.models.functions import Lower
-from django.conf import settings
-from django.core.cache import cache
-from django.shortcuts import redirect
+from django.http import Http404, HttpRequest, HttpResponse, HttpResponseRedirect
+from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse
 from django.views.decorators.http import require_POST
+from django.views.generic import View
 
 from braces.views import LoginRequiredMixin
 
@@ -28,8 +33,15 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.pagination import PageNumberPagination
 
-from .forms import ActivityForm, AssetForm
-from .models import Page, Resource, ResourceImage, EmailTemplate, send_email_async
+from .forms import ActivityForm, AssetForm, ResourceFeedbackForm
+from .models import (
+    Page,
+    Resource,
+    ResourceImage,
+    EmailNotificationText,
+    EmailTemplate,
+    send_email_async,
+)
 from .serializers import (
     PageSerializer,
     ResourceSerializer,
@@ -46,14 +58,13 @@ from .utils import (
     guess_missing_activity_fields_async,
 )
 
-from django.contrib.auth.decorators import login_required
-from django.shortcuts import get_object_or_404, render
-
-import django.utils.timezone as djtz
-
 
 ALLOWED_TAGS = bleach.sanitizer.ALLOWED_TAGS
 ALLOWED_TAGS += ["p"]
+
+
+def is_staff(user):
+    return user.is_staff
 
 
 def index(request):
@@ -123,13 +134,19 @@ def contribute_activity(request, identifier=None):
             }
 
             try:
-                send_email_async(
-                    "emails/submission_received.tpl",
-                    context,  # {}, # {"user": user, "key": key},
-                    "info@openeducationweek.org",
-                    [resource.email],
-                    cc=["openeducationweek@oeglobal.org"],
+                template = EmailNotificationText.objects.get(
+                    action=EmailNotificationText.ACTION_RES_NEW
                 )
+                filled = template.fill_from_resource(resource)
+                send_email_async(
+                    filled["subject"],
+                    filled["body"],
+                    settings.EMAIL_NOTIF_FROM,
+                    [resource.email],
+                    cc=settings.EMAIL_NOTIF_CC,
+                )
+            except ObjectDoesNotExist as ex:
+                print("WARNING failed to load template for email: %s" % ex)
             except Exception as ex:
                 print("Failed to send email to %s: %s" % (resource.email, ex))
 
@@ -278,7 +295,6 @@ def _set_event_day_number(event, tz):
     return event
 
 
-# @login_required(login_url='/admin/')
 def show_events(request):
     request_timezone = request.GET.get("timezone", "local")  # "local" = default
     event_list = (
@@ -329,10 +345,10 @@ def handle_old_event_detail(request, slug):
     return redirect("show_event_detail", year=resource.year, slug=resource.slug)
 
 
-# @login_required(login_url='/admin/')
 def show_event_detail(request, year, slug):
     event = get_object_or_404(Resource, year=year, slug=slug, post_type="event")
-    # #todo -- check if event is "published" (throw 404 for drafts / trash)
+    # #todo -- check if event is "published" (redirect to staff login for non-published, show also status info if already logged in)
+    # #toto -- filter out trash
     event.consolidated_image_url = event.get_image_url_for_detail()
     context = {
         "obj": event,
@@ -341,15 +357,13 @@ def show_event_detail(request, year, slug):
     return render(request, "web/event_detail.html", context=context)
 
 
-# @login_required(login_url='/admin/')
 def show_resources(request):
     resource_list = (
         Resource.objects.all()
         .filter(post_type="resource", year=settings.OEW_YEAR)
-        .order_by(Lower("title"))
+        .order_by(Lower("title"))  # "Lower" = for case-insensitive sorting
         .filter(post_status="publish")
-    )  # .exclude(post_status='trash')
-    # "Lower" = for case-insensitive sorting
+    )
     resource_count = len(resource_list)
 
     for resource in resource_list:
@@ -374,12 +388,116 @@ def handle_old_resource_detail(request, slug):
     return redirect("show_resource_detail", year=resource.year, slug=resource.slug)
 
 
-# @login_required(login_url='/admin/')
 def show_resource_detail(request, year, slug):
     resource = get_object_or_404(Resource, year=year, slug=slug, post_type="resource")
+    # #todo -- check if event is "published" (redirect to staff login for non-published, show also status info if already logged in)
+    # #toto -- filter out trash
     resource.consolidated_image_url = resource.get_image_url_for_detail()
     context = {"obj": resource}
     return render(request, "web/resource_detail.html", context=context)
+
+
+@user_passes_test(is_staff, login_url="/admin/")
+def staff_view(request):
+    """
+    for now mainly "approval list"
+    """
+    request_timezone = request.GET.get("timezone", "local")
+    resource_list = (
+        Resource.objects.all()
+        .filter(post_status__in=["draft", ""], year=settings.OEW_YEAR)
+        .order_by("modified")
+    )
+
+    resource_count = len(resource_list)
+    for resource in resource_list:
+        resource.consolidated_image_url = resource.get_image_url_for_list()
+        url_args = [resource.year, resource.slug]
+        if resource.post_type == "event":
+            resource.detail_url = reverse("show_event_detail", args=url_args)
+        else:
+            resource.detail_url = reverse("show_resource_detail", args=url_args)
+
+    current_time_utc = djtz.now()
+    context = {
+        "resource_list": resource_list,
+        "current_time_utc": current_time_utc,
+        "resource_count": resource_count,
+        "reload_after_timezone_change": True,
+        "oew_year": settings.OEW_YEAR,  # TODO: add also to other resource views, etc. to get rid of hard-coded "2023" in various templates
+    }
+    return render(request, "web/staff.html", context=context)
+
+
+# see staff.html (and some others)
+ACTION_BUTTON_NAME = "action"
+APPROVE_ACTION_BUTTONS = {
+    "approve": EmailNotificationText.ACTION_RES_APPROVED,
+    "send feedback": EmailNotificationText.ACTION_RES_FEEDBACK,
+    "reject": EmailNotificationText.ACTION_RES_REJECTED,
+}
+
+
+def _change_state(resource, action):
+    if action == EmailNotificationText.ACTION_RES_APPROVED:
+        resource.post_status = Resource.POST_STATUS_PUBLISH
+    elif action == EmailNotificationText.ACTION_RES_FEEDBACK:
+        resource.post_status = Resource.POST_STATUS_DRAFT
+    elif action == EmailNotificationText.ACTION_RES_REJECTED:
+        resource.post_status = Resource.POST_STATUS_TRASH
+    else:
+        raise ValueError("unknown action")
+    resource.save()
+
+
+@user_passes_test(is_staff, login_url="/admin/")
+@require_POST
+def approve_action(request, id):
+    if ACTION_BUTTON_NAME not in request.POST:
+        raise ValueError("missing action")
+    action = request.POST["action"]
+    if action not in APPROVE_ACTION_BUTTONS:
+        raise ValueError("unknown action")
+    action = APPROVE_ACTION_BUTTONS[action]
+
+    resource = get_object_or_404(Resource, pk=id)
+    template = get_object_or_404(EmailNotificationText, action=action)
+
+    _change_state(resource, action)
+
+    initial = template.fill_from_resource(resource)
+    form = ResourceFeedbackForm(initial=initial)
+    context = {
+        "form": form,
+        "resource": resource,
+    }
+    return render(request, "web/send-resource-feedback.html", context)
+
+
+@user_passes_test(is_staff, login_url="/admin/")
+@require_POST
+def submit_resource_feedback(request):
+    form = ResourceFeedbackForm(request.POST)
+    resource_id = request.POST.get("resource_id")
+    resource = get_object_or_404(Resource, pk=resource_id)
+    if form.is_valid():
+        if form.cleaned_data["body"]:
+            send_email_async(
+                form.cleaned_data["subject"],
+                form.cleaned_data["body"],
+                settings.EMAIL_NOTIF_FROM,
+                [resource.email],
+                cc=settings.EMAIL_NOTIF_CC,
+            )
+            return render(request, "web/resource-feedback-sent.html")
+        # empty body => nothing to send => go straight back to ...
+        return redirect("staff_view")
+
+    context = {
+        "form": form,
+        "resource": resource,
+    }
+    return render(request, "web/send-resource-feedback.html", context)
 
 
 class LargeResultsSetPagination(PageNumberPagination):
