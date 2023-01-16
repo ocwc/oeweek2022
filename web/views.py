@@ -9,15 +9,18 @@ import xlwt
 from itertools import groupby
 from datetime import datetime, timezone
 
-from django.views.generic import View
-from django.http import Http404, HttpRequest, HttpResponse, HttpResponseRedirect
+import django.utils.timezone as djtz
+
+from django.conf import settings
+from django.contrib.auth.decorators import user_passes_test
+from django.core.cache import cache
 from django.db.models import Q
 from django.db.models.functions import Lower
-from django.conf import settings
-from django.core.cache import cache
-from django.shortcuts import redirect
+from django.http import Http404, HttpRequest, HttpResponse, HttpResponseRedirect
+from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse
 from django.views.decorators.http import require_POST
+from django.views.generic import View
 
 from braces.views import LoginRequiredMixin
 
@@ -45,11 +48,6 @@ from .utils import (
     days_to_go,
     guess_missing_activity_fields_async,
 )
-
-from django.contrib.auth.decorators import user_passes_test
-from django.shortcuts import get_object_or_404, render
-
-import django.utils.timezone as djtz
 
 
 ALLOWED_TAGS = bleach.sanitizer.ALLOWED_TAGS
