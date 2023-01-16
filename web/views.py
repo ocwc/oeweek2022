@@ -405,7 +405,8 @@ def staff_view(request):
     request_timezone = request.GET.get("timezone", "local")
     resource_list = (
         Resource.objects.all()
-        .filter(post_status__in=["draft", ""], year=settings.OEW_YEAR)
+        .filter(year=settings.OEW_YEAR)
+        .filter(Q(post_status__in=["draft", ""]) | Q(status__in=["new", "feedback"]))
         .order_by("modified")
     )
 
@@ -438,15 +439,19 @@ APPROVE_ACTION_BUTTONS = {
 }
 
 
-def _change_state(resource, action):
+def _change_state(resource, action, reviewer):
     if action == EmailNotificationText.ACTION_RES_APPROVED:
         resource.post_status = Resource.POST_STATUS_PUBLISH
+        resource.status = "approved"
     elif action == EmailNotificationText.ACTION_RES_FEEDBACK:
         resource.post_status = Resource.POST_STATUS_DRAFT
+        resource.status = "feedback"
     elif action == EmailNotificationText.ACTION_RES_REJECTED:
         resource.post_status = Resource.POST_STATUS_TRASH
+        resource.status = "rejected"
     else:
         raise ValueError("unknown action")
+    resource.reviewer = reviewer
     resource.save()
 
 
@@ -463,7 +468,7 @@ def approve_action(request, id):
     resource = get_object_or_404(Resource, pk=id)
     template = get_object_or_404(EmailNotificationText, action=action)
 
-    _change_state(resource, action)
+    _change_state(resource, action, request.user)
 
     initial = template.fill_from_resource(resource)
     form = ResourceFeedbackForm(initial=initial)
