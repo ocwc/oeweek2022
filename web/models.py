@@ -486,6 +486,21 @@ def send_email_async(
     print("email %d put into the queue" % queue_item.id)
 
 
+class EmailNotificationText(models.Model):
+    ACTION_RES_APPROVED = "r_a"
+    ACTION_RES_FEEDBACK = "r_f"
+    ACTION_RES_REJECTED = "r_r"
+    ACTION_CHOICES = Choices(
+        (ACTION_RES_APPROVED, "resource: approved"),
+        (ACTION_RES_FEEDBACK, "resource: feedback sent"),
+        (ACTION_RES_REJECTED, "resource: rejected"),
+    )
+
+    action = models.CharField(max_length=3, choices=ACTION_CHOICES)
+    subject = models.CharField(max_length=128)
+    body = models.TextField(blank=True)
+
+
 # TODO: Profile
 # - map to a user account
 # - add timezone setting

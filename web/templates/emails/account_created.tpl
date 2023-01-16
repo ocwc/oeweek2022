@@ -1,3 +1,5 @@
+{# deprecated, see web.model.EmailNotificationText => TODO: remove #}
+
 {% extends "mail_templated/base.tpl" %}
 
 {% block subject %}
