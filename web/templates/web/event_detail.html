@@ -107,7 +107,7 @@
                 <a href="{% url 'staff_approve' obj.id %}" class="bg-green-500 rounded px-2 py-1">approve</a> this resource.
             </p>
             <p class="my-6">Or <a href="/admin/web/resource/{{ obj.id }}/change/" class="bg-yellow-500 rounded px-2 py-1">edit this resource</a>.</p>
-            <p class="my-6"><a href="{% url 'staff_view' %}">&#8592;Back to approval list</a><p class="my-6">
+            <p class="my-6"><a href="{% url 'staff_view' %}">&#8592;Back to approval list</a></p>
         {% endif %}
 
     </div>
