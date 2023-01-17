@@ -218,28 +218,28 @@
                     </div>
                 </div>
                 <ul class="hidden lg:w-3/4 ml-16 lg:grid grid-cols-3 gap-8">
-                    <ul class="sub-menu flex flex-col gap-3 mb-4">
+                    <ul class="sub-menu flex flex-col gap-1 mb-4">
                         <li class="font-bold mb-2">About</li>
-                        <li class="mb-1">
+                        <li>
                             <a href="/pages/" id="ember14"
                                 class="active ember-view">All About Open Education Week</a>
                         </li>
-                        <li class="mb-1">
+                        <li>
                             <a href="/pages/2023/" id="ember14"
                                 class="active ember-view">About OE Week 2023</a>
                         </li>
-                        <li class="mb-1">
+                        <li>
                             <a href="/pages/faq/" id="ember15" class="ember-view">FAQ</a>
                         </li>
                     </ul>
-                    <ul class="sub-menu flex flex-col gap-3 mb-4 leading-snug">
+                    <ul class="sub-menu flex flex-col gap-1 mb-4 leading-snug">
                         <li class="font-bold mb-2">Participate in #OEweek</li>
-                        <li class="mb-1">
+                        <li>
                             <a href="/contribute/" id="ember17" class="ember-view">Contribute an asset or activity</a>
                         </li>
                         <li><a href="/events/">2023 Activity Schedule</a></li>
                         <li><a href="/resources/">2023 OE Resource Library</a></li>
-                        <li class="mb-1">
+                        <li>
                             <a href="https://connect.oeglobal.org/c/oeweek/33/none" target="_blank"
                                 rel="noopener noreferrer">OEG Connect</a>
                         </li>
@@ -255,9 +255,9 @@
                         {% endif %}
 
                 </ul>
-                <div class="sub-menu flex flex-col gap-3 mb-4">
+                <div class="sub-menu flex flex-col gap-1 mb-4">
                     <h3 class="font-bold mb-2">Join #OEWeek on</h3>
-                    <ul class="flex gap-2 text-xl">
+                    <ul class="flex gap-1 text-xl">
                         <li><a href="https://twitter.com/OEWeek" rel="noopener noreferrer"><i class="fab fa-twitter-square"></i> <span class="hidden">Twitter</span></a></li>
                         <li><a href="https://www.facebook.com/openeducationwk" rel="noopener noreferrer"><i class="fab fa-facebook-square"></i> <span class="hidden">Facebook</span></a></li>
                         <li><a href="https://www.instagram.com/oeweek/"><i class="fab fa-instagram-square"></i></i><span class="hidden">Instagram</span></a></li>
@@ -272,12 +272,18 @@
         </div>
     </div> {% comment %} .site-footer  {% endcomment %}
 
-    <footer class="site--footer2 bg-blue-800 text-gray-100 pb-10 lg:pt-20">
-        <div class="container flex flex-col lg:flex-row justify-between border-t border-white pt-8 text-sm">
-            <div class="w-full lg:w-8/12 pb-4 lg:pb-0">
-                Content on this site is licensed under a <a class="underline"
-                    href="https://creativecommons.org/licenses/by/4.0/">Creative Commons
-                    Attribution 4.0 International License</a>, except where otherwise noted.
+    <footer class="site--footer2 bg-blue-800 text-gray-100 pb-10 lg:pt-10">
+        <div class="container flex flex-col lg:flex-row justify-between text-sm">
+            <div class="w-full lg:w-8/12 pb-4 lg:pb-0 flex gap-2">
+                <div class="cc-icons mr-1 flex-grow-0 flex-shrink-0">
+                    <i class="fa-brands fa-creative-commons fa-2x"></i>
+                    <i class="fa-brands fa-creative-commons-by fa-2x"></i>
+                </div>
+                <p>
+                    Content on this site is licensed under a <a class="underline"
+                        href="https://creativecommons.org/licenses/by/4.0/">Creative Commons
+                        Attribution 4.0 International License</a>, except where otherwise noted.
+                </p>
             </div>
             <div class="flex lg:justify-end lg:items-start w-full lg:w-4/12">
                 <a class="mb-0! underline" href="https://www.oeglobal.org/terms-of-use-and-privacy-policy/"
