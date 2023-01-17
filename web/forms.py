@@ -36,6 +36,7 @@ class ActivityForm(ModelForm):
             # 'image',
             "user_image",
             "event_source_timezone",
+            "newsletter",
         ]
 
     # uuid = forms.UUIDField(
@@ -195,6 +196,7 @@ class AssetForm(ModelForm):
             # 'image',
             "user_image",
             "event_source_timezone",
+            "newsletter",
         ]
 
     # uuid = forms.UUIDField(

@@ -273,6 +273,8 @@ class Resource(TimeStampedModel, ReviewModel):
     twitter_personal = models.CharField(blank=True, null=True, max_length=255)
     twitter_institution = models.CharField(blank=True, null=True, max_length=255)
 
+    newsletter = models.BooleanField(default=False)
+
     @property
     def twitter_personal_url(self):
         t = self.twitter_personal
