@@ -234,12 +234,6 @@
                     </ul>
                     <ul class="sub-menu flex flex-col gap-1 mb-4 leading-snug">
                         <li class="font-bold mb-2">Participate in #OEweek</li>
-                        <!--
-                        <li>
-                            <a href="/page/contribute/" id="ember16"
-                                class="ember-view">Ways to contribute</a>
-                        </li>
-                        -->
                         <li>
                             <a href="/contribute/" id="ember17" class="ember-view">Contribute an asset or activity</a>
                         </li>
@@ -250,7 +244,6 @@
                                 rel="noopener noreferrer">OEG Connect</a>
                         </li>
                         {% if user.is_authenticated %}
-                            {# TODO: find a better place for logout link - it is usually expected at top-right where "profile" link is #}
                             {% if user.is_staff %}
                                 <li><a href="{% url 'admin:logout' %}?next=/">Log out</a></li>
                             {% elif signup_enabled  %}
