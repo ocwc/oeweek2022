@@ -34,7 +34,6 @@ INSTALLED_APPS = (
     "rest_auth",
     "django_wysiwyg",
     "ckeditor",
-    "mail_templated",
     "model_utils",
     "corsheaders",
     "web",
