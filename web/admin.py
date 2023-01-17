@@ -63,7 +63,11 @@ class EmailQueueItemAdmin(admin.ModelAdmin):
 
 
 class EmailNotificationTextAdmin(admin.ModelAdmin):
-    pass
+    list_display = (
+        "id",
+        "action",
+        "subject",
+    )
 
 
 admin.site.register(Resource, ResourceAdmin)
