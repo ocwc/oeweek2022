@@ -76,24 +76,24 @@ class ActivityForm(ModelForm):
 
     twitter_institution = forms.CharField(
         required=False,
-        label="Institutional Twitter",
+        label="Organizational Twitter",
         widget=forms.TextInput(attrs={"class": "w-full"}),
     )
 
     institution = forms.CharField(
         required=True,
-        label="Institution or Organization (*)",
+        label="Name of Institution, Organization, Initiative (*)",
         widget=forms.TextInput(attrs={"class": "w-full"}),
     )
 
     institution_url = forms.CharField(
         required=True,
-        label="Website of Institution or Organization (*)",
+        label="Website of Institution, Organization, Initiative (*)",
         widget=forms.TextInput(attrs={"class": "w-full"}),
     )
 
     institution_is_oeg_member = forms.TypedChoiceField(
-        label="Is the institution an OEGlobal member?",
+        label="Is the organization an OEGlobal member?",
         coerce=lambda x: x == "True",
         choices=((None, "Please select an option below"), (False, "No"), (True, "Yes")),
     )
@@ -161,7 +161,7 @@ class ActivityForm(ModelForm):
 
     user_image = forms.ImageField(
         required=False,
-        label="Screenshot of the activity website",
+        label="Image",
     )
 
     event_source_timezone = forms.CharField(
@@ -236,24 +236,24 @@ class AssetForm(ModelForm):
 
     twitter_institution = forms.CharField(
         required=False,
-        label="Institutional Twitter",
+        label="Organizational Twitter",
         widget=forms.TextInput(attrs={"class": "w-full"}),
     )
 
     institution = forms.CharField(
         required=True,
-        label="Institution or Organization (*)",
+        label="Name of Institution, Organization, Initiative (*)",
         widget=forms.TextInput(attrs={"class": "w-full"}),
     )
 
     institution_url = forms.CharField(
         required=True,
-        label="Website of Institution or Organization (*)",
+        label="Website of Institution, Organization, Initiative (*)",
         widget=forms.TextInput(attrs={"class": "w-full"}),
     )
 
     institution_is_oeg_member = forms.TypedChoiceField(
-        label="Is the institution an OEGlobal member?",
+        label="Is the organization an OEGlobal member?",
         coerce=lambda x: x == "True",
         choices=((None, "Please select an option below"), (False, "No"), (True, "Yes")),
     )
@@ -296,7 +296,7 @@ class AssetForm(ModelForm):
 
     user_image = forms.ImageField(
         required=False,
-        label="Screenshot of the activity website",
+        label="Image",
     )
 
     event_source_timezone = forms.CharField(
