@@ -54,7 +54,6 @@
     </title>
     <meta name="ember-cli-head-end" content="">
     <link rel="icon" type="image/png" sizes="32x32" href="{% static 'web/images/favicon.png' %}">
-    <script src="{% static 'web/js/htmx.min.js' %}" defer></script>
     {% block extra_head %}
     {# Override this in templates to add extra stylesheets #}
     {% endblock %}
@@ -117,6 +116,21 @@
                                 </div>
                             </div>
 
+                            {% if user.is_staff %}
+                            <div class="ember-basic-dropdown">
+                                <div id="ember6"
+                                    class="ember-view ember-basic-dropdown-trigger ember-basic-dropdown-trigger--in-place"
+                                    role="button" tabindex="0" data-ebd-id="ember5-trigger"
+                                    aria-owns="ember-basic-dropdown-content-ember5" aria-expanded="false">
+
+                                    <li class="menu-item">
+                                        <a href="{% url 'staff_view' %}"
+                                            id="ember5" class="ember-view"><i class="fal fa-briefcase"></i> Staff</a>
+                                    </li>
+                                </div>
+                            </div>
+                            {% endif %}
+
                             <div class="ember-basic-dropdown">
                                 <div id="ember6"
                                     class="ember-view ember-basic-dropdown-trigger ember-basic-dropdown-trigger--in-place"
@@ -127,18 +141,10 @@
                                         <a href="/pages/"
                                             id="ember5" class="ember-view"><i class="fal fa-info-circle"></i> About</a>
                                     </li>
-
-                                    <!--
-                                    <li class="menu-item has-children">
-                                    <button type=button>About</button>
-                                    <div id=ember-basic-dropdown-content-ember5 class=ember-basic-dropdown-content-placeholder style=display:none></div>
-                                    </li>
-                                    -->
-
                                 </div>
                             </div>
 
-                            {% if user.is_authenticated %}
+                            {% if signup_enabled and user.is_authenticated %}
                             <div class="ember-basic-dropdown">
                                 <div id="ember6"
                                     class="ember-view ember-basic-dropdown-trigger ember-basic-dropdown-trigger--in-place"
@@ -159,14 +165,6 @@
                                     class="ember-view ember-basic-dropdown-trigger ember-basic-dropdown-trigger--in-place"
                                     role="button" tabindex="0" data-ebd-id="ember5-trigger"
                                     aria-owns="ember-basic-dropdown-content-ember5" aria-expanded="false">
-
-                                    <!--
-                                    <li class="md:ml-4">
-                                        <a href="/contribute/" id="ember13"
-                                            class="ember-view button-outline"><i class="fal fa-cloud-upload"></i> Contribute</a>
-                                    </li>
-                                    -->
-
                                 </div>
                             </div>
 
@@ -255,10 +253,10 @@
                             {# TODO: find a better place for logout link - it is usually expected at top-right where "profile" link is #}
                             {% if user.is_staff %}
                                 <li><a href="{% url 'admin:logout' %}?next=/">Log out</a></li>
-                            {% else %}
+                            {% elif signup_enabled  %}
                                 <li><a href="{% url 'magiclink:logout' %}?next=/">Log out</a></li>
                             {% endif %}
-                        {% else %}
+                        {% elif signup_enabled %}
                             <li><a href="{% url 'magiclink:signup' %}">Sign up</a></li>
                             <li><a href="{% url 'magiclink:login' %}">Log in</a></li>
                         {% endif %}
@@ -282,24 +280,6 @@
     </div> {% comment %} .site-footer  {% endcomment %}
 
     <footer class="site--footer2 bg-blue-800 text-gray-100 pb-10 lg:pt-10">
-        <div class="container flex flex-col lg:flex-row justify-between text-sm pb-8">
-            <div class="w-full mb-4">
-                {% load tz %}
-                {% get_current_timezone as current_timezone %}
-                <form hx-post="{% if reload_after_timezone_change %}{% url 'set_timezone_reload' %}{% else %}{% url 'set_timezone' %}{% endif %}"
-                      hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}'
-                      hx-trigger="change" hx-target="#timezone_result">
-                    <label for="timezone">Time zone:</label>
-                    <select name="timezone" class="px-3 py-2 rounded-lg text-gray-800">
-                        {% for tz in timezones %}
-                        <option value="{{ tz }}"{% if tz == current_timezone %} selected{% endif %}>{{ tz }}</option>
-                        {% endfor %}
-                    </select>
-                </form>
-            </div>
-            <div class="hidden" id="timezone_result">{{ current_timezone }}</div>
-        </div>
-
         <div class="container flex flex-col lg:flex-row justify-between text-sm">
             <div class="w-full lg:w-8/12 pb-4 lg:pb-0 flex gap-2">
                 <div class="cc-icons mr-1 flex-grow-0 flex-shrink-0">

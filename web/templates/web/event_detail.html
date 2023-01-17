@@ -67,7 +67,7 @@
                 hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}'
                 hx-trigger="change" hx-target="#timezone_result">
             <i class="fal fa-calendar-star"></i> <strong>Date and Time</strong>: {{ obj.event_time|date:'M d, Y H:i' }}
-            <select name="timezone" xxx-class="w-full lg:w-1/4">
+            <select name="timezone" class="px-3 py-2 rounded-lg">
                 {% for tz in timezones %}
                 <option value="{{ tz }}"{% if tz == current_timezone %} selected{% endif %}>{{ tz }}</option>
                 {% endfor %}
