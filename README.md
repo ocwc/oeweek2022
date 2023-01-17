@@ -33,3 +33,22 @@ For source code formatting, etc.:
 ## Deployment
 
 see [README in ansible subdirectory](ansible/README.md)
+
+### Special case: front-end only
+
+In case you are going to do only local development focused on front-end (e.g. no need for scheduled tasks like screenshot fetching. etc.)
+then above mentioned `ansible/README.md` still applies but:
+
+* `localsettings.py`: add following
+
+```
+FE_DEPLOYMENT = True
+```
+
+* `pip install -r requirements.txt`: do following instead after `BASE_DIR = ...`
+
+```
+pip install -r requirements-fe.txt
+```
+
+The rest should be the same.

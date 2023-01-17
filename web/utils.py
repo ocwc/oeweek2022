@@ -7,7 +7,9 @@ from rest_framework_jwt.utils import jwt_payload_handler
 from rest_framework_json_api.exceptions import exception_handler
 from sentry_sdk import capture_message, set_context
 
-from django_q.tasks import async_task
+# special case for "front-end deployment" with "back-end stuff" not installed:
+if not settings.FE_DEPLOYMENT:
+    from django_q.tasks import async_task
 
 from .data import GC
 from .models import Resource
@@ -135,6 +137,11 @@ def guess_missing_location(resource_id):
 
 
 def guess_missing_activity_fields_async(resource):
+    if settings.FE_DEPLOYMENT:
+        print(
+            "WARNING, back-end stuff disabled => guessing of missing activity fields skipped"
+        )
+        return
     if _abort_needed(resource):
         return
     async_task(guess_missing_location, resource.id)
