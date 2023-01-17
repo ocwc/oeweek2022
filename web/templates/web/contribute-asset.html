@@ -58,7 +58,7 @@
     <p>
         {{ form.content.label_tag }}
         {{ form.content.errors }}
-        <br>Include a summary of the asset. What does it do? Who can use it and how can it be used? What are the expected outcomes of using the asset?
+        <br>Include a short summary of the resource. What does it do? Who can use it and how can it be used? What are the expected outcomes of using the asset?
         <br><em>Suggested length: 50-500 words. Feel free to also provide the description in your own language)</em>
 
         {{ form.content }}
@@ -72,10 +72,11 @@
     </p>
 
     <p>
-    	{{ form.user_image.label_tag }}
-    	{{ form.user_image.errors }}
-    	<br><em>Recommended size: 584x232 pixels</em>
-    	{{ form.user_image }}
+        {{ form.user_image.label_tag }}
+        {{ form.user_image.errors }}
+        <br>Share an image that is representative of your asset - logo, symbol, icon, graphics, team photo, etc. If no image is provided a screenshot of your website will be uploaded.
+        <br><em>Recommended size: 584x232 pixels</em>
+        {{ form.user_image }}
    	</p>
 
     <p>
