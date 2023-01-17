@@ -16,6 +16,13 @@ from .models import Resource
 from .serializers import SubmissionResourceSerializer
 
 
+def inject_template_variables(request):
+    return {
+        "contributions_open": contribution_period_is_now(),
+        "signup_enabled": settings.SIGNUP_ENABLED,
+    }
+
+
 def custom_jwt_payload_handler(user):
     payload = jwt_payload_handler(user)
 
