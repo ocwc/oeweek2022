@@ -87,6 +87,21 @@
                     <nav id="mainMenu" role="navigation" class="nav-primary lg:block flex hidden">
                         <ul class="nav nav-dropdown flex gap-4 flex-col lg:flex-row lg:items-center">
 
+                            {% if contributions_open == True and not user.is_staff %}
+                            <div class="ember-basic-dropdown">
+                                <div id="ember6"
+                                    class="ember-view ember-basic-dropdown-trigger ember-basic-dropdown-trigger--in-place"
+                                    role="button" tabindex="0" data-ebd-id="ember5-trigger"
+                                    aria-owns="ember-basic-dropdown-content-ember5" aria-expanded="false">
+
+                                    <li class="menu-item">
+                                        <a href="/contribute/"
+                                            id="ember5" class="ember-view"><i class="fal fa-box"></i> Contribute</a>
+                                    </li>
+
+                                </div>
+                            </div>
+	                        {% endif %}
 
                             <div class="ember-basic-dropdown">
                                 <div id="ember6"
@@ -234,9 +249,11 @@
                     </ul>
                     <ul class="sub-menu flex flex-col gap-1 mb-4 leading-snug">
                         <li class="font-bold mb-2">Participate in #OEweek</li>
+                        {% if contributions_open == True %}
                         <li>
                             <a href="/contribute/" id="ember17" class="ember-view">Contribute an asset or activity</a>
                         </li>
+                        {% endif %}
                         <li><a href="/events/">2023 Activity Schedule</a></li>
                         <li><a href="/resources/">2023 OE Resource Library</a></li>
                         <li>
