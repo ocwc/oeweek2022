@@ -3,6 +3,7 @@ import os
 import datetime
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+FE_DEPLOYMENT = False
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/1.8/howto/deployment/checklist/
@@ -34,7 +35,6 @@ INSTALLED_APPS = (
     "rest_auth",
     "django_wysiwyg",
     "ckeditor",
-    "mail_templated",
     "model_utils",
     "corsheaders",
     "web",
@@ -59,8 +59,6 @@ INSTALLED_APPS = (
     "wagtail",
     # required by WagTail stuff
     "modelcluster",
-    # required for automatic screenshots
-    "django_q",
 )
 
 MIDDLEWARE = [
@@ -266,3 +264,9 @@ if CI:
     from .testsettings import *  # noqa: F401, F403
 else:
     from .localsettings import *  # noqa: F401, F403
+
+if not FE_DEPLOYMENT:
+    INSTALLED_APPS += (
+        # required for automatic screenshots
+        "django_q",
+    )

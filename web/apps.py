@@ -1,5 +1,7 @@
-from django.apps import AppConfig
 from sqlite3 import OperationalError
+
+from django.apps import AppConfig
+from django.conf import settings
 
 
 class WebConfig(AppConfig):
@@ -26,9 +28,15 @@ class WebConfig(AppConfig):
         except OperationalError:
             # to avoid "sqlite3.OperationalError: no such table: django_q_schedule" during initial setup
             # e.g. when we do NOT need full DEV setup with django-q fully operational
-            print("WARNING, failed to schedule task %s" % task_name)
+            print("ERROR: failed to schedule task %s" % task_name)
 
     def ready(self):
+        if settings.FE_DEPLOYMENT:
+            print(
+                "WARNING, back-end stuff disabled => scheduling of back-end tasks skipped"
+            )
+            return
+
         from django_q.tasks import Schedule
 
         self.schedule_task(
