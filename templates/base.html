@@ -54,6 +54,7 @@
     </title>
     <meta name="ember-cli-head-end" content="">
     <link rel="icon" type="image/png" sizes="32x32" href="{% static 'web/images/favicon.png' %}">
+    <script src="{% static 'web/js/htmx.min.js' %}" defer></script>
     {% block extra_head %}
     {# Override this in templates to add extra stylesheets #}
     {% endblock %}
@@ -116,21 +117,6 @@
                                 </div>
                             </div>
 
-                            {% if user.is_staff %}
-                            <div class="ember-basic-dropdown">
-                                <div id="ember6"
-                                    class="ember-view ember-basic-dropdown-trigger ember-basic-dropdown-trigger--in-place"
-                                    role="button" tabindex="0" data-ebd-id="ember5-trigger"
-                                    aria-owns="ember-basic-dropdown-content-ember5" aria-expanded="false">
-
-                                    <li class="menu-item">
-                                        <a href="{% url 'staff_view' %}"
-                                            id="ember5" class="ember-view"><i class="fal fa-briefcase"></i> Staff</a>
-                                    </li>
-                                </div>
-                            </div>
-                            {% endif %}
-
                             <div class="ember-basic-dropdown">
                                 <div id="ember6"
                                     class="ember-view ember-basic-dropdown-trigger ember-basic-dropdown-trigger--in-place"
@@ -141,10 +127,18 @@
                                         <a href="/pages/"
                                             id="ember5" class="ember-view"><i class="fal fa-info-circle"></i> About</a>
                                     </li>
+
+                                    <!--
+                                    <li class="menu-item has-children">
+                                    <button type=button>About</button>
+                                    <div id=ember-basic-dropdown-content-ember5 class=ember-basic-dropdown-content-placeholder style=display:none></div>
+                                    </li>
+                                    -->
+
                                 </div>
                             </div>
 
-                            {% if signup_enabled and user.is_authenticated %}
+                            {% if user.is_authenticated %}
                             <div class="ember-basic-dropdown">
                                 <div id="ember6"
                                     class="ember-view ember-basic-dropdown-trigger ember-basic-dropdown-trigger--in-place"
@@ -165,6 +159,14 @@
                                     class="ember-view ember-basic-dropdown-trigger ember-basic-dropdown-trigger--in-place"
                                     role="button" tabindex="0" data-ebd-id="ember5-trigger"
                                     aria-owns="ember-basic-dropdown-content-ember5" aria-expanded="false">
+
+                                    <!--
+                                    <li class="md:ml-4">
+                                        <a href="/contribute/" id="ember13"
+                                            class="ember-view button-outline"><i class="fal fa-cloud-upload"></i> Contribute</a>
+                                    </li>
+                                    -->
+
                                 </div>
                             </div>
 
@@ -204,11 +206,11 @@
     </div>
 
     <div class="site--footer text-gray-800 pb-10 lg:pt-20">
-
+        
         <div class="container flex flex-col items-start just">
             <div class="flex flex-col lg:flex-row gap-16 w-full justify-between">
                 <div class="w-full lg:w-1/4">
-
+                    
                     <div class="py-8 flex flex-col items-center justify-center gap-2 lg:mb-20 text-center">
                         <div class="text-sm">Organized by</div>
                         <a href="https://www.oeglobal.org/">
@@ -218,46 +220,53 @@
                     </div>
                 </div>
                 <ul class="hidden lg:w-3/4 ml-16 lg:grid grid-cols-3 gap-8">
-                    <ul class="sub-menu flex flex-col gap-3 mb-4">
+                    <ul class="sub-menu flex flex-col gap-1 mb-4">
                         <li class="font-bold mb-2">About</li>
-                        <li class="mb-1">
+                        <li>
                             <a href="/pages/" id="ember14"
                                 class="active ember-view">All About Open Education Week</a>
                         </li>
-                        <li class="mb-1">
+                        <li>
                             <a href="/pages/2023/" id="ember14"
                                 class="active ember-view">About OE Week 2023</a>
                         </li>
-                        <li class="mb-1">
+                        <li>
                             <a href="/pages/faq/" id="ember15" class="ember-view">FAQ</a>
                         </li>
                     </ul>
-                    <ul class="sub-menu flex flex-col gap-3 mb-4 leading-snug">
+                    <ul class="sub-menu flex flex-col gap-1 mb-4 leading-snug">
                         <li class="font-bold mb-2">Participate in #OEweek</li>
-                        <li class="mb-1">
+                        <!--
+                        <li>
+                            <a href="/page/contribute/" id="ember16"
+                                class="ember-view">Ways to contribute</a>
+                        </li>
+                        -->
+                        <li>
                             <a href="/contribute/" id="ember17" class="ember-view">Contribute an asset or activity</a>
                         </li>
                         <li><a href="/events/">2023 Activity Schedule</a></li>
                         <li><a href="/resources/">2023 OE Resource Library</a></li>
-                        <li class="mb-1">
+                        <li>
                             <a href="https://connect.oeglobal.org/c/oeweek/33/none" target="_blank"
                                 rel="noopener noreferrer">OEG Connect</a>
                         </li>
                         {% if user.is_authenticated %}
+                            {# TODO: find a better place for logout link - it is usually expected at top-right where "profile" link is #}
                             {% if user.is_staff %}
                                 <li><a href="{% url 'admin:logout' %}?next=/">Log out</a></li>
-                            {% elif signup_enabled  %}
+                            {% else %}
                                 <li><a href="{% url 'magiclink:logout' %}?next=/">Log out</a></li>
                             {% endif %}
-                        {% elif signup_enabled %}
+                        {% else %}
                             <li><a href="{% url 'magiclink:signup' %}">Sign up</a></li>
                             <li><a href="{% url 'magiclink:login' %}">Log in</a></li>
                         {% endif %}
-
+                        
                 </ul>
-                <div class="sub-menu flex flex-col gap-3 mb-4">
+                <div class="sub-menu flex flex-col gap-1 mb-4">
                     <h3 class="font-bold mb-2">Join #OEWeek on</h3>
-                    <ul class="flex gap-2 text-xl">
+                    <ul class="flex gap-1 text-xl">
                         <li><a href="https://twitter.com/OEWeek" rel="noopener noreferrer"><i class="fab fa-twitter-square"></i> <span class="hidden">Twitter</span></a></li>
                         <li><a href="https://www.facebook.com/openeducationwk" rel="noopener noreferrer"><i class="fab fa-facebook-square"></i> <span class="hidden">Facebook</span></a></li>
                         <li><a href="https://www.instagram.com/oeweek/"><i class="fab fa-instagram-square"></i></i><span class="hidden">Instagram</span></a></li>
@@ -267,17 +276,41 @@
                 </div>
             </div>
             </div>
-
-
+            
+            
         </div>
     </div> {% comment %} .site-footer  {% endcomment %}
 
-    <footer class="site--footer2 bg-blue-800 text-gray-100 pb-10 lg:pt-20">
-        <div class="container flex flex-col lg:flex-row justify-between border-t border-white pt-8 text-sm">
-            <div class="w-full lg:w-8/12 pb-4 lg:pb-0">
-                Content on this site is licensed under a <a class="underline"
-                    href="https://creativecommons.org/licenses/by/4.0/">Creative Commons
-                    Attribution 4.0 International License</a>, except where otherwise noted.
+    <footer class="site--footer2 bg-blue-800 text-gray-100 pb-10 lg:pt-10">
+        <div class="container flex flex-col lg:flex-row justify-between text-sm pb-8">
+            <div class="w-full mb-4">
+                {% load tz %}
+                {% get_current_timezone as current_timezone %}
+                <form hx-post="{% if reload_after_timezone_change %}{% url 'set_timezone_reload' %}{% else %}{% url 'set_timezone' %}{% endif %}"
+                      hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}'
+                      hx-trigger="change" hx-target="#timezone_result">
+                    <label for="timezone">Time zone:</label>
+                    <select name="timezone" class="px-3 py-2 rounded-lg text-gray-800">
+                        {% for tz in timezones %}
+                        <option value="{{ tz }}"{% if tz == current_timezone %} selected{% endif %}>{{ tz }}</option>
+                        {% endfor %}
+                    </select>
+                </form>
+            </div>
+            <div class="hidden" id="timezone_result">{{ current_timezone }}</div>
+        </div>
+
+        <div class="container flex flex-col lg:flex-row justify-between text-sm">
+            <div class="w-full lg:w-8/12 pb-4 lg:pb-0 flex gap-2">
+                <div class="cc-icons mr-1 flex-grow-0 flex-shrink-0">
+                    <i class="fa-brands fa-creative-commons fa-2x"></i>
+                    <i class="fa-brands fa-creative-commons-by fa-2x"></i>
+                </div>
+                <p>
+                    Content on this site is licensed under a <a class="underline"
+                        href="https://creativecommons.org/licenses/by/4.0/">Creative Commons
+                        Attribution 4.0 International License</a>, except where otherwise noted.
+                </p>
             </div>
             <div class="flex lg:justify-end lg:items-start w-full lg:w-4/12">
                 <a class="mb-0! underline" href="https://www.oeglobal.org/terms-of-use-and-privacy-policy/"
@@ -285,7 +318,7 @@
             </div>
         </div>
     </footer>
-
+    
     <nav
         class="mobile-nav block bg-white text-gray-600 fixed md:hidden bottom-0 w-full h-58px z-50 w-screen max-w-full text-xs sf-hidden">
 

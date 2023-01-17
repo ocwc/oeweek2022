@@ -399,34 +399,36 @@ svg {
 }
 
 .site--footer {
-  background-color: #E7EBF6;
+  background-color: var(--color-brand-blue-100);
 }
 
 .site--footer .sub-menu li {
-  margin-top: 0;
-  margin-bottom: 0.15rem!important;
+  margin: 0!important;
 }
 
 .site--footer .sub-menu a,
 .site--footer .sub-menu a:visited {
   --tw-bg-opacity: 1;
   color: var(--color-brand-blue-600);
-  background-color: var(--color-brand-blue-100);
+  background-color: transparent;
   border-radius: 0.25rem;
   display: block;
   transition-property: all;
-  transition-duration: 150ms;
+  transition-duration: 250ms;
   padding: 0.25rem 0.5rem;
+  padding-left: 0;
+  margin: 0;
 }
 
 .site--footer .sub-menu a:hover,
 .site--footer .sub-menu a:active {
   background-color: var(--color-brand-blue-200);
+  padding-left: 0.5rem;
 }
 
 .site--footer .sub-menu a  {
   transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
-
+  
 }
 
 .prose {
@@ -464,6 +466,10 @@ svg {
 
 .prose > :last-child {
   margin-bottom: 0;
+}
+
+.prose.max-w-none {
+  max-width: none;
 }
 
 .bg-white {
@@ -717,21 +723,43 @@ svg {
   line-height: 2.1rem;
   letter-spacing: -0.1px;
   margin-bottom: 2.5rem;
-  --tw-text-opacity: 1;
-  color: rgba(51, 51, 51, var(--tw-text-opacity));
+}
+
+.content h1,
+.content h2,
+.content h3,
+.content h4 {
+  font-weight: bold;
+}
+
+.content h2,
+.content h3,
+.content h4 {
+  margin-top: 2em;
 }
 
 .content h2 {
-  font-weight: 700;
-  font-size: 1.5rem;
-  line-height: 2.0rem;
-  letter-spacing: -0.1px;
-  margin-bottom: 2.1rem;
-  --tw-text-opacity: 1;
-  color: rgba(51, 51, 51, var(--tw-text-opacity));
+  font-size: 1.65rem;
+}
+.content h3 {
+  font-size: 1.45rem;
+}
+.content h4 {
+  font-size: 1.25rem;
 }
 
-/* TODO: adjust H2, add H3 and H3 */
+.content ul,
+.content ol {
+  padding-left: 0.5em;
+  margin-left: 1em;
+}
+
+.content ul:not(.list-none) {
+  list-style: disc;
+}
+.content ol:not(.list-none) {
+  list-style: decimal;
+}
 
 @media (min-width: 1024px) {
   .content h1 {
@@ -740,9 +768,13 @@ svg {
     letter-spacing: -0.35px;
   }
   .content h2 {
-    font-size: 2.5rem;
-    line-height: 3.0rem;
-    letter-spacing: -0.35px;
+    font-size: 2.15rem;
+  }
+  .content h3 {
+    font-size: 1.8rem;
+  }
+  .content h4 {
+    font-size: 1.45rem;
   }
 }
 
@@ -969,6 +1001,12 @@ svg {
 }
 .button-main:hover {
   opacity: 0.8;
+}
+
+.social-list {
+  list-style-type: none;
+  padding-left: 0!important;
+  margin-left: 0!important;
 }
 
 /* Banner after party */
