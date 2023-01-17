@@ -1,0 +1,4 @@
+# full requirements:
+
+-r requirements-fe.txt
+-r requirements-be.txt
