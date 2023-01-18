@@ -51,7 +51,7 @@
     </div>
     <div class="detail-media">
         {% if resource.consolidated_image_url %}
-        <a href="resource.detail_url"><img src="{{ resource.consolidated_image_url }}" class="object-cover h-150px md:h-120px"></a>
+        <a href="{{ resource.detail_url }}"><img src="{{ resource.consolidated_image_url }}" class="object-cover h-150px md:h-120px"></a>
         {% else %}
           {% load static %}
           <a href="{{ resource.detail_url }}">
