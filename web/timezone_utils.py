@@ -24,7 +24,10 @@ class TimezoneMiddleware:
 
 
 def inject_timezones(request):
-    return {"timezones": TIMEZONE_CHOICES}
+    return {
+        "timezone_known": SESSION_TIMEZONE in request.session,
+        "timezones": TIMEZONE_CHOICES,
+    }
 
 
 def get_timezone(request):
