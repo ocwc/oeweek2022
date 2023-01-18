@@ -26,6 +26,8 @@ from django.views.generic import View
 
 from braces.views import LoginRequiredMixin
 
+from constance import config
+
 from django_htmx.middleware import HtmxDetails
 
 from rest_framework import permissions, viewsets, generics, mixins
@@ -563,7 +565,7 @@ class SubmissionViewSet(viewsets.ModelViewSet):
 
     def get_queryset(self):
         queryset = Resource.objects.filter(
-            created__gte=arrow.get(settings.OEW_CFP_OPEN).datetime
+            created__gte=arrow.get(config.OEW_CFP_OPEN).datetime
         ).order_by("-created")
         if self.request.user.is_staff:
             return queryset

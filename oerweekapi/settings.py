@@ -39,6 +39,8 @@ INSTALLED_APPS = (
     "corsheaders",
     "web",
     "import_export",
+    "constance",
+    "constance.backends.database",
     # our WagTail-based apps
     "contributor_profile",
     "gp",
@@ -80,6 +82,16 @@ AUTHENTICATION_BACKENDS = (
     "magiclink.backends.MagicLinkBackend",
     "django.contrib.auth.backends.ModelBackend",
 )
+
+CONSTANCE_BACKEND = "constance.backends.database.DatabaseBackend"
+
+CONSTANCE_CONFIG = {
+    "OEW_CFP_OPEN": (
+        datetime.date(2023, 1, 23),
+        "Date when Contributions are open",
+        datetime.date,
+    ),
+}
 
 ROOT_URLCONF = "oerweekapi.urls"
 
@@ -197,9 +209,10 @@ DJANGO_WYSIWYG_FLAVOR = "ckeditor"
 LOGIN_URL = "/api-auth/login/"
 
 # all in UTC, see TIME_ZONE above
+# TODO: refactor into CONSTANCE_CONFIG
 OEW_YEAR = 2023
 OEW_RANGE = ["2023-03-06 00:00:00", "2023-03-10 23:59:59"]
-OEW_CFP_OPEN = "2023-01-16"
+# OEW_CFP_OPEN = "2023-01-16"
 
 # next year's OE week starting date
 FUTURE_OEWEEK = datetime.date(2024, 3, 4)

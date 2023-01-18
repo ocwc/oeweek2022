@@ -140,3 +140,6 @@ bleach>=5.0.1,==5.0.*
 django-magiclink>=1.2.0,==1.2.*
 
 django-htmx>=1.13.0,==1.13.*
+
+django-constance>=2.9.1,==2.9.*
+django-constance[database]>=2.9.1,==2.9.*
