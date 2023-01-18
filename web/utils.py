@@ -1,8 +1,12 @@
 import arrow
-import django.utils.timezone as djtz
 
 from datetime import date
+
+import django.utils.timezone as djtz
+
 from django.conf import settings
+
+from constance import config
 from rest_framework_jwt.utils import jwt_payload_handler
 from rest_framework_json_api.exceptions import exception_handler
 from sentry_sdk import capture_message, set_context
@@ -69,7 +73,7 @@ def days_to_go():
 
 def contribution_period_is_now():
     now = arrow.utcnow()
-    start = arrow.get(settings.OEW_CFP_OPEN).datetime
+    start = arrow.get(config.OEW_CFP_OPEN).datetime
     end = arrow.get(settings.OEW_RANGE[1])
     return now >= start and now <= end
 

@@ -6,6 +6,13 @@ main stuff: see [Upgrade](#upgrade)
 
 All assuming roughly that we're running Linux (Ubuntu, ...) on all machines involved.
 
+More details about what systems and/or versions are supported/tested:
+
+* Linux: Debian 10, Ubuntu 20.x.x, Fedora 36, 37
+* Python: 3.7.x, 3.8.x
+* PostgreSQL: 11, 12
+* ansible: 5.9.x
+
 
 ### On machine running deployment
 
