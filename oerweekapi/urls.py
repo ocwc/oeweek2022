@@ -126,10 +126,14 @@ urlpatterns = (
         path("cms/", include(wagtailadmin_urls)),
         path("documents/", include(wagtaildocs_urls)),
         # redirect from legacy URL path to new URLs
-        url(r"^about$", RedirectView.as_view(url="/pages/", permanent=True)),
-        url(r"^about/$", RedirectView.as_view(url="/pages/", permanent=True)),
+        url(r"^about$", RedirectView.as_view(url="/pages/about/", permanent=True)),
+        url(r"^about/$", RedirectView.as_view(url="/pages/about/", permanent=True)),
         url(r"^about/faq/$", RedirectView.as_view(url="/pages/faq/", permanent=True)),
         url(r"^about/2023/$", RedirectView.as_view(url="/pages/2023/", permanent=True)),
+        # redirect from semi-hardcoded "about" page to the newer about page
+        url(r"^pages$", RedirectView.as_view(url="/pages/about/", permanent=False)), # not permanent
+        url(r"^pages/$", RedirectView.as_view(url="/pages/about/", permanent=False)), # not permanent
+        # wagtail URLs
         path("pages/", include(wagtail_urls)),
         # path("search/", search_views.search, name="search"),
         url(r"^set-timezone/$", views.set_timezone, name="set_timezone"),
