@@ -7,9 +7,9 @@
 <div class="relative">
     {% include 'web/snippet-days_to_go.html' %}
     {% if contributions_open == True %}
-    <img srcset= "{% static 'web/images/home-banner-contribute-sm.svg' %} 600w,
+    <a href="/contribute/"><img srcset= "{% static 'web/images/home-banner-contribute-sm.svg' %} 600w,
                     {% static 'web/images/home-banner-contribute.svg' %}"
-                    alt="Mark your calendars for next OEWeek March 6-10, 2023" class="w-full mx-auto rounded-md z-0">
+                    alt="Mark your calendars for next OEWeek March 6-10, 2023 and contribute" class="w-full mx-auto rounded-md z-0"></a>
     {% else %}
     <img srcset= "{% static 'web/images/home-banner-sm.svg' %} 600w,
                     {% static 'web/images/home-banner.svg' %}"
