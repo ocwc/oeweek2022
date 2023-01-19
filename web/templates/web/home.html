@@ -11,9 +11,10 @@
                     {% static 'web/images/home-banner-contribute.svg' %}"
                     alt="Mark your calendars for next OEWeek March 6-10, 2023 and contribute" class="w-full mx-auto rounded-md z-0"></a>
     {% else %}
-    <img srcset= "{% static 'web/images/home-banner-sm.svg' %} 600w,
-                    {% static 'web/images/home-banner.svg' %}"
-                    alt="Mark your calendars for next OEWeek March 6-10, 2023" class="w-full mx-auto rounded-md z-0">
+    <a href="/contribute/">
+        <img srcset="/static/web/images/home-banner-contribute-sm.svg 600w,
+        /static/web/images/home-banner-contribute.svg" alt="Mark your calendars for next OEWeek March 6-10, 2023 and contribute" class="w-full mx-auto rounded-md z-0">
+    </a>
     {% endif %}
 
 </div>
@@ -74,7 +75,7 @@
             <p class="text-base leading-snug">You can use the promotional kit to help customize your event.</p>
             <p class="text-center my-8"><a href="https://oeweek.oeglobal.org/promote/" class="button-main">Get the kit</a></p> -->
 
-            <p class="mb-4">A quick thank you video for all those educators and students and open education advocates that took part in #oeweek 2022.</p>
+            <p class="mb-4">A quick thank you video for all those educators and students and open education advocates that took part in #oeweek22.</p>
 
             <iframe width="560" height="315" src="https://www.youtube.com/embed/0N5mQ6nX93o?controls=0" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen class="w-full"></iframe>
         </div>

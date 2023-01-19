@@ -134,6 +134,19 @@
                             </div>
                             -->
 
+                            <div class="ember-basic-dropdown">
+                                <div id="ember6"
+                                    class="ember-view ember-basic-dropdown-trigger ember-basic-dropdown-trigger--in-place"
+                                    role="button" tabindex="0" data-ebd-id="ember5-trigger"
+                                    aria-owns="ember-basic-dropdown-content-ember5" aria-expanded="false">
+
+                                    <li class="menu-item">
+                                        <a href="/pages/about/"
+                                            id="ember5" class="ember-view"><i class="fal fa-info-circle"></i> About</a>
+                                    </li>
+                                </div>
+                            </div>
+
                             {% if user.is_staff %}
                             <div class="ember-basic-dropdown">
                                 <div id="ember6"
@@ -148,19 +161,6 @@
                                 </div>
                             </div>
                             {% endif %}
-
-                            <div class="ember-basic-dropdown">
-                                <div id="ember6"
-                                    class="ember-view ember-basic-dropdown-trigger ember-basic-dropdown-trigger--in-place"
-                                    role="button" tabindex="0" data-ebd-id="ember5-trigger"
-                                    aria-owns="ember-basic-dropdown-content-ember5" aria-expanded="false">
-
-                                    <li class="menu-item">
-                                        <a href="/pages/"
-                                            id="ember5" class="ember-view"><i class="fal fa-info-circle"></i> About</a>
-                                    </li>
-                                </div>
-                            </div>
 
                             {% if signup_enabled and user.is_authenticated %}
                             <div class="ember-basic-dropdown">
@@ -177,6 +177,19 @@
                                 </div>
                             </div>
                             {% endif %}
+
+                            <div class="ember-basic-dropdown">
+                                <div id="ember6"
+                                    class="ember-view ember-basic-dropdown-trigger ember-basic-dropdown-trigger--in-place"
+                                    role="button" tabindex="0" data-ebd-id="ember5-trigger"
+                                    aria-owns="ember-basic-dropdown-content-ember5" aria-expanded="false">
+
+                                    <li class="menu-item">
+                                        <a href="/contribute/"
+                                            id="ember5" class="ember-view button button-outline w-full md:w-auto">Contribute</a>
+                                    </li>
+                                </div>
+                            </div>
 
                             <div class="ember-basic-dropdown">
                                 <div id="ember6"
