@@ -5,7 +5,7 @@
 {% block content %}
 <h1>{{ page.title }}</h1>
 
-<div class="card bg-white p-8 lg:p-16 rounded shadow-lg prose">
+<div class="card bg-white p-8 lg:p-16 rounded shadow-lg prose lg:prose-lg max-w-none">
 
     <p><a href="/pages/" data-type="page" data-id="11191"><i class="fal fa-arrow-left"></i> Open Education Week</a></p>
 
@@ -13,9 +13,8 @@
 
     {% for post in page.get_children %}
     <div class="mb-6">
-        <h2 class="text-xl" id="{{ post.title|slugify }}">Q. {{ post.title }}</h2>
+        <h2 class="leading-tight" id="{{ post.title|slugify }}">Q. {{ post.title }}</h2>
         <p>{{ post.specific.answer|richtext }}</p>
-        <hr>
     </div>
     {% endfor %}
 
