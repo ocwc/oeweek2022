@@ -30,11 +30,9 @@
 <div class="card bg-white p-8 lg:p-16 rounded shadow-lg prose">
     <img src="https://conference.oeglobal.org/2021/wp-content/uploads/2022/02/submission-banner.png">
 
-    <p>All open educators, students, policymakers, technologists and enthusiasts, wherever you may be, are invited to celebrate their Open Education work by hosting events and activities and sharing their open assets during OE Week 2023.</p>
+    <p>Are you hosting an open education-focused activity during Open Education Week 2023? Look no further! Enter all the details here, and we will make sure it is featured alongside other exciting #oeweek events around the world!</p>
 
-    <p><strong>Open Education Activities</strong> could be events or sessions related to the intersection of the Open movement with Education that take place during the Open Education Week period. These activities can be live and in-person, online or asynchronous. They can be a series or one, although we encourage you to plan more than webinars and online live presentations. Try something different and creative to drive participation and promote collaboration and networking across OE Week. Use the <a href="https://www.oeglobal.org/activities/open-education-week/open-education-week-kit/">OEWeek Promotional Materials</a> for your activity.</p>
-
-    <p>Have questions? <a href="/pages/faq/">Read our FAQs</a>.</p>
+    <p>If you need to know more information before <strong>Contributing an Activity</strong>, <a href="/contribute/">here’s all you need to know</a>.</p>
 
     <form action="{{ submit_url }}" method="post" enctype="multipart/form-data">
     {% csrf_token %}
@@ -79,8 +77,9 @@
     <p>
         {{ form.content.label_tag }}
         {{ form.content.errors }}
-        <br>Include a short summary of the activity. Who can/will participate? What will a participant need to be part of this? What will be the outcomes of the activity?
-        <br><em>Suggested length: 50-500 words. Feel free to also provide the description in your own language)</em>
+
+        <br>Describe briefly the highlights of your activity/event. What will be the main focus of the session? Who would be most interested in participating? What are the expected outcomes? Include anything else you want to share.
+        <br><em>Suggested length: 50-500 words. (Feel free to also provide thedescription in your own lanquage).</em>
 
         {{ form.content }}
         {% wysiwyg_editor "id_content" "id_content_editor" "{ toolbar: 'Custom', toolbar_Custom: [['Bold', 'Italic', 'Underline'], ['NumberedList', 'BulletedList'], ['Link', 'Unlink'], ['RemoveFormat', 'Source']]}" %}
@@ -95,21 +94,21 @@
    	</p>
 
     <p>
-        <label for="id_event_time">Activity starts at:</label>
-        <br>Choose the time in your local time zone.
-        <br>
-        {{ form.event_time.errors }}
-        <input type="datetime-local" name="event_time" id="id_event_time" value="{{ form.event_time.value|date:'Y-m-d H:i' }}"/>
-    </p>
-
-    <p>
         <label for="id_event_source_timezone">Your local time zone:</label>
-        <br>We have detected your time zone automatically as follows (you can change it by selecting a different value from the dropdown menu):
+        <br>We try to automatically detect your time zone. If it is wrong, select the correct value:
         <select name="event_source_timezone" id="id_event_source_timezone" class="w-full">
         {% for tz in timezones %}
             <option value="{{ tz }}"{% if tz == current_timezone %} selected{% endif %}>{{ tz }}</option>
         {% endfor %}
         </select>
+    </p>
+
+    <p>
+        <label for="id_event_time">Activity starts at:</label>
+        <br>Choose the time <strong>in your local time zone</strong>.
+        <br>
+        {{ form.event_time.errors }}
+        <input type="datetime-local" name="event_time" id="id_event_time" value="{{ form.event_time.value|date:'Y-m-d H:i' }}"/>
     </p>
 
     {{ form.primarylanguage.errors }}
@@ -170,7 +169,7 @@
     </p>
 
     <hr class="my-8">
-    <br>
+
     <h2 style="background-color: #eeeeee"><strong>Organization</strong></h2>
 
     <div></div>
@@ -201,7 +200,7 @@
     </p>
 
     <hr class="my-8">
-    <br>
+
     <h2 style="background-color: #eeeeee"><strong>Contact person:</strong></h2>
 
     {{ form.firstname.errors }}
