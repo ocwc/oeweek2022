@@ -57,7 +57,7 @@
       If you'd like to edit your entry, \"{title}\", you can do so here:
       https://oeweek.oeglobal.org/edit/{uuid}/\r\n\r\nOpen Education Week is
       a global effort built on everyone's contributions.  Please visit the
-      website ( https://www.openeducationweek.org ) regularly for the latest
+      website ( https://oeweek.oeglobal.org ) regularly for the latest
       updates and additions to the event.  Take advantage of the promotional
       materials available for you to download, reuse, remix, and redistribute
       to promote your own activities and events.\r\n\r\nThis year we invite
@@ -77,5 +77,5 @@
     subject: 'OEW: Your account to edit submission(s)'
     body: "Dear OEW Collaborator,\r\n\r\nPlease click on the following link
       to login and edit your submissions to Open Education Week:\r\n\r\n
-      https://www.openeducationweek.org/user-login/?user={user.username}&key={key}
+      https://oeweek.oeglobal.org/user-login/?user={user.username}&key={key}
       \r\n\r\nMany thanks,\r\nOEW Planning Committee"
