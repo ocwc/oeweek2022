@@ -30,8 +30,8 @@
     action: r_f
     subject: OE Week 2023 submission
     body: "Dear {firstname},\r\n \r\nThank you for your support and contribution to
-      Open Education Week.  We would like to include your entry [Title] on the OE
-      Week website but it’s not clear to us how it relates to open education.  \r\n
+      Open Education Week.  We would like to include your entry \"{title}\" on the
+      OE Week website but it’s not clear to us how it relates to open education.  \r\n
       \r\nCould you please elaborate a little bit more on how you see the connection
       between what you have submitted and the goals of Open Education Week? Please
       let us know how you support openness and we’ll be happy to reconsider. \r\n\r\nDo
@@ -52,8 +52,8 @@
     action: r_r
     subject: OE Week 2023 submission
     body: "Dear {firstname},\r\n \r\nThank you for your support and contribution to
-      Open Education Week.  We would like to include your entry [Title] on the OE
-      Week website but it’s not clear to us how it relates to open education.  \r\n
+      Open Education Week.  We would like to include your entry \"{title}\" on the
+      OE Week website but it’s not clear to us how it relates to open education.  \r\n
       \r\nCould you please elaborate a little bit more on how you see the connection
       between what you have submitted and the goals of Open Education Week? Please
       let us know how you support openness and we’ll be happy to reconsider. \r\n\r\nDo
