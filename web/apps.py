@@ -2,6 +2,7 @@ from sqlite3 import OperationalError
 
 from django.apps import AppConfig
 from django.conf import settings
+from django.db.utils import ProgrammingError
 
 
 class WebConfig(AppConfig):
@@ -29,6 +30,12 @@ class WebConfig(AppConfig):
             # to avoid "sqlite3.OperationalError: no such table: django_q_schedule" during initial setup
             # e.g. when we do NOT need full DEV setup with django-q fully operational
             print("ERROR: failed to schedule task %s" % task_name)
+        except ProgrammingError:
+            # to allow initial "manage migrate" when django_q do not exist yet
+            print(
+                "WARNING: failed to schedule task %s - django-q stuff in DB not initialized yet"
+                % task_name
+            )
 
     def ready(self):
         if settings.FE_DEPLOYMENT:
