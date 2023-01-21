@@ -2,80 +2,96 @@
   pk: 1
   fields:
     action: r_a
-    subject: Your OE Week contribution is featured on the website!
-    body: "Dear {firstname},\r\n\r\nWe appreciate your support and contribution
-      to the Open Education Week.  Your entry \"{title}\" has been approved and
-      will be featured on the OE Week website ( https://oeweek.oeglobal.org ).\r\n\r\nYou
-      may find it here:  https://oeweek.oeglobal.org/{slug1}/{year}/{slug2}/\r\n\r\nPlease
-      take a minute to review the information. If you have any questions
-      or need to make changes or updates to your contribution, please notify us at
-      info@openeducationweek.org\r\n\r\nAs you get ready for OEWeek …\r\n\r\nDon’t
-      forget to take advantage of the promotional kit available for download, reuse, remix,
-      and redistribution here ( https://oeweek.oeglobal.org/promote/ ). These OEWeek-branded
-      materials can help you to promote your own event. You’ll also find the official
-      OEWeek Badge for your website.\r\n\r\nDiscuss all things Open Education and
-      #oeweek highlights in OEG Connect at ( https://connect.oeglobal.org/c/oeweek/33
-      ). If you don’t have an account yet, join here: https://connect.oeglobal.org/invites/jTtdVe5Qsx\r\n\r\nGet
-      social … Open Education Week is a global effort built on everyone’s contributions.
-      Follow #OEWeek on social media to get updates!\r\n\r\n• Twitter: https://twitter.com/OEWeek\r\n•
-      Facebook: https://www.facebook.com/openeducationwk\r\n\r\nOpen Education Week
-      is a global effort built on everyone’s contributions. Please visit the website
-      ( https://oeweek.oeglobal.org ) regularly for the latest updates, and join in
-      on other events where you can! Check your inbox for email updates!\r\n\r\nThank
+    subject: OE Week contribution approved
+    body: "Dear {firstname},\r\n\r\nWe appreciate your support and contribution to
+      the Open Education Week.  Your entry \"{title}\" has been approved and will
+      be featured on the OE Week website ( https://oeweek.oeglobal.org ). \r\n\r\nYou
+      may find it here: https://oeweek.oeglobal.org/{slug1}/{year}/{slug2}/\r\n\r\nPlease
+      take a minute to review the information. If you have any questions or need to
+      make changes or updates to your submission, please notify us at info@openeducationweek.org\r\n\r\nAs
+      you get ready for OEWeek …\r\n\r\nDon't forget to take advantage of the promotional
+      kit available for download, reuse, remix, and redistribution to promote your
+      own events and to promote Open Education Week. Here you’ll find the official
+      OEWeek Badge to display on your website. \r\n\r\nDiscuss all things Open Education
+      and #oeweek highlights in OEG Connect here: https://connect.oeglobal.org/c/oeweek/33!
+      \r\n\r\nLook out for email updates on the OEWeek activities around the world!
+      If you don’t have an account yet, join here: https://connect.oeglobal.org/invites/jTtdVe5Qsx\r\n\r\nGet
+      social … Open Education Week is a global effort built on everyone's contributions.
+      Follow #OEWeek on social media to get updates!\r\n• Twitter @OEWeek\r\n• Facebook
+      @openeducationwk \r\n \r\nOpen Education Week is a global effort built on everyone's
+      contributions. Please visit the website ( https://www.openeducationweek.org
+      ) regularly for the latest updates, and join in on other events where you can!\r\n\r\nThank
       you for joining us to make this 10 year anniversary a global celebration of
-      the Open Education Movement. We look forward to seeing you throughout the week.\r\n\r\nMany
-      thanks,\r\n\r\nThe Open Education Week Planning Committee\r\n#oeweek"
+      the Open Education movement. We look forward to seeing you throughout the week.
+      \r\n\r\nMany thanks,\r\nOEWeek Planning Committee at OEGlobal\r\n\r\n#OEWeek"
 - model: web.emailnotificationtext
   pk: 2
   fields:
     action: r_f
-    subject: Additional inforation regarding your OE Week contribution is required
-    body: "Dear OEW Collaborator,\r\n\r\nRegarding your entry \"{title}\" we would
-      like to ...\r\n\r\nYou can use following link to update your submission:\r\n\r\n
-      https://oeweek.oeglobal.org/edit/{uuid}/\r\n\r\nMany thanks,\r\n\r\nThe Open
-      Education Week Planning Committee\r\n#oeweek"
+    subject: OE Week 2023 submission
+    body: "Dear {firstname},\r\n \r\nThank you for your support and contribution to
+      Open Education Week.  We would like to include your entry [Title] on the OE
+      Week website but it’s not clear to us how it relates to open education.  \r\n
+      \r\nCould you please elaborate a little bit more on how you see the connection
+      between what you have submitted and the goals of Open Education Week? Please
+      let us know how you support openness and we’ll be happy to reconsider. \r\n\r\nDo
+      not be discouraged, you obviously wish to know more about the power of open
+      as a solution for education challenges. The goal of Open Education Week is to
+      raise awareness about free and open educational opportunities around the world.
+      We want to highlight how open education and open educational practices can help
+      people meet their goals in education worldwide. You can learn more about Open
+      Education here ( https://connect.oeglobal.org/t/what-is-open-education/4121
+      ), or by watching these videos ( https://www.youtube.com/playlist?list=PLwjjssN-EL4r8KfFERQW-tZN1x5LrWO47
+      ), and about how to use CC licenses ( https://certificates.creativecommons.org/cccertedu/
+      ). Even though, this time, you were not successful in your application, please
+      feel free to join in on the events during March 6-10.\r\n \r\n \r\nBest regards,\r\nOEWeek
+      Planning Committee at OEGlobal"
 - model: web.emailnotificationtext
   pk: 3
   fields:
     action: r_r
-    subject: Your OE Week contribution was declined
-    body: "Dear OEW Collaborator,\r\n\r\nYour entry \"{title}\" has been declined
-      ...\r\n\r\nYou may use following link to update your submission:\r\n\r\n
-      https://oeweek.oeglobal.org/edit/{uuid}/\r\n\r\nAfter the changes, it will be
-      evaluated again and you will be notified.\r\n\r\nMany thanks,\r\n\r\nThe Open
-      Education Week Planning Committee\r\n#oeweek"
+    subject: OE Week 2023 submission
+    body: "Dear {firstname},\r\n \r\nThank you for your support and contribution to
+      Open Education Week.  We would like to include your entry [Title] on the OE
+      Week website but it’s not clear to us how it relates to open education.  \r\n
+      \r\nCould you please elaborate a little bit more on how you see the connection
+      between what you have submitted and the goals of Open Education Week? Please
+      let us know how you support openness and we’ll be happy to reconsider. \r\n\r\nDo
+      not be discouraged, you obviously wish to know more about the power of open
+      as a solution for education challenges. The goal of Open Education Week is to
+      raise awareness about free and open educational opportunities around the world.
+      We want to highlight how open education and open educational practices can help
+      people meet their goals in education worldwide. You can learn more about Open
+      Education here ( https://connect.oeglobal.org/t/what-is-open-education/4121
+      ), or by watching these videos ( https://www.youtube.com/playlist?list=PLwjjssN-EL4r8KfFERQW-tZN1x5LrWO47
+      ), and about how to use CC licenses ( https://certificates.creativecommons.org/cccertedu/
+      ). Even though, this time, you were not successful in your application, please
+      feel free to join in on the events during March 6-10.\r\n \r\n \r\nBest regards,\r\nOEWeek
+      Planning Committee at OEGlobal"
 - model: web.emailnotificationtext
   pk: 4
   fields:
     action: r_n
-    subject: OE Week submission received
-    body: "Dear Open Education Week Collaborator,\r\n\r\nWe appreciate your
-      contribution to Open Education Week (OE Week).  Your entry has been
-      received and will be reviewed shortly by the OE Week Planning Committee.
-      We will notify you when your submission is approved and posted to the
-      website. If you have questions, please reply to this message.\r\n\r\n
-      If you'd like to edit your entry, \"{title}\", you can do so here:
-      https://oeweek.oeglobal.org/edit/{uuid}/\r\n\r\nOpen Education Week is
-      a global effort built on everyone's contributions.  Please visit the
-      website ( https://oeweek.oeglobal.org ) regularly for the latest
-      updates and additions to the event.  Take advantage of the promotional
-      materials available for you to download, reuse, remix, and redistribute
-      to promote your own activities and events.\r\n\r\nThis year we invite
-      you to share your OE Week experiences, curate resources, and participate
-      in discussions in our OEG Connect community space for the event at
-      https://connect.oeglobal.org/c/oeweek/33\r\n\r\nIf you have not created
-      an account here we offer a unique invitation link so you can join
-      https://connect.oeglobal.org/invites/jTtdVe5Qsx\r\n\r\nOnce again thank
-      you for helping us make this event a global celebration of the Open
-      Education movement. We look forward to seeing your participation
-      throughout the week.\r\n\r\nMany thanks,\r\n\r\nOpen Education Week
-      Planning Committee\r\n#OEWeek"
-- model: web.emailnotificationtext
-  pk: 5
-  fields:
-    action: a_n
-    subject: 'OEW: Your account to edit submission(s)'
-    body: "Dear OEW Collaborator,\r\n\r\nPlease click on the following link
-      to login and edit your submissions to Open Education Week:\r\n\r\n
-      https://oeweek.oeglobal.org/user-login/?user={user.username}&key={key}
-      \r\n\r\nMany thanks,\r\nOEW Planning Committee"
+    subject: OE Week contribution was received
+    body: "Dear Open Education Week enthusiast,\r\n\r\nWe appreciate your contribution
+      to Open Education Week (OE Week).  Your entry has been received and will be
+      reviewed shortly by the OE Week Planning Committee.  We will notify you when
+      your submission is approved and posted to the website. If you have questions,
+      please reply to this message.\r\n\r\nIf you'd like to edit your entry, \"{title}\",
+      you can do so here: https://oeweek.oeglobal.org/edit/{uuid}/\r\n\r\nOpen Education
+      Week is a global effort built on everyone's contributions.  Please visit the
+      website ( https://www.openeducationweek.org ) regularly for the latest updates
+      and additions to the event.  Take advantage of the promotional kit ( https://www.oeglobal.org/activities/open-education-week/open-education-week-kit/
+      ) promotional materials available for you to download, reuse, remix, and redistribute
+      to promote your own activities and events.\r\n\r\n\r\nWe invite you to share
+      your OE Week experiences, curate resources, and participate in discussions in
+      our OEG Connect community space for the event at https://connect.oeglobal.org/c/oeweek/\r\n\r\nIf
+      you have not created an account here we offer a unique invitation link so you
+      can join https://connect.oeglobal.org/invites/jTtdVe5Qsx\r\n\r\nFollow #OEWeek
+      on social media to get updates!\r\n- Facebook: https://www.facebook.com/openeducationwk/\r\n-
+      Twitter: https://twitter.com/OEWeek\r\n- Or Subscribe for updates: http://eepurl.com/hMAPS1\r\n\r\nIf
+      you have any questions, consult our FAQ section ( https://www.oeglobal.org/activities/open-education-week/faq/
+      ) or contact us at info@openeducationweek.org.\r\n\r\nOnce again thank you for
+      helping us make this event a global celebration of the Open Education movement.
+      We look forward to seeing your participation throughout the week.\r\n\r\nMany
+      thanks,\r\n\r\nOEWeek Planning Committee at OEGlobal\r\n\r\n#OEWeek"
