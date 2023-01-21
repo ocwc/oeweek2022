@@ -532,9 +532,9 @@ class EmailNotificationText(models.Model):
         args["uuid"] = resource.uuid
         args["year"] = resource.year
         if resource.post_type == "event":
-            args["slug1"] = "event"
+            args["slug1"] = "events"
         else:
-            args["slug1"] = "resource"
+            args["slug1"] = "resources"
         initial["body"] = self.body.format(**args)
 
         return initial
