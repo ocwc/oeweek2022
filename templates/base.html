@@ -87,7 +87,7 @@
                     <nav id="mainMenu" role="navigation" class="nav-primary lg:block flex hidden">
                         <ul class="nav nav-dropdown flex gap-4 flex-col lg:flex-row lg:items-center">
 
-                            <!--
+                            {% if hide_resource_buttons == False %}
                             <div class="ember-basic-dropdown">
                                 <div id="ember6"
                                     class="ember-view ember-basic-dropdown-trigger ember-basic-dropdown-trigger--in-place"
@@ -115,7 +115,7 @@
 
                                 </div>
                             </div>
-                            -->
+                            {% endif %}
 
                             <div class="ember-basic-dropdown">
                                 <div id="ember6"

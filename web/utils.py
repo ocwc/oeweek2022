@@ -22,6 +22,7 @@ from .serializers import SubmissionResourceSerializer
 
 def inject_template_variables(request):
     return {
+        "hide_resource_buttons": config.HIDE_RESOURCE_BUTTONS_IN_BASE_TEMPLACE,
         "contributions_open": contribution_period_is_now(),
         "signup_enabled": settings.SIGNUP_ENABLED,
     }
