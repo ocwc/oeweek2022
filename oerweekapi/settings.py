@@ -91,6 +91,11 @@ CONSTANCE_CONFIG = {
         "Date when Contributions are open",
         datetime.date,
     ),
+    "HIDE_RESOURCE_BUTTONS_IN_BASE_TEMPLACE": (
+        False,
+        "If True, 'Events' and 'Assets' buttons in base template are hidden",
+        bool,
+    ),
 }
 
 ROOT_URLCONF = "oerweekapi.urls"
