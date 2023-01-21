@@ -87,25 +87,6 @@
                     <nav id="mainMenu" role="navigation" class="nav-primary lg:block flex hidden">
                         <ul class="nav nav-dropdown flex gap-4 flex-col lg:flex-row lg:items-center">
 
-                            {#{% if contributions_open == True and not user.is_staff %}#}
-                            {% if contributions_open == True %}
-                            <!--
-                            <div class="ember-basic-dropdown">
-                                <div id="ember6"
-                                    class="ember-view ember-basic-dropdown-trigger ember-basic-dropdown-trigger--in-place"
-                                    role="button" tabindex="0" data-ebd-id="ember5-trigger"
-                                    aria-owns="ember-basic-dropdown-content-ember5" aria-expanded="false">
-
-                                    <li class="menu-item">
-                                        <a href="/contribute/"
-                                            id="ember5" class="ember-view"><i class="fal fa-box"></i> Contribute</a>
-                                    </li>
-
-                                </div>
-                            </div>
-                            -->
-	                        {% endif %}
-
                             <!--
                             <div class="ember-basic-dropdown">
                                 <div id="ember6"
@@ -180,6 +161,7 @@
                             </div>
                             {% endif %}
 
+                            {% if contributions_open == True %}
                             <div class="ember-basic-dropdown">
                                 <div id="ember6"
                                     class="ember-view ember-basic-dropdown-trigger ember-basic-dropdown-trigger--in-place"
@@ -192,6 +174,7 @@
                                     </li>
                                 </div>
                             </div>
+	                        {% endif %}
 
                             <div class="ember-basic-dropdown">
                                 <div id="ember6"
