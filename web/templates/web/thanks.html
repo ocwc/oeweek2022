@@ -4,10 +4,14 @@
 
 <h1>Thank you!</h1>
 <div class="prose">
-    <p>Thank you for contributing {{ title }} for Open Education Week. You will be notified by email about the status of your contribution, and once accepted, it will be added to the web site program.</p>
+    <p>Thank you for contributing "{{ title }}" for Open Education Week. You will be notified by email about the status of your contribution, and once accepted, it will be added to the OE Week website.</p>
 
-    <p>You can edit your entry by <a href="/edit/{{ uuid }}/">clicking here</a>.</p>
+    <h2>You may now:</h2>
 
-    <p>You can submit similar entry by <a href="{{ contribute_similar }}">clicking here</a>.</p>
+    <ul>
+      <li><a href="/edit/{{ uuid }}/">Review/edit</a> your entry</li>
+      <li><a href="{{ contribute_similar }}">Submit a new entry</a> (with same contact information)</li>
+      <li><a href="/">Return</a> to Open Education Week</li>
+    </ul>
 </div>
 {% endblock %}

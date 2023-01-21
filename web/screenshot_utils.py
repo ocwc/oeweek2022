@@ -3,17 +3,19 @@ import sys
 import tempfile
 import time
 
-try:
+from django.conf import settings
+
+# special case for "front-end deployment" with "back-end stuff" not installed:
+if not settings.FE_DEPLOYMENT:
     from PyQt5.QtCore import QUrl
     from PyQt5.QtGui import QImage, QPainter
     from PyQt5.QtWidgets import QApplication
     from PyQt5.QtWebKitWidgets import QWebView
-except:
-    # TODO: maybe find a more elegant way to avoid crashes on systems without PyQt5 (e.g. MacOS)?
-    QUrl, QImage, QPainter, QApplication, QWebView = object
 
-from django.core.files import File
-from django_q.tasks import async_task
+    from django.core.files import File
+    from django_q.tasks import async_task
+else:
+    QWebView = object
 
 from .models import Resource, ResourceImage
 
@@ -120,6 +122,10 @@ def _fetch_screenshot(resource):
 
 
 def fetch_screenshot_async(resource):
+    if settings.FE_DEPLOYMENT:
+        print("WARNING, back-end stuff disabled => fetching of screenshot skipped")
+        return
+
     async_task(
         _fetch_screenshot,
         resource,

@@ -15,15 +15,11 @@
 <div class="card bg-white p-8 lg:p-16 rounded shadow-lg prose">
     <img src="https://conference.oeglobal.org/2021/wp-content/uploads/2022/02/submission-banner.png">
 
-    <p><strong>Open Education Week 2023 takes place March 6-10.</strong></p>
+    <p>Have you created, or do you know of, an Open Asset or resource that you would like to share with the community during Open Education Week 2023?</p>
 
-    <p>All open educators, students, policymakers, technologists and enthusiasts, wherever you may be, are invited to celebrate their Open Education work by hosting events and activities during OE Week 2023.</p>
+    <p>An Open Asset could be an OER, Open Textbook, Open Course, Open Repository or Library, Open Tool, etc. Enter all the details here, and we will make sure it is added to the OE Week Global Library and featured alongside other exciting #oeweek resources!</p>
 
-    <p><strong>Assets</strong> are the tangible resources, repositories or technologies that are produced for use through open education initiatives. These can range from OERs, textbooks, collections of resources, or education modules – all have educational purpose and value and are openly licenced and accessible. Add your asset to the OE Week Library to share and highlight your favorite resources.</p>
-
-    <p>Still have questions? <a href="/pages/faq/">Read our FAQs</a>.</p>
-
-    <p><strong>Share your asset, resource, or repository by filling out the form below.</strong></p>
+    <p>If you need to know more information before <strong>Contributing an Open Asset</strong>, <a href="/contribute/">here’s all you need to know</a>.</p>
 
     <form action="{{ submit_url }}" method="post" enctype="multipart/form-data">
     {% csrf_token %}
@@ -50,8 +46,6 @@
     {% endif %}
 
     <hr class="my-8">
-    <br>
-    <h2 style="background-color: #eeeeee"><strong>Details of your Asset for OE Week</strong></h2>
 
     <div></div>
 
@@ -64,8 +58,9 @@
     <p>
         {{ form.content.label_tag }}
         {{ form.content.errors }}
-        <br>Include a summary of the asset. What does it do? Who can use it and how can it be used? What are the expected outcomes of using the asset?
-        <br><em>Suggested length: 50-500 words. Feel free to also provide the description in your own language)</em>
+
+        <br>Include a short summary of your resource and describe its key elements. What are its goals and objectives? Who would benefit the most from using it? What makes it unique?
+        <br><em>Suggested length: 50-500 words. (Feel free to also provide the description in your own language)</em>
 
         {{ form.content }}
         {% wysiwyg_editor "id_content" "id_content_editor" "{ toolbar: 'Custom', toolbar_Custom: [['Bold', 'Italic', 'Underline'], ['NumberedList', 'BulletedList'], ['Link', 'Unlink'], ['RemoveFormat', 'Source']]}" %}
@@ -78,10 +73,11 @@
     </p>
 
     <p>
-    	{{ form.user_image.label_tag }}
-    	{{ form.user_image.errors }}
-    	<br><em>Recommended size: 584x232 pixels</em>
-    	{{ form.user_image }}
+        {{ form.user_image.label_tag }}
+        {{ form.user_image.errors }}
+        <br>Share an image that is representative of your asset - logo, symbol, icon, graphics, team photo, etc. If no image is provided a screenshot of your website will be uploaded.
+        <br><em>Recommended size: 584x232 pixels</em>
+        {{ form.user_image }}
    	</p>
 
     <p>
@@ -118,8 +114,8 @@
     </div>
 
     <hr class="my-8">
-    <br>
-    <h2 style="background-color: #eeeeee"><strong>Organizational host:</strong></h2>
+
+    <h2 style="background-color: #eeeeee"><strong>Organization</strong></h2>
 
     <div></div>
 
@@ -171,7 +167,7 @@
     </div>
 
     <hr class="my-8">
-    <br>
+
     <h2 style="background-color: #eeeeee"><strong>Contact person:</strong></h2>
 
     {{ form.firstname.errors }}
@@ -204,6 +200,13 @@
             {{ form.twitter_personal }}
         </p>
     </div>
+
+    <p>
+        {{ form.newsletter.label_tag }}
+        {{ form.newsletter.errors }}
+        {{ form.newsletter }}
+        Join the OEGlobal newsletter for updates
+    </p>
 
     <input type="submit" value="Submit" class="button-outline font-bold my-8">
     </form>

@@ -3,6 +3,10 @@ import os
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
+# In case only front-end development is going to be done:
+# (This will disable back-end stuff, e.g. mainly Django Q.)
+#FE_DEPLOYMENT = True
+
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
@@ -11,3 +15,7 @@ DATABASES = {
 }
 
 DEBUG = False
+
+# In case Sing-up and Profile functionality is NOT needed:
+# (Note, since that switch is meant as temporary, it does NOT fully disable magiclink and other associated functionality. And later will be removed. => TODO)
+#SIGNUP_ENABLED = False

@@ -1,0 +1,145 @@
+# front-end requirements:
+
+# appnope==0.1.0
+
+# DONOTDELETE -- used in web/views.py
+arrow
+
+# contextlib2==0.5.1
+# decorator==4.2.1
+
+# DONOTDELETE -- <3
+django>=3.2,<=3.3
+
+# DONOTDELETE -- used in web/views.py
+django-braces
+
+# DONOTDELETE
+django-ckeditor
+
+# DONOTDELETE -- see settings.py (CORS middleware)
+django-cors-headers
+
+# DONOTDELETE -- used in multiple places
+django-filter
+
+# DONOTDELETE -- used in web/models.py
+django-model-utils
+
+# ??? -- enabled in settings.py
+django-rest-auth
+
+# DONOTDELETE -- used in web/models.py
+django-taggit
+
+# django-vanilla-views==1.0.5
+
+# DONOTDELETE -- used in settings.py (with ckeditor)
+# FIXME: unmaintained => replace
+django-wysiwyg
+
+# DONOTDELETE
+djangorestframework
+
+# DONOTDELETE -- see web/utils.py + settings.py
+djangorestframework-jsonapi
+
+# DONOTDELETE -- used in code
+djangorestframework-jwt
+
+wagtail>=4.0,<4.1
+
+# ???
+future
+
+# DONOTDELETE
+gunicorn
+
+# ipdb==0.11
+# ipython==6.5.0
+# ipython-genutils==0.2.0
+# jedi==0.11.1
+
+# ??? -- enabled in settings.py
+Markdown
+
+# micawber==0.3.5
+# oauthlib==2.1.0
+# olefile==0.45.1
+# parso==0.3.1
+# path.py==11.0.1
+# pexpect==4.6.0
+# pickleshare==0.7.4
+
+# DO NOT DELETE -- web/models.py uses ImageField
+Pillow
+
+# pluggy==0.7.1
+# prompt-toolkit==1.0.15
+
+# ???
+psycopg2_binary
+# !!! #piphowto #pypihowto -- if this crashes, first do "sudo apt install postgresql postgresql-contrib" !!!
+# psycopg2_binary==2.7.5
+
+# ptyprocess==0.5.2
+# py==1.5.4
+# Pygments==2.2.0
+
+# ??? (not imported explicitly)
+# PyJWT==1.6.4
+
+pytest
+pytest-django
+pytest-flake8
+
+# python-dateutil==2.7.3
+# python-oembed==0.2.4
+
+# DONOTDELETE -- used in web/views.py
+python-twitter
+
+# DONOTDELETE -- used in web/utils.py
+sentry-sdk
+
+# DONOTDELETE
+requests
+# ???
+requests-oauthlib
+
+# simplegeneric==0.8.1
+# six==1.11.0
+# tox==3.2.1
+# traitlets==4.3.2
+
+# ???
+virtualenv
+
+# wcwidth==0.1.7
+
+# DONOTDELETE -- used in web/views.py
+xlwt
+
+# ???
+setuptools
+
+# ??? -- see pytest.ini
+flake8
+
+# 2022-02-22
+django-import-export
+
+# 2022-02-23
+django-timezone-field
+
+geonamescache>=1.5.0,==1.5.*
+
+# required for rich text editing
+bleach>=5.0.1,==5.0.*
+
+django-magiclink>=1.2.0,==1.2.*
+
+django-htmx>=1.13.0,==1.13.*
+
+django-constance>=2.9.1,==2.9.*
+django-constance[database]>=2.9.1,==2.9.*

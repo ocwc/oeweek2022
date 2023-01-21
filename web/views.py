@@ -1,30 +1,49 @@
 import arrow
 import bleach
-import xlwt
+import pytz
 import urllib.parse
 import twitter
 import uuid
+import xlwt
 
 from itertools import groupby
-from datetime import datetime
+from datetime import datetime, timezone
 
-from django.views.generic import View
-from django.http import HttpResponse, HttpResponseRedirect
+import django.utils.timezone as djtz
+
+from django.conf import settings
+from django.contrib.auth.decorators import user_passes_test
+from django.core.cache import cache
+from django.core.exceptions import ObjectDoesNotExist
+from django.db import models
 from django.db.models import Q
 from django.db.models.functions import Lower
-from django.conf import settings
-from django.core.cache import cache
+from django.http import Http404, HttpRequest, HttpResponse, HttpResponseRedirect
+from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse
+from django.views.decorators.http import require_POST
+from django.views.generic import View
 
 from braces.views import LoginRequiredMixin
+
+from constance import config
+
+from django_htmx.middleware import HtmxDetails
 
 from rest_framework import permissions, viewsets, generics, mixins
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.pagination import PageNumberPagination
 
-from .forms import ActivityForm, AssetForm
-from .models import Page, Resource, ResourceImage, EmailTemplate
+from .forms import ActivityForm, AssetForm, ResourceFeedbackForm
+from .models import (
+    Page,
+    Resource,
+    ResourceImage,
+    EmailNotificationText,
+    EmailTemplate,
+    send_email_async,
+)
 from .serializers import (
     PageSerializer,
     ResourceSerializer,
@@ -34,20 +53,20 @@ from .serializers import (
     ResourceImageSerializer,
 )
 from .screenshot_utils import fetch_screenshot_async
-from .utils import contribution_period_is_now, days_to_go, guess_missing_activity_fields
-
-from mail_templated import send_mail
-
-from django.contrib.auth.decorators import login_required
-from django.shortcuts import get_object_or_404, render
-
-from pytz import timezone
-
-import django.utils.timezone as djtz
+from .timezone_utils import SESSION_TIMEZONE, TIMEZONE_CHOICES, get_timezone
+from .utils import (
+    contribution_period_is_now,
+    days_to_go,
+    guess_missing_activity_fields_async,
+)
 
 
 ALLOWED_TAGS = bleach.sanitizer.ALLOWED_TAGS
 ALLOWED_TAGS += ["p"]
+
+
+def is_staff(user):
+    return user.is_staff
 
 
 def index(request):
@@ -74,10 +93,26 @@ def contribute(request):
         return HttpResponseRedirect(reverse("web_index"))
 
 
+def _set_session_tz_from_form_value(request):
+    """Generally, we somehow guess timezone for users (their sessions) and then let them adjust that with SELECT
+    at the bottom of all pages. Since 1) guess might be wrong and 2) users may overlook that option at the bottom,
+    we "repeat" timezone SELECT in submit/edit activity form. But, we do not store that value into form/resource,
+    we use it to set/reset timezone setting for the user in his session.
+
+    Make sure to call this before processing the form, so that Django does timezone conversion properly,
+    with the selected value.
+    """
+    tzname = request.POST.get("event_source_timezone")
+    if tzname:
+        request.session[SESSION_TIMEZONE] = tzname
+        djtz.activate(pytz.timezone(tzname))
+
+
 def contribute_activity(request, identifier=None):
     if not contribution_period_is_now():
         return HttpResponseRedirect(reverse("web_index"))
     if request.method == "POST":
+        _set_session_tz_from_form_value(request)
         # create a form instance & populate with request data
         form = ActivityForm(request.POST, request.FILES)
         if form.is_valid():
@@ -85,7 +120,7 @@ def contribute_activity(request, identifier=None):
             resource = form.save(commit=False)
             resource.content = bleach.clean(resource.content, tags=ALLOWED_TAGS)
             resource.save()
-            guess_missing_activity_fields(resource)
+            guess_missing_activity_fields_async(resource)
             fetch_screenshot_async(resource)
             # process the data in form.cleaned_data as required
             # user = CustomUser.objects.create_user(
@@ -93,7 +128,7 @@ def contribute_activity(request, identifier=None):
             #     form.cleaned_data['full_name'],
             # )
             context = {
-                "uuid": resource.uuid,
+                "uuid": str(resource.uuid),
                 "title": resource.title,
                 "contribute_similar": reverse(
                     "contribute-activity", args=[resource.uuid]
@@ -101,15 +136,21 @@ def contribute_activity(request, identifier=None):
             }
 
             try:
-                send_mail(
-                    "emails/submission_received.tpl",
-                    context,  # {}, # {"user": user, "key": key},
-                    "info@openeducationweek.org",
-                    [resource.email],
-                    cc=["openeducationweek@oeglobal.org"],
+                template = EmailNotificationText.objects.get(
+                    action=EmailNotificationText.ACTION_RES_NEW
                 )
-            except:
-                print("Failed to send email to " + resource.email)
+                filled = template.fill_from_resource(resource)
+                send_email_async(
+                    filled["subject"],
+                    filled["body"],
+                    settings.EMAIL_NOTIF_FROM,
+                    [resource.email],
+                    cc=settings.EMAIL_NOTIF_CC,
+                )
+            except ObjectDoesNotExist as ex:
+                print("WARNING failed to load template for email: %s" % ex)
+            except Exception as ex:
+                print("Failed to send email to %s: %s" % (resource.email, ex))
 
             return render(request, "web/thanks.html", context=context)
     elif identifier is not None:  # => GET ...
@@ -214,6 +255,8 @@ def edit_resource(request, identifier):
         contribute_similar_url = reverse("contribute-asset", args=[uuid])
 
     if request.method == "POST":
+        _set_session_tz_from_form_value(request)
+
         if resource.post_type == "event":
             form = ActivityForm(request.POST or None, request.FILES, instance=resource)
         elif resource.post_type == "resource":
@@ -240,7 +283,20 @@ def thanks(request):
     return render(request, "web/thanks.html")
 
 
-# @login_required(login_url='/admin/')
+def _set_event_day_number(event, tz):
+    result = "other"
+    if not event.event_time:
+        return result
+
+    oew_start = arrow.get(settings.OEW_RANGE[0], tzinfo=tz).datetime
+    oew_end = arrow.get(settings.OEW_RANGE[1], tzinfo=tz).datetime
+    if event.event_time >= oew_start and event.event_time <= oew_end:
+        result = event.event_time.astimezone(tz).strftime("%w")
+
+    event.event_day_number = result
+    return event
+
+
 def show_events(request):
     request_timezone = request.GET.get("timezone", "local")  # "local" = default
     event_list = (
@@ -252,28 +308,23 @@ def show_events(request):
     )  # .exclude(post_status='trash')
 
     event_count = len(event_list)
+    tz = pytz.timezone(get_timezone(request))
     for event in event_list:
         event.consolidated_image_url = event.get_image_url_for_list()
-        event.convertedtime = event.event_time_utc
-        event.convertedtimezone = "UTC"
+        _set_event_day_number(event, tz)
 
     # sort django queryset by UTC (property) values, not by local timezone
-    event_list = sorted(event_list, key=lambda item: item.event_time_utc)
-
-    # now = djtz.make_aware(djtz.now(), djtz.get_default_timezone())
-    now = djtz.now()
-    current_time_utc = now.astimezone(djtz.utc)
-    today = current_time_utc.strftime("%Y-%m-%d")
-
+    event_list = sorted(event_list, key=lambda item: item.event_time)
+    current_time_utc = djtz.now()
     days = [
-        ("Monday", "Monday, March 6", "2023-03-06"),
-        ("Tuesday", "Tuesday, March 7", "2023-03-07"),
-        ("Wednesday", "Wednesday, March 8", "2023-03-08"),
-        ("Thursday", "Thursday, March 9", "2023-03-09"),
-        ("Friday", "Friday, March 10", "2023-03-10"),
-        # ('Saturday', 'Saturday, March 11', '2023-03-11'),
-        # ('Sunday', 'Sunday, March 12', '2023-03-12'),
-        ("Other", "Other days", ""),
+        ("Monday", "Monday, March 6", "1"),
+        ("Tuesday", "Tuesday, March 7", "2"),
+        ("Wednesday", "Wednesday, March 8", "3"),
+        ("Thursday", "Thursday, March 9", "4"),
+        ("Friday", "Friday, March 10", "5"),
+        # ('Saturday', 'Saturday, March 11', "6"),
+        # ('Sunday', 'Sunday, March 12', "0"),
+        ("Other", "Other days", "other"),
     ]
 
     context = {
@@ -281,32 +332,40 @@ def show_events(request):
         "event_list": event_list,
         "current_time_utc": current_time_utc,
         "event_count": event_count,
-        "today": today,
         "days_to_go": days_to_go,
+        "reload_after_timezone_change": True,
     }
     return render(request, "web/events.html", context=context)
 
 
-# @login_required(login_url='/admin/')
+def handle_old_event_detail(request, slug):
+    resource = (
+        Resource.objects.filter(slug=slug, post_type="event").order_by("year").first()
+    )
+    if resource is None:
+        raise Http404("No event matches given query.")
+    return redirect("show_event_detail", year=resource.year, slug=resource.slug)
+
+
 def show_event_detail(request, year, slug):
-    event = get_object_or_404(Resource, year=year, slug=slug)
-    # #todo -- check if event is "published" (throw 404 for drafts / trash)
-    event.convertedtime = event.event_time_utc
-    event.convertedtimezone = "UTC"
+    event = get_object_or_404(Resource, year=year, slug=slug, post_type="event")
+    # #todo -- check if event is "published" (redirect to staff login for non-published, show also status info if already logged in)
+    # #toto -- filter out trash
     event.consolidated_image_url = event.get_image_url_for_detail()
-    context = {"obj": event}
+    context = {
+        "obj": event,
+        "reload_after_timezone_change": True,
+    }
     return render(request, "web/event_detail.html", context=context)
 
 
-# @login_required(login_url='/admin/')
 def show_resources(request):
     resource_list = (
         Resource.objects.all()
         .filter(post_type="resource", year=settings.OEW_YEAR)
-        .order_by(Lower("title"))
+        .order_by(Lower("title"))  # "Lower" = for case-insensitive sorting
         .filter(post_status="publish")
-    )  # .exclude(post_status='trash')
-    # "Lower" = for case-insensitive sorting
+    )
     resource_count = len(resource_list)
 
     for resource in resource_list:
@@ -320,12 +379,132 @@ def show_resources(request):
     return render(request, "web/resources.html", context=context)
 
 
-# @login_required(login_url='/admin/')
+def handle_old_resource_detail(request, slug):
+    resource = (
+        Resource.objects.filter(slug=slug, post_type="resource")
+        .order_by("year")
+        .first()
+    )
+    if resource is None:
+        raise Http404("No resource matches given query.")
+    return redirect("show_resource_detail", year=resource.year, slug=resource.slug)
+
+
 def show_resource_detail(request, year, slug):
-    resource = get_object_or_404(Resource, year=year, slug=slug)
+    resource = get_object_or_404(Resource, year=year, slug=slug, post_type="resource")
+    # #todo -- check if event is "published" (redirect to staff login for non-published, show also status info if already logged in)
+    # #toto -- filter out trash
     resource.consolidated_image_url = resource.get_image_url_for_detail()
     context = {"obj": resource}
     return render(request, "web/resource_detail.html", context=context)
+
+
+@user_passes_test(is_staff, login_url="/admin/")
+def staff_view(request):
+    """
+    for now mainly "approval list"
+    """
+    request_timezone = request.GET.get("timezone", "local")
+    resource_list = (
+        Resource.objects.all()
+        .filter(year=settings.OEW_YEAR)
+        .filter(Q(post_status__in=["draft", ""]) | Q(status__in=["new", "feedback"]))
+        .order_by("modified")
+    )
+
+    resource_count = len(resource_list)
+    for resource in resource_list:
+        resource.consolidated_image_url = resource.get_image_url_for_list()
+        url_args = [resource.year, resource.slug]
+        if resource.post_type == "event":
+            resource.detail_url = reverse("show_event_detail", args=url_args)
+        else:
+            resource.detail_url = reverse("show_resource_detail", args=url_args)
+
+    current_time_utc = djtz.now()
+    context = {
+        "resource_list": resource_list,
+        "current_time_utc": current_time_utc,
+        "resource_count": resource_count,
+        "reload_after_timezone_change": True,
+        "oew_year": settings.OEW_YEAR,  # TODO: add also to other resource views, etc. to get rid of hard-coded "2023" in various templates
+    }
+    return render(request, "web/staff.html", context=context)
+
+
+# see staff.html (and some others)
+ACTION_BUTTON_NAME = "action"
+APPROVE_ACTION_BUTTONS = {
+    "approve": EmailNotificationText.ACTION_RES_APPROVED,
+    "send feedback": EmailNotificationText.ACTION_RES_FEEDBACK,
+    "reject": EmailNotificationText.ACTION_RES_REJECTED,
+}
+
+
+def _change_state(resource, action, reviewer):
+    if action == EmailNotificationText.ACTION_RES_APPROVED:
+        resource.post_status = Resource.POST_STATUS_PUBLISH
+        resource.status = "approved"
+    elif action == EmailNotificationText.ACTION_RES_FEEDBACK:
+        resource.post_status = Resource.POST_STATUS_DRAFT
+        resource.status = "feedback"
+    elif action == EmailNotificationText.ACTION_RES_REJECTED:
+        resource.post_status = Resource.POST_STATUS_TRASH
+        resource.status = "rejected"
+    else:
+        raise ValueError("unknown action")
+    resource.reviewer = reviewer
+    resource.save()
+
+
+@user_passes_test(is_staff, login_url="/admin/")
+@require_POST
+def approve_action(request, id):
+    if ACTION_BUTTON_NAME not in request.POST:
+        raise ValueError("missing action")
+    action = request.POST["action"]
+    if action not in APPROVE_ACTION_BUTTONS:
+        raise ValueError("unknown action")
+    action = APPROVE_ACTION_BUTTONS[action]
+
+    resource = get_object_or_404(Resource, pk=id)
+    template = get_object_or_404(EmailNotificationText, action=action)
+
+    _change_state(resource, action, request.user)
+
+    initial = template.fill_from_resource(resource)
+    form = ResourceFeedbackForm(initial=initial)
+    context = {
+        "form": form,
+        "resource": resource,
+    }
+    return render(request, "web/send-resource-feedback.html", context)
+
+
+@user_passes_test(is_staff, login_url="/admin/")
+@require_POST
+def submit_resource_feedback(request):
+    form = ResourceFeedbackForm(request.POST)
+    resource_id = request.POST.get("resource_id")
+    resource = get_object_or_404(Resource, pk=resource_id)
+    if form.is_valid():
+        if form.cleaned_data["body"]:
+            send_email_async(
+                form.cleaned_data["subject"],
+                form.cleaned_data["body"],
+                settings.EMAIL_NOTIF_FROM,
+                [resource.email],
+                cc=settings.EMAIL_NOTIF_CC,
+            )
+            return render(request, "web/resource-feedback-sent.html")
+        # empty body => nothing to send => go straight back to ...
+        return redirect("staff_view")
+
+    context = {
+        "form": form,
+        "resource": resource,
+    }
+    return render(request, "web/send-resource-feedback.html", context)
 
 
 class LargeResultsSetPagination(PageNumberPagination):
@@ -386,7 +565,7 @@ class SubmissionViewSet(viewsets.ModelViewSet):
 
     def get_queryset(self):
         queryset = Resource.objects.filter(
-            created__gte=arrow.get(settings.OEW_CFP_OPEN).datetime
+            created__gte=arrow.get(config.OEW_CFP_OPEN).datetime
         ).order_by("-created")
         if self.request.user.is_staff:
             return queryset
@@ -636,3 +815,37 @@ class RequestAccessView(APIView):
             return Response({"status": "invalid_email"})
 
         return Response({"status": "ok"})
+
+
+# HTMX stuff:
+
+# Typing pattern recommended by django-stubs:
+# https://github.com/typeddjango/django-stubs#how-can-i-create-a-httprequest-thats-guaranteed-to-have-an-authenticated-user
+class HtmxHttpRequest(HttpRequest):
+    htmx: HtmxDetails
+
+
+# Used for pages which do NOT need to refresh their content when user chooses different timezone (e.g. anything but events pages).
+# This is default behavior, e.g. relies on `reload_after_timezone_change` NOT being is set in the context or set to `False`.
+# TODO: Currently not used (since selection was moved from footer to only events pages). For now kept, but if it stays that way, remove later.
+@require_POST
+def set_timezone(request: HtmxHttpRequest) -> HttpResponse:
+    timezone = request.POST["timezone"]
+    if timezone in TIMEZONE_CHOICES:
+        request.session[SESSION_TIMEZONE] = request.POST["timezone"]
+        result = "timezone changed: %s" % timezone
+    else:
+        result = "NOK"
+    return render(
+        request,
+        "web/timezone.html",
+        {"result": result},
+    )
+
+
+# Used for events pages (of wherever `reload_after_timezone_change:True` is set to context).
+@require_POST
+def set_timezone_and_reload(request: HtmxHttpRequest) -> HttpResponse:
+    response = set_timezone(request)
+    response["HX-Refresh"] = "true"
+    return response

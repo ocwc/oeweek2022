@@ -2,7 +2,14 @@ from django.contrib import admin
 
 from import_export.admin import ImportExportMixin
 
-from .models import Page, Resource, Category, EmailTemplate, ResourceImage
+from .models import (
+    Page,
+    Resource,
+    Category,
+    ResourceImage,
+    EmailQueueItem,
+    EmailNotificationText,
+)
 
 
 class ResourceAdmin(ImportExportMixin, admin.ModelAdmin):
@@ -31,7 +38,7 @@ class ResourceAdmin(ImportExportMixin, admin.ModelAdmin):
         "institution",
         "link",
     )
-    list_filter = ("post_status", "post_type", "event_type", "notified")
+    list_filter = ("post_status", "post_type", "event_type", "notified", "year")
 
     change_form_template = "web/admin/change_form.html"
 
@@ -47,16 +54,25 @@ class CategoryAdmin(admin.ModelAdmin):
     pass
 
 
-class EmailTemplateAdmin(admin.ModelAdmin):
-    pass
-
-
 class ResourceImageAdmin(admin.ModelAdmin):
     pass
+
+
+class EmailQueueItemAdmin(admin.ModelAdmin):
+    pass
+
+
+class EmailNotificationTextAdmin(admin.ModelAdmin):
+    list_display = (
+        "id",
+        "action",
+        "subject",
+    )
 
 
 admin.site.register(Resource, ResourceAdmin)
 admin.site.register(Page, PageAdmin)
 admin.site.register(Category, CategoryAdmin)
-admin.site.register(EmailTemplate, EmailTemplateAdmin)
 admin.site.register(ResourceImage, ResourceImageAdmin)
+admin.site.register(EmailQueueItem, EmailQueueItemAdmin)
+admin.site.register(EmailNotificationText, EmailNotificationTextAdmin)

@@ -1,68 +1,46 @@
 # -*- coding: utf-8 -*-
 
+import pytest
+
 from web.models import Resource
-from web.utils import guess_missing_activity_fields
+from web.utils import guess_missing_location
 
 
-def test_guess_missing_activity_fields_timezone():
-    # several Bostons exist + no country given -> not able to guess
+def __prepare_resource(country=None, city=None):
     resource = Resource()
-    resource.city = "Boston"
-    guess_missing_activity_fields(resource)
-    assert resource.event_source_timezone == ""
-
-    resource = Resource()
-    resource.city = "Boston"
-    resource.country = "United States"
-    guess_missing_activity_fields(resource)
-    assert resource.event_source_timezone == "America/New_York"
-
-    resource = Resource()
-    resource.city = "Bratislava"
-    guess_missing_activity_fields(resource)
-    assert resource.event_source_timezone == "Europe/Bratislava"
-
-    resource = Resource()
-    resource.city = "kosice"
-    guess_missing_activity_fields(resource)
-    assert resource.event_source_timezone == "Europe/Bratislava"
-
-    # note: TODO later, but tricky, since:
-    # 1) if we get "capital" for the country and look it up via get_cities_by_name(),
-    #    we get several "Washington"
-    # 2) even if we do filter properly, the result might be ambiguous anyway
-    #    since there are several timezones in US
-    resource = Resource()
-    resource.country = "United States"
-    guess_missing_activity_fields(resource)
-    assert resource.event_source_timezone == ""
-
-    resource = Resource()
-    resource.country = "Slovakia"
-    guess_missing_activity_fields(resource)
-    assert resource.event_source_timezone == "Europe/Bratislava"
-
-    resource = Resource()
-    resource.city = "Dummy City"
-    guess_missing_activity_fields(resource)
-    assert resource.event_source_timezone == ""
+    resource.country = country
+    resource.city = city
+    resource.save()
+    return resource.id
 
 
+def __get_resource(id):
+    return Resource.objects.get(pk=id)
+
+
+@pytest.mark.django_db
 def test_guess_missing_activity_fields_location():
-    resource = Resource()
-    resource.country = "Slovakia"
-    guess_missing_activity_fields(resource)
-    assert resource.lat == 48.14816
-    assert resource.lng == 17.10674
+    # fails to guess given Paris/France vs. Paris/Texas
+    resource_id = __prepare_resource(city="Paris")
+    guess_missing_location(resource_id)
+    resource = __get_resource(resource_id)
+    assert resource.lat is None
+    assert resource.lng is None
 
-    resource = Resource()
-    resource.city = "kosice"
-    guess_missing_activity_fields(resource)
+    resource_id = __prepare_resource(city="Paris", country="United States")
+    guess_missing_location(resource_id)
+    resource = __get_resource(resource_id)
+    assert resource.lat == 33.66094
+    assert resource.lng == -95.55551
+
+    resource_id = __prepare_resource(city="kosice")
+    guess_missing_location(resource_id)
+    resource = __get_resource(resource_id)
     assert resource.lat == 48.71395
     assert resource.lng == 21.25808
 
-    resource = Resource()
-    resource.city = "Dummy City"
-    guess_missing_activity_fields(resource)
+    resource_id = __prepare_resource(city="Dummy City")
+    guess_missing_location(resource_id)
+    resource = __get_resource(resource_id)
     assert resource.lat is None
     assert resource.lng is None

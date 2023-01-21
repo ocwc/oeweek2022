@@ -3,6 +3,7 @@ import os
 import datetime
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+FE_DEPLOYMENT = False
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/1.8/howto/deployment/checklist/
@@ -25,6 +26,7 @@ INSTALLED_APPS = (
     "django.contrib.messages",
     "django.contrib.staticfiles",
     "django_filters",
+    "django_htmx",
     "magiclink",
     "markdown",
     "taggit",
@@ -33,11 +35,12 @@ INSTALLED_APPS = (
     "rest_auth",
     "django_wysiwyg",
     "ckeditor",
-    "mail_templated",
     "model_utils",
     "corsheaders",
     "web",
     "import_export",
+    "constance",
+    "constance.backends.database",
     # our WagTail-based apps
     "contributor_profile",
     "gp",
@@ -58,8 +61,6 @@ INSTALLED_APPS = (
     "wagtail",
     # required by WagTail stuff
     "modelcluster",
-    # required for automatic screenshots
-    "django_q",
 )
 
 MIDDLEWARE = [
@@ -72,13 +73,30 @@ MIDDLEWARE = [
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
     "django.middleware.security.SecurityMiddleware",
+    "django_htmx.middleware.HtmxMiddleware",
     "wagtail.contrib.redirects.middleware.RedirectMiddleware",
+    "web.timezone_utils.TimezoneMiddleware",
 ]
 
 AUTHENTICATION_BACKENDS = (
     "magiclink.backends.MagicLinkBackend",
     "django.contrib.auth.backends.ModelBackend",
 )
+
+CONSTANCE_BACKEND = "constance.backends.database.DatabaseBackend"
+
+CONSTANCE_CONFIG = {
+    "OEW_CFP_OPEN": (
+        datetime.date(2023, 1, 23),
+        "Date when Contributions are open",
+        datetime.date,
+    ),
+    "HIDE_RESOURCE_BUTTONS_IN_BASE_TEMPLACE": (
+        False,
+        "If True, 'Events' and 'Assets' buttons in base template are hidden",
+        bool,
+    ),
+}
 
 ROOT_URLCONF = "oerweekapi.urls"
 
@@ -95,6 +113,8 @@ TEMPLATES = [
                 "django.template.context_processors.request",
                 "django.contrib.auth.context_processors.auth",
                 "django.contrib.messages.context_processors.messages",
+                "web.timezone_utils.inject_timezones",
+                "web.utils.inject_template_variables",
             ],
         },
     },
@@ -103,6 +123,8 @@ TEMPLATES = [
 WSGI_APPLICATION = "oerweekapi.wsgi.application"
 
 EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
+EMAIL_NOTIF_FROM = "info@openeducationweek.org"
+EMAIL_NOTIF_CC = ["openeducationweek@oeglobal.org"]
 
 # Internationalization
 # https://docs.djangoproject.com/en/1.8/topics/i18n/
@@ -192,9 +214,10 @@ DJANGO_WYSIWYG_FLAVOR = "ckeditor"
 LOGIN_URL = "/api-auth/login/"
 
 # all in UTC, see TIME_ZONE above
+# TODO: refactor into CONSTANCE_CONFIG
 OEW_YEAR = 2023
 OEW_RANGE = ["2023-03-06 00:00:00", "2023-03-10 23:59:59"]
-OEW_CFP_OPEN = "2023-01-16"
+# OEW_CFP_OPEN = "2023-01-16"
 
 # next year's OE week starting date
 FUTURE_OEWEEK = datetime.date(2024, 3, 4)
@@ -233,7 +256,9 @@ Q_CLUSTER = {
     "bulk": 10,
 }
 
-# magiclink
+SIGNUP_ENABLED = True
+
+# magiclink (note: not used if SIGNUP_ENABLED = False)
 LOGIN_URL = "magiclink:login"
 LOGIN_REDIRECT_URL = "/profile/"
 
@@ -257,3 +282,9 @@ if CI:
     from .testsettings import *  # noqa: F401, F403
 else:
     from .localsettings import *  # noqa: F401, F403
+
+if not FE_DEPLOYMENT:
+    INSTALLED_APPS += (
+        # required for automatic screenshots
+        "django_q",
+    )

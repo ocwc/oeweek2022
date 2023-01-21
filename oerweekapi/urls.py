@@ -43,7 +43,6 @@ router.register(r"email-templates", EmailTemplateView)
 urlpatterns = (
     [
         url(r"^api/", include(router.urls)),
-        # url(r'^api/submission/', SubmissionView.as_view()),
         url(r"^api/events-summary/", EventSummaryView.as_view()),
         url(r"^api/twitter/", TwitterSearchResults.as_view()),
         url(r"^api/request-access/", RequestAccessView.as_view()),
@@ -51,13 +50,8 @@ urlpatterns = (
         url(r"^api-auth/", include("rest_framework.urls", namespace="rest_framework")),
         url(r"^api-token-auth/", rest_framework_jwt.views.obtain_jwt_token),
         url(r"^api-token-refresh/", rest_framework_jwt.views.refresh_jwt_token),
-        path("auth/", include("magiclink.urls", namespace="magiclink")),
         url(r"^export/resources/$", ExportResources.as_view(), name="resource_export"),
         url(r"^$", views.index, name="web_index"),
-        # url(r'^$', RedirectView.as_view(url='https://www.oeglobal.org/activities/open-education-week/', permanent=False), name='root_redirect'),
-        # url(r'^page/what-is-open-education-week/$', views.page__what_is_open_education_week),
-        # url(r'^page/faq/$', views.page__faq),
-        # url(r'^page/contribute/$', views.page__contribute),
         url(r"^submit$", RedirectView.as_view(url="/contribute/", permanent=False)),
         url(r"^submit/$", RedirectView.as_view(url="/contribute/", permanent=False)),
         url(
@@ -99,31 +93,66 @@ urlpatterns = (
             name="contribute-asset",
         ),
         path("edit/<uuid:identifier>/", views.edit_resource),
-        # OLD: url(r'^edit/$', views.edit_resource),
-        # url(r'^page/materials/$', views.page__materials),
         url(r"^thanks/$", views.thanks),
-        url(r"^schedule$", RedirectView.as_view(url="/events/", permanent=False)),
-        url(r"^schedule/$", RedirectView.as_view(url="/events/", permanent=False)),
-        url(r"^events$", RedirectView.as_view(url="/events/", permanent=False)),
+        url(r"^schedule$", RedirectView.as_view(url="/events/", permanent=True)),
+        url(r"^schedule/$", RedirectView.as_view(url="/events/", permanent=True)),
+        url(r"^events$", RedirectView.as_view(url="/events/", permanent=True)),
         url(r"^events/$", views.show_events),
-        url(r"^resources$", RedirectView.as_view(url="/resources/", permanent=False)),
+        url(r"^resources$", RedirectView.as_view(url="/resources/", permanent=True)),
         url(r"^resources/$", views.show_resources),
-        path("events/<int:year>/<str:slug>/", views.show_event_detail),
-        path("resources/<int:year>/<str:slug>/", views.show_resource_detail),
-        # url(r'^page/home/$', views.index, name='web_index'),
+        path("events/<str:slug>/", views.handle_old_event_detail),
+        path(
+            "events/<int:year>/<str:slug>/",
+            views.show_event_detail,
+            name="show_event_detail",
+        ),
+        path("resources/<str:slug>/", views.handle_old_resource_detail),
+        path(
+            "resources/<int:year>/<str:slug>/",
+            views.show_resource_detail,
+            name="show_resource_detail",
+        ),
+        path("staff/", views.staff_view, name="staff_view"),
+        path(
+            "staff/approve/<int:id>/",
+            views.approve_action,
+            name="staff_approve_action",
+        ),
+        path(
+            "staff/submit_feedback/",
+            views.submit_resource_feedback,
+            name="staff_submit_feedback",
+        ),
         path("cms/", include(wagtailadmin_urls)),
         path("documents/", include(wagtaildocs_urls)),
         # redirect from legacy URL path to new URLs
-        url(r"^about$", RedirectView.as_view(url="/pages/about/", permanent=False)),
-        url(r"^about/$", RedirectView.as_view(url="/pages/about/", permanent=False)),
-        url(r"^about/faq/$", RedirectView.as_view(url="/pages/faq/", permanent=False)),
-        url(
-            r"^about/2023/$", RedirectView.as_view(url="/pages/2023/", permanent=False)
-        ),
+        url(r"^about$", RedirectView.as_view(url="/pages/about/", permanent=True)),
+        url(r"^about/$", RedirectView.as_view(url="/pages/about/", permanent=True)),
+        url(r"^promote$", RedirectView.as_view(url="/pages/promote/", permanent=True)),
+        url(r"^promote/$", RedirectView.as_view(url="/pages/promote/", permanent=True)),
+        url(r"^about/faq$", RedirectView.as_view(url="/pages/faq/", permanent=True)),
+        url(r"^about/faq/$", RedirectView.as_view(url="/pages/faq/", permanent=True)),
+        url(r"^about/2023$", RedirectView.as_view(url="/pages/2023/", permanent=True)),
+        url(r"^about/2023/$", RedirectView.as_view(url="/pages/2023/", permanent=True)),
+        # redirect from semi-hardcoded "about" page to the newer about page
+        url(r"^pages$", RedirectView.as_view(url="/pages/about/", permanent=False)), # not permanent
+        url(r"^pages/$", RedirectView.as_view(url="/pages/about/", permanent=False)), # not permanent
+        # wagtail URLs
         path("pages/", include(wagtail_urls)),
-        path("profile/", include("contributor_profile.urls", namespace="c_profile")),
         # path("search/", search_views.search, name="search"),
+        url(r"^set-timezone/$", views.set_timezone, name="set_timezone"),
+        url(
+            r"^set-timezone-reload/$",
+            views.set_timezone_and_reload,
+            name="set_timezone_reload",
+        ),
     ]
     + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
     + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
 )
+
+if settings.SIGNUP_ENABLED:
+    urlpatterns += [
+        path("auth/", include("magiclink.urls", namespace="magiclink")),
+        path("profile/", include("contributor_profile.urls", namespace="c_profile")),
+    ]

@@ -1,20 +1,18 @@
+import json
 import uuid
 
 from django.db import models
 from django.conf import settings
-from django.core.exceptions import ValidationError
+from django.core.exceptions import ObjectDoesNotExist, ValidationError
 from django.core.files.base import ContentFile
 from django.utils.deconstruct import deconstructible
 from django.utils.text import slugify
 from django.contrib.postgres.fields import ArrayField
 from django.contrib.auth import get_user_model
-
 from taggit.managers import TaggableManager
 
 from model_utils import Choices
 from model_utils.models import TimeStampedModel
-
-from mail_templated import send_mail
 
 from .data import COUNTRY_CHOICES, LANGUAGE_CHOICES, LICENSE_CHOICES
 
@@ -106,8 +104,13 @@ class Resource(TimeStampedModel, ReviewModel):
         ("resource", "Resource"), ("project", "Project"), ("event", "Event")
     )
 
+    POST_STATUS_DRAFT = "draft"
+    POST_STATUS_PUBLISH = "publish"
+    POST_STATUS_TRASH = "trash"
     POST_STATUS_TYPES = Choices(
-        ("publish", "Publish"), ("draft", "Draft"), ("trash", "Trash")
+        (POST_STATUS_PUBLISH, "Publish"),
+        (POST_STATUS_DRAFT, "Draft"),
+        (POST_STATUS_TRASH, "Trash"),
     )
 
     EVENT_TYPES = Choices(
@@ -171,32 +174,20 @@ class Resource(TimeStampedModel, ReviewModel):
     country = models.CharField(
         max_length=255, blank=True, null=True, choices=COUNTRY_CHOICES
     )
-    event_time = models.DateTimeField(blank=True, null=True)
-
-    @property
-    def event_time_utc(self):
-        try:
-            event_tzinfo = timezone(self.event_source_timezone)
-            event_localtime = self.event_time
-
-            if event_localtime and event_tzinfo:
-                dt = arrow.get(event_localtime, tzinfo=event_tzinfo)
-                utc = dt.to("UTC")  # .replace(tzinfo=timezone('UTC'))
-                return utc
-        except:
-            return ""
-            # return self.event_time
+    event_time = models.DateTimeField(
+        blank=True, null=True
+    )  # in TZ set in setting.py:TIME_ZONE
 
     @property
     def event_time_link_to_everytimezone(self):
-        ts = self.event_time_utc
+        ts = self.event_time
         noon_utc = ts.replace(hour=12, minute=0, second=0)
         offset = int((ts - noon_utc).total_seconds() / 60)
         return f"https://everytimezone.com/#{ts.year}-{ts.month}-{ts.day},{offset},6bj"
 
     @property
     def event_offset_in_hours(self):
-        then = self.event_time_utc
+        then = self.event_time
         now = djtz.now()
 
         duration = then - now
@@ -210,31 +201,14 @@ class Resource(TimeStampedModel, ReviewModel):
             return ""
         # FYI: https://stackoverflow.com/questions/1345827/how-do-i-find-the-time-difference-between-two-datetime-objects-in-python
 
-    @property
-    def event_day(self):
-        return self.event_time_utc.strftime("%Y-%m-%d") if self.event_time_utc else ""
-
-    @property
-    def event_weekday(self):
-        return self.event_time_utc.strftime("%A") if self.event_time_utc else ""
-
-    @property
-    def event_oeweekday(self):
-        if not self.event_time_utc:
-            return "Other"
-        if arrow.get(self.event_time_utc) < arrow.get(
-            settings.OEW_RANGE[0]
-        ):  # .replace(tzinfo='local'):
-            return "Other"
-        if arrow.get(self.event_time_utc) > arrow.get(settings.OEW_RANGE[1]):
-            return "Other"
-        return self.event_time_utc.strftime("%A")
-
     event_type = models.CharField(
         max_length=255, blank=True, null=True, choices=EVENT_TYPES
     )
     event_online = models.BooleanField(default=False)
+    # TODO 1: store original value filled by user (see then also event_source_timezone, given that Django will convert it to UTC before storing to `event_time`) *or* if too difficult, simply remove
+    # TODO 2: once 1 is done, we can treat add migration which will treat empty event_source_datetime as "old content" and 1) copying `event_time` into `event_source_datetime` and 2) adjusting `event_time` to UTC assuming `event_source_timezone`
     event_source_datetime = models.CharField(max_length=255, blank=True)
+    # TODO: store SESSION_TIMEZONE (see then also event_source_datetime) *or* if too difficult, simply remove
     event_source_timezone = models.CharField(
         max_length=255, blank=True, validators=[validate_timezone]
     )
@@ -251,8 +225,19 @@ class Resource(TimeStampedModel, ReviewModel):
 
     categories = models.ManyToManyField(Category, blank=True)
     tags = TaggableManager(blank=True)
-    opentags = models.CharField(max_length=255, blank=True)
 
+    # BEWARE: Before 2022, PostgreSQL was used and tags were stored in ArrayField (see commented-out
+    # part bellow). For 2022 and 2023 SQlite is being used. Since SQlite does NOT support ArrayField,
+    # only CharField is used. Later on we plan to move back to PostgreSQL (to take advantage of
+    # MetaBase). And in the mean time we're importing pre-2022 content from PostgreSQL into SQlite,
+    # hence:
+    # 1) opentags_old = models.CharField is being added
+    # 2) it will contain "SELECT ..., array_to_string(opentags, ',') AS opentags_old ..."
+    # 3) once we migrate back to PostgreSQL, migration will be done using
+    #    "SELECT string_to_array(opentags_old, ',') ..." and opentags_old will be removed
+    # x) In the mean time, code working with 'opentags' will most probably NOT work since it was
+    #    written for opentags = ArrayField
+    opentags_old = models.CharField(max_length=255, blank=True)
     # opentags = ArrayField(
     #     models.CharField(
     #         max_length=255,
@@ -260,6 +245,10 @@ class Resource(TimeStampedModel, ReviewModel):
     #     ),
     #     blank=True,
     # )
+    @property
+    def opentags(self):
+        """temporary workaround until we are back to PostgreSQL with opentags = ArrayField"""
+        return []
 
     notified = models.BooleanField(default=False)
     raw_post = models.TextField(blank=True)
@@ -283,6 +272,8 @@ class Resource(TimeStampedModel, ReviewModel):
     twitter = models.CharField(blank=True, null=True, max_length=255)
     twitter_personal = models.CharField(blank=True, null=True, max_length=255)
     twitter_institution = models.CharField(blank=True, null=True, max_length=255)
+
+    newsletter = models.BooleanField(default=False)
 
     @property
     def twitter_personal_url(self):
@@ -385,16 +376,24 @@ class Resource(TimeStampedModel, ReviewModel):
 
         super().save(*args, **kwargs)
 
+    # TODO: duplicate of send_email_async() in contribute_activity() but used in serialized => find out what/why/... and clean-up/de-duplicate
     def send_new_submission_email(self):
-        send_mail(
-            "emails/submission_received.tpl",
-            {},
-            "info@openeducationweek.org",
-            [self.email],
-        )
+        try:
+            template = EmailNotificationText.objects.get(
+                action=EmailNotificationText.ACTION_RES_NEW
+            )
+            filled = template.fill_from_resource(resource)
+            send_email_async(
+                filled["subject"],
+                filled["body"],
+                settings.EMAIL_NOTIF_FROM,
+                [self.email],
+            )
+        except ObjectDoesNotExist as ex:
+            print("WARNING failed to load template for email: %s" % ex)
 
     def send_new_account_email(self, force=False):
-        # TODO: chek and possibly adjust how that should relate to magiclink accounts
+        # TODO: check and possibly adjust how that should relate to magiclink accounts
         email = self.email.lower()
         if force or not User.objects.filter(email=email).exists():
             user, is_created = User.objects.get_or_create(
@@ -410,14 +409,22 @@ class Resource(TimeStampedModel, ReviewModel):
             user.set_password(key)
             user.save()
 
-            send_mail(
-                "emails/account_created.tpl",
-                {"user": user, "key": key},
-                "info@openeducationweek.org",
-                [self.email],
-            )
+            try:
+                template = EmailNotificationText.objects.get(
+                    action=EmailNotificationText.ACTION_ACCOUNT_NEW
+                )
+                # TODO: filling of values into template: {user}, {key}
+                send_email_async(
+                    filled["subject"],
+                    filled["body"],
+                    settings.EMAIL_NOTIF_FROM,
+                    [self.email],
+                )
+            except models.Model.DoesNotExist as ex:
+                print("WARNING failed to load template for email: %s" % ex)
 
 
+# TODO: no longer being used, but some code references remain => resolve / remove
 class EmailTemplate(models.Model):
     name = models.CharField(max_length=128)
     subject = models.CharField(max_length=255)
@@ -435,3 +442,107 @@ class ResourceImage(models.Model):
 
     def __str__(self):
         return repr(self.image)
+
+
+class EmailQueueItem(models.Model):
+    STATUS_UNSENT = "u"
+    STATUS_SENT = "s"
+    STATUS_CHOICES = Choices((STATUS_SENT, "sent"), (STATUS_UNSENT, "not sent yet"))
+
+    subject = models.CharField(max_length=128)
+    body = models.TextField()
+    from_email = models.EmailField()
+    created = models.DateTimeField(auto_now_add=True)
+    modified = models.DateTimeField(auto_now=True)
+    priority = models.IntegerField(default=1)
+    status = models.CharField(
+        max_length=1, choices=STATUS_CHOICES, default=STATUS_UNSENT
+    )
+    # special case: we need to store list -> use json to serialize/deserialize into/from model
+    # TODO: change to JSONField once we migrate back to PostgreSQL
+    recipient_list = models.CharField(max_length=512)
+    # special case: we need to store list -> use json to serialize/deserialize into/from model
+    # TODO: change to JSONField once we migrate back to PostgreSQL
+    cc = models.CharField(max_length=512, blank=True)
+
+    def get_recipient_list(self):
+        if self.recipient_list:
+            return json.loads(self.recipient_list)
+        return []
+
+    def set_recipient_list(self, recipients):
+        self.recipient_list = json.dumps(recipients)
+
+    def get_cc(self):
+        if self.cc:
+            return json.loads(self.cc)
+        return None
+
+    def set_cc(self, cc):
+        self.cc = json.dumps(cc)
+
+
+def send_email_async(subject, body, from_email, recipient_list, cc=[], priority=1):
+    """
+    priority: 0 = notifications for staff, 1 = notifications for users
+    """
+    queue_item = EmailQueueItem.objects.create(
+        subject=subject, body=body, from_email=from_email, priority=priority
+    )
+    queue_item.set_recipient_list(recipient_list)
+    queue_item.set_cc(cc)
+    queue_item.save()
+    print("email %d put into the queue" % queue_item.id)
+
+
+class EmailNotificationText(models.Model):
+    ACTION_ACCOUNT_NEW = "a_n"
+    ACTION_RES_NEW = "r_n"
+    ACTION_RES_APPROVED = "r_a"
+    ACTION_RES_FEEDBACK = "r_f"
+    ACTION_RES_REJECTED = "r_r"
+    ACTION_CHOICES = Choices(
+        (ACTION_ACCOUNT_NEW, "account: new"),
+        (ACTION_RES_NEW, "resource: new"),
+        (ACTION_RES_APPROVED, "resource: approved"),
+        (ACTION_RES_FEEDBACK, "resource: feedback sent"),
+        (ACTION_RES_REJECTED, "resource: rejected"),
+    )
+
+    action = models.CharField(max_length=3, choices=ACTION_CHOICES, unique=True)
+    subject = models.CharField(max_length=128)
+    body = models.TextField(
+        blank=True,
+        help_text="You can use the following variables in body and title: {firstname}, {lastname}, {title}, {slug1}, {slug2}, {uuid} and {year}. HTML is not allowed.",
+    )
+
+    def fill_from_resource(self, resource):
+        """
+        returns dictionary usable for initialization of ResourceFeedbackForm
+        """
+        initial = {}
+        initial["resource_id"] = resource.id
+        initial["subject"] = self.subject
+
+        args = {}
+        args["firstname"] = resource.firstname
+        args["lastname"] = resource.lastname
+        args["slug2"] = resource.slug
+        args["title"] = resource.title
+        args["uuid"] = resource.uuid
+        args["year"] = resource.year
+        if resource.post_type == "event":
+            args["slug1"] = "events"
+        else:
+            args["slug1"] = "resources"
+        initial["body"] = self.body.format(**args)
+
+        return initial
+
+
+# TODO: Profile
+# - map to a user account
+# - add timezone setting
+# - initial value (when signing up) of timezone settings comes from SESSION_TIMEZONE
+# - when guessing tiemzone and user is logged in, use value from profile
+# - timezone selection form will still override (in display) override profile value but changing it will affect only display, (e.g. NOT saved in profile, that is reserved only for "edit profile")
