@@ -301,11 +301,12 @@ def show_events(request):
     request_timezone = request.GET.get("timezone", "local")  # "local" = default
     event_list = (
         Resource.objects.all()
-        .filter(post_type="event", post_status="publish", year=settings.OEW_YEAR)
+        .filter(post_type="event", year=settings.OEW_YEAR, post_status="publish")
+        # TODO: very few items like that => try to sort that out without such exludes
         .exclude(event_source_timezone__exact="")
         .exclude(event_source_timezone__isnull=True)
         .exclude(event_time__isnull=True)
-    )  # .exclude(post_status='trash')
+    )
 
     event_count = len(event_list)
     tz = pytz.timezone(get_timezone(request))
@@ -340,7 +341,9 @@ def show_events(request):
 
 def handle_old_event_detail(request, slug):
     resource = (
-        Resource.objects.filter(slug=slug, post_type="event").order_by("year").first()
+        Resource.objects.filter(slug=slug, post_type="event", post_status="publish")
+        .order_by("year")
+        .first()
     )
     if resource is None:
         raise Http404("No event matches given query.")
@@ -348,9 +351,9 @@ def handle_old_event_detail(request, slug):
 
 
 def show_event_detail(request, year, slug):
-    event = get_object_or_404(Resource, year=year, slug=slug, post_type="event")
-    # #todo -- check if event is "published" (redirect to staff login for non-published, show also status info if already logged in)
-    # #toto -- filter out trash
+    event = get_object_or_404(
+        Resource, year=year, slug=slug, post_type="event", post_status="publish"
+    )
     event.consolidated_image_url = event.get_image_url_for_detail()
     context = {
         "obj": event,
@@ -362,9 +365,8 @@ def show_event_detail(request, year, slug):
 def show_resources(request):
     resource_list = (
         Resource.objects.all()
-        .filter(post_type="resource", year=settings.OEW_YEAR)
+        .filter(post_type="resource", year=settings.OEW_YEAR, post_status="publish")
         .order_by(Lower("title"))  # "Lower" = for case-insensitive sorting
-        .filter(post_status="publish")
     )
     resource_count = len(resource_list)
 
@@ -381,7 +383,7 @@ def show_resources(request):
 
 def handle_old_resource_detail(request, slug):
     resource = (
-        Resource.objects.filter(slug=slug, post_type="resource")
+        Resource.objects.filter(slug=slug, post_type="resource", post_status="publish")
         .order_by("year")
         .first()
     )
@@ -391,9 +393,9 @@ def handle_old_resource_detail(request, slug):
 
 
 def show_resource_detail(request, year, slug):
-    resource = get_object_or_404(Resource, year=year, slug=slug, post_type="resource")
-    # #todo -- check if event is "published" (redirect to staff login for non-published, show also status info if already logged in)
-    # #toto -- filter out trash
+    resource = get_object_or_404(
+        Resource, year=year, slug=slug, post_type="resource", post_status="publish"
+    )
     resource.consolidated_image_url = resource.get_image_url_for_detail()
     context = {"obj": resource}
     return render(request, "web/resource_detail.html", context=context)
