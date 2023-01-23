@@ -302,10 +302,11 @@ def show_events(request):
     event_list = (
         Resource.objects.all()
         .filter(post_type="event", year=settings.OEW_YEAR, post_status="publish")
+        # TODO: very few items like that => try to sort that out without such exludes
         .exclude(event_source_timezone__exact="")
         .exclude(event_source_timezone__isnull=True)
         .exclude(event_time__isnull=True)
-    )  # .exclude(post_status='trash')
+    )
 
     event_count = len(event_list)
     tz = pytz.timezone(get_timezone(request))
