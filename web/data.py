@@ -2,7 +2,7 @@ import geonamescache
 
 GC = geonamescache.GeonamesCache()
 
-COUNTRY_CHOICES = [(None, "Please select an option below")]
+COUNTRY_CHOICES = [(None, "Please select an option")]
 COUNTRY_CHOICES += [((c, c)) for c in sorted(GC.get_countries_by_names().keys())]
 COUNTRY_CHOICES += [("Country Not Listed", "Country Not Listed")]
 
@@ -33,7 +33,7 @@ LANGUAGE_LIST = """
     Other
 """
 
-LANGUAGE_CHOICES = [(None, "Please select an option below")]
+LANGUAGE_CHOICES = [(None, "Please select an option")]
 LANGUAGE_CHOICES += [
     ((c.strip(), c.strip())) for c in LANGUAGE_LIST.strip().split("\n")
 ]
@@ -41,7 +41,7 @@ LANGUAGE_CHOICES += [
 #
 
 LICENSE_CHOICES = [
-    (None, "Please select an option below"),
+    (None, "Please select an option"),
     ("Public domain", "Public domain"),
     ("CC-0", "CC Zero (CC 0)"),
     ("CC-BY", "CC Attribution (CC BY)"),

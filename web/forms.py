@@ -95,7 +95,7 @@ class ActivityForm(ModelForm):
     institution_is_oeg_member = forms.TypedChoiceField(
         label="Is the organization an OEGlobal member?",
         coerce=lambda x: x == "True",
-        choices=((None, "Please select an option below"), (False, "No"), (True, "Yes")),
+        choices=((None, "Please select an option"), (False, "No"), (True, "Yes")),
     )
 
     # print(COUNTRY_CHOICES)
@@ -255,7 +255,7 @@ class AssetForm(ModelForm):
     institution_is_oeg_member = forms.TypedChoiceField(
         label="Is the organization an OEGlobal member?",
         coerce=lambda x: x == "True",
-        choices=((None, "Please select an option below"), (False, "No"), (True, "Yes")),
+        choices=((None, "Please select an option"), (False, "No"), (True, "Yes")),
     )
 
     # print(COUNTRY_CHOICES)
