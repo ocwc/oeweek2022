@@ -3,15 +3,15 @@
 {% block content %}
 
 <h1>Thank you!</h1>
-<div class="prose">
+<div class="prose lg:prose-lg">
     <p>Thank you for contributing "{{ title }}" for Open Education Week. You will be notified by email about the status of your contribution, and once accepted, it will be added to the OE Week website.</p>
 
     <h2>You may now:</h2>
 
-    <ul>
-      <li><a href="/edit/{{ uuid }}/">Review/edit</a> your entry</li>
-      <li><a href="{{ contribute_similar }}">Submit a new entry</a> (with same contact information)</li>
-      <li><a href="/">Return</a> to Open Education Week</li>
+    <ul class="list-none pl-0! ml-0!">
+      <li><a href="/edit/{{ uuid }}/"><i class="fa-light fa-pen-to-square"></i> Review/edit</a> your entry</li>
+      <li><a href="{{ contribute_similar }}"><i class="fa-light fa-paper-plane"></i> Submit a new entry</a> (with same contact information)</li>
+      <li><a href="/"><i class="fa-light fa-arrow-rotate-left"></i> Return to Open Education Week</a></li>
     </ul>
 </div>
 {% endblock %}

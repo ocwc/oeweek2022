@@ -12,8 +12,9 @@
 {% wysiwyg_setup %}
 
 <h1>{{ action_verb }} Asset</h1>
-<div class="card bg-white p-8 lg:p-16 rounded shadow-lg prose">
-    <img src="https://conference.oeglobal.org/2021/wp-content/uploads/2022/02/submission-banner.png">
+<div class="card bg-white p-8 lg:p-16 rounded shadow-lg">
+    <img src="https://conference.oeglobal.org/2021/wp-content/uploads/2022/02/submission-banner.png" class="w-full mb-8">
+    <div class="prose lg:prose-lg mx-auto">
 
     <p>Have you created, or do you know of, an Open Asset or resource that you would like to share with the community during Open Education Week 2023?</p>
 
@@ -115,7 +116,7 @@
 
     <hr class="my-8">
 
-    <h2 style="background-color: #eeeeee"><strong>Organization</strong></h2>
+    <h2>Organization</h2>
 
     <div></div>
 
@@ -168,7 +169,7 @@
 
     <hr class="my-8">
 
-    <h2 style="background-color: #eeeeee"><strong>Contact person:</strong></h2>
+    <h2>Contact person</h2>
 
     {{ form.firstname.errors }}
     {{ form.lastname.errors }}
@@ -215,5 +216,6 @@
     <hr class="my-8">
     <p>You can submit similar entry by <a href="{{ contribute_similar }}">clicking here</a>.</p>
     {% endif %}
-</div>
+    </div><!-- prose -->
+</div> <!-- card -->
 {% endblock %}
