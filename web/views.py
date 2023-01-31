@@ -351,9 +351,9 @@ def handle_old_event_detail(request, slug):
 
 
 def show_event_detail(request, year, slug):
-    event = get_object_or_404(
-        Resource, year=year, slug=slug, post_type="event", post_status="publish"
-    )
+    event = get_object_or_404(Resource, year=year, slug=slug, post_type="event")
+    if event.post_status != "publish" and not request.user.is_staff:
+        raise Http404("Event %s/%s not found" % (year, slug))
     event.consolidated_image_url = event.get_image_url_for_detail()
     context = {
         "obj": event,
@@ -393,9 +393,9 @@ def handle_old_resource_detail(request, slug):
 
 
 def show_resource_detail(request, year, slug):
-    resource = get_object_or_404(
-        Resource, year=year, slug=slug, post_type="resource", post_status="publish"
-    )
+    resource = get_object_or_404(Resource, year=year, slug=slug, post_type="resource")
+    if resource.post_status != "publish" and not request.user.is_staff:
+        raise Http404("Event %s/%s not found" % (year, slug))
     resource.consolidated_image_url = resource.get_image_url_for_detail()
     context = {"obj": resource}
     return render(request, "web/resource_detail.html", context=context)

@@ -760,6 +760,11 @@ svg {
 .content ol:not(.list-none) {
   list-style: decimal;
 }
+.content ul.list-none,
+.content ol.list-none {
+  padding-left: 0;
+  margin-left: 0;
+}
 
 @media (min-width: 1024px) {
   .content h1 {

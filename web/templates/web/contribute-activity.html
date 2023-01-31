@@ -27,226 +27,230 @@
 {% get_current_timezone as current_timezone %}
 
 <h1>{{ action_verb }} Activity</h1>
-<div class="card bg-white p-8 lg:p-16 rounded shadow-lg prose">
-    <img src="https://conference.oeglobal.org/2021/wp-content/uploads/2022/02/submission-banner.png">
+<div class="card bg-white p-8 md:p-16 rounded shadow-lg">
+    <img src="https://conference.oeglobal.org/2021/wp-content/uploads/2022/02/submission-banner.png" class="w-full mb-8">
+    <div class="prose lg:prose-lg mx-auto">
 
-    <p>Are you hosting an open education-focused activity during Open Education Week 2023? Look no further! Enter all the details here, and we will make sure it is featured alongside other exciting #oeweek events around the world!</p>
 
-    <p>If you need to know more information before <strong>Contributing an Activity</strong>, <a href="/contribute/">here’s all you need to know</a>.</p>
+        <p>Are you hosting an open education-focused activity during Open Education Week 2023? Look no further! Enter all the details here, and we will make sure it is featured alongside other exciting #oeweek events around the world!</p>
 
-    <form action="{{ submit_url }}" method="post" enctype="multipart/form-data">
-    {% csrf_token %}
+        <p>If you need to know more information before <strong>Contributing an Activity</strong>, <a href="/contribute/">here’s all you need to know</a>.</p>
 
-    {#{{ form.uuid }}#} {# FYI: hidden field #}
-    {{ form.post_type }} {# FYI: hidden field #}
+        <form action="{{ submit_url }}" method="post" enctype="multipart/form-data">
+        {% csrf_token %}
 
-    {% if form.errors %}
-        <div class="alert alert-error">
-            <p style="background-color: red; color: white;"><strong>This form contains errors. Please scroll down to fix them and submit again.</strong></p>
-            <ul>
-                {% for field in form %}
-                    {% if field.errors %}
-                        {% for error in field.errors %}
-                            <li><a href="#id_{{ field.name }}" class="error">{{ error|escape }}</a></li>
-                        {% endfor %}
-                    {% endif %}
-                {% endfor %}
-            </ul>
-            {% if form.non_field_errors %}
-                {{ form.non_field_errors }}
-            {% endif %}
+        {#{{ form.uuid }}#} {# FYI: hidden field #}
+        {{ form.post_type }} {# FYI: hidden field #}
+
+        {% if form.errors %}
+            <div class="alert alert-error">
+                <p style="background-color: red; color: white;"><strong>This form contains errors. Please scroll down to fix them and submit again.</strong></p>
+                <ul>
+                    {% for field in form %}
+                        {% if field.errors %}
+                            {% for error in field.errors %}
+                                <li><a href="#id_{{ field.name }}" class="error">{{ error|escape }}</a></li>
+                            {% endfor %}
+                        {% endif %}
+                    {% endfor %}
+                </ul>
+                {% if form.non_field_errors %}
+                    {{ form.non_field_errors }}
+                {% endif %}
+            </div>
+        {% endif %}
+
+        <hr class="my-8">
+
+        <div></div>
+
+        <p>
+            {{ form.title.label_tag }}
+            {{ form.title.errors }}
+            {{ form.title }}
+        </p>
+
+        <p>
+            {{ form.event_facilitator.label_tag }}
+            {{ form.event_facilitator.errors }}
+            {{ form.event_facilitator }}
+        </p>
+
+        <p>
+            {{ form.content.label_tag }}
+            {{ form.content.errors }}
+
+            <br>Describe briefly the highlights of your activity/event. What will be the main focus of the session? Who would be most interested in participating? What are the expected outcomes? Include anything else you want to share.
+            <br><em>Suggested length: 50-500 words. (Feel free to also provide thedescription in your own lanquage).</em>
+
+            {{ form.content }}
+            {% wysiwyg_editor "id_content" "id_content_editor" "{ toolbar: 'Custom', toolbar_Custom: [['Bold', 'Italic', 'Underline'], ['NumberedList', 'BulletedList'], ['Link', 'Unlink'], ['RemoveFormat', 'Source']]}" %}
+        </p>
+
+        <p>
+            {{ form.user_image.label_tag }}
+            {{ form.user_image.errors }}
+            <br>Share an image that is representative of your activity - logo, symbol, icon, graphics, team photo, etc. If no image is provided a screenshot of your website will be uploaded.
+            <br><em>Recommended size: 584x232 pixels</em>
+            {{ form.user_image }}
+        </p>
+
+        <p>
+            <label for="id_event_source_timezone">Your local time zone:</label>
+            <br>We try to automatically detect your time zone. If it is wrong, select the correct value:
+            <select name="event_source_timezone" id="id_event_source_timezone" class="w-full">
+            {% for tz in timezones %}
+                <option value="{{ tz }}"{% if tz == current_timezone %} selected{% endif %}>{{ tz }}</option>
+            {% endfor %}
+            </select>
+        </p>
+
+        <p>
+            <label for="id_event_time">Activity starts at:</label>
+            <br>Choose the time <strong>in your local time zone</strong>.
+            <br>
+            {{ form.event_time.errors }}
+            <input type="datetime-local" name="event_time" id="id_event_time" value="{{ form.event_time.value|date:'Y-m-d H:i' }}"/>
+        </p>
+
+        {{ form.primarylanguage.errors }}
+        {{ form.opentags.errors }}
+        <div class="flex-none md:flex justify-between">
+            <p class="w-full mr-2">
+            <label for="id_form_language">Primary language:</label>
+            <select name="form_language" id="id_form_language" class="w-full">
+            {% for id, name in form.fields.form_language.choices %}
+                <option value="{{ id }}"
+                    {% if id == None %}disabled=""{% endif %}
+                    {% if id == form.form_language.value %}selected=""{% endif %}
+                >{{ name }}</option>
+            {% endfor %}
+            </select>
+            </p>
+
+            <!--
+            <p class="w-full ml-2">
+            <label for="id_opentags">Opentags:</label>
+            <input type="text" name="opentags" maxlength="255" id="id_opentags" class="w-full" value="{{ form.opentags.value }}">
+            </p>
+            -->
         </div>
-    {% endif %}
 
-    <hr class="my-8">
+        {{ form.country.errors }}
+        {{ form.city.errors }}
+        <div class="flex-none md:flex justify-between">
+            <p class="w-full mr-2">
+            {{ form.country.label_tag }}
+            <select name="country" id="id_country" class="w-full">
+            {% for id, name in form.fields.country.choices %}
+                <option value="{{ id }}"
+                    {% if id == None %} disabled=""{% endif %}
+                    {% if id == form.country.value %} selected=""{% endif %}
+                >{{ name }}</option>
+            {% endfor %}
+            </select>
+            </p>
 
-    <div></div>
+            <p class="w-full ml-2">
+                {{ form.city.label_tag }}
+                {{ form.city }}
+            </p>
 
-    <p>
-        {{ form.title.label_tag }}
-        {{ form.title.errors }}
-        {{ form.title }}
-    </p>
+        </div>
 
-    <p>
-        {{ form.event_facilitator.label_tag }}
-        {{ form.event_facilitator.errors }}
-        {{ form.event_facilitator }}
-    </p>
-
-    <p>
-        {{ form.content.label_tag }}
-        {{ form.content.errors }}
-
-        <br>Describe briefly the highlights of your activity/event. What will be the main focus of the session? Who would be most interested in participating? What are the expected outcomes? Include anything else you want to share.
-        <br><em>Suggested length: 50-500 words. (Feel free to also provide thedescription in your own lanquage).</em>
-
-        {{ form.content }}
-        {% wysiwyg_editor "id_content" "id_content_editor" "{ toolbar: 'Custom', toolbar_Custom: [['Bold', 'Italic', 'Underline'], ['NumberedList', 'BulletedList'], ['Link', 'Unlink'], ['RemoveFormat', 'Source']]}" %}
-    </p>
-
-    <p>
-        {{ form.user_image.label_tag }}
-        {{ form.user_image.errors }}
-        <br>Share an image that is representative of your activity - logo, symbol, icon, graphics, team photo, etc. If no image is provided a screenshot of your website will be uploaded.
-        <br><em>Recommended size: 584x232 pixels</em>
-        {{ form.user_image }}
-   	</p>
-
-    <p>
-        <label for="id_event_source_timezone">Your local time zone:</label>
-        <br>We try to automatically detect your time zone. If it is wrong, select the correct value:
-        <select name="event_source_timezone" id="id_event_source_timezone" class="w-full">
-        {% for tz in timezones %}
-            <option value="{{ tz }}"{% if tz == current_timezone %} selected{% endif %}>{{ tz }}</option>
-        {% endfor %}
-        </select>
-    </p>
-
-    <p>
-        <label for="id_event_time">Activity starts at:</label>
-        <br>Choose the time <strong>in your local time zone</strong>.
-        <br>
-        {{ form.event_time.errors }}
-        <input type="datetime-local" name="event_time" id="id_event_time" value="{{ form.event_time.value|date:'Y-m-d H:i' }}"/>
-    </p>
-
-    {{ form.primarylanguage.errors }}
-    {{ form.opentags.errors }}
-    <div class="flex-none md:flex justify-between">
-        <p class="w-full mr-2">
-        <label for="id_form_language">Primary language:</label>
-        <select name="form_language" id="id_form_language" class="w-full">
-        {% for id, name in form.fields.form_language.choices %}
-            <option value="{{ id }}"
-                {% if id == None %}disabled=""{% endif %}
-                {% if id == form.form_language.value %}selected=""{% endif %}
-            >{{ name }}</option>
-        {% endfor %}
-        </select>
+        <p>
+            {{ form.link.label_tag }}
+            {{ form.link.errors }}
+            {{ form.link }}
         </p>
 
-        <!--
-        <p class="w-full ml-2">
-        <label for="id_opentags">Opentags:</label>
-        <input type="text" name="opentags" maxlength="255" id="id_opentags" class="w-full" value="{{ form.opentags.value }}">
-        </p>
-        -->
-    </div>
-
-    {{ form.country.errors }}
-    {{ form.city.errors }}
-    <div class="flex-none md:flex justify-between">
-        <p class="w-full mr-2">
-        {{ form.country.label_tag }}
-        <select name="country" id="id_country" class="w-full">
-        {% for id, name in form.fields.country.choices %}
-            <option value="{{ id }}"
-                {% if id == None %} disabled=""{% endif %}
-                {% if id == form.country.value %} selected=""{% endif %}
-            >{{ name }}</option>
-        {% endfor %}
-        </select>
+        <p>
+            {{ form.linkwebroom.label_tag }}
+            {{ form.linkwebroom.errors }}
+            {{ form.linkwebroom }}
         </p>
 
-        <p class="w-full ml-2">
-            {{ form.city.label_tag }}
-            {{ form.city }}
+        <hr class="my-8">
+
+        <h2>Organization</h2>
+
+        <div></div>
+
+        <p>
+            {{ form.institution.label_tag }}
+            {{ form.institution.errors }}
+            {{ form.institution }}
+            <br>If this is an individual contribution not affiliated with an institution or organization you may fill in "Open Educator".
         </p>
 
-    </div>
-
-    <p>
-        {{ form.link.label_tag }}
-        {{ form.link.errors }}
-        {{ form.link }}
-    </p>
-
-    <p>
-        {{ form.linkwebroom.label_tag }}
-        {{ form.linkwebroom.errors }}
-        {{ form.linkwebroom }}
-    </p>
-
-    <hr class="my-8">
-
-    <h2 style="background-color: #eeeeee"><strong>Organization</strong></h2>
-
-    <div></div>
-
-    <p>
-        {{ form.institution.label_tag }}
-        {{ form.institution.errors }}
-        {{ form.institution }}
-    </p>
-
-    <p>
-        {{ form.institution_url.label_tag }}
-        {{ form.institution_url.errors }}
-        {{ form.institution_url }}
-    </p>
-
-    <p>
-        {{ form.twitter_institution.label_tag }}
-        {{ form.twitter_institution.errors }}
-        {{ form.twitter_institution }}
-    </p>
-
-    <p>
-        {{ form.institution_is_oeg_member.label_tag }}
-        {{ form.institution_is_oeg_member.errors }}
-        &nbsp;
-        {{ form.institution_is_oeg_member }}
-    </p>
-
-    <hr class="my-8">
-
-    <h2 style="background-color: #eeeeee"><strong>Contact person:</strong></h2>
-
-    {{ form.firstname.errors }}
-    {{ form.lastname.errors }}
-    <div class="flex-none md:flex justify-between">
-        <p class="w-full mr-2">
-            {#<label for="id_firstname">First Name:</label>#}
-            {#<input type="text" name="firstname" maxlength="255" id="id_firstname" class="w-full" value="{{ form.firstname.value }}">#}
-            {{ form.firstname.label_tag }}
-            {{ form.firstname }}
+        <p>
+            {{ form.institution_url.label_tag }}
+            {{ form.institution_url.errors }}
+            {{ form.institution_url }}
         </p>
 
-        <p class="w-full ml-2">
-            {{ form.lastname.label_tag }}
-            {{ form.lastname }}
-            {#<label for="id_lastname">Last Name:</label>#}
-            {#<input type="text" name="lastname" maxlength="255" id="id_lastname" class="w-full" value="{{ form.lastname.value }}">#}
+        <p>
+            {{ form.twitter_institution.label_tag }}
+            {{ form.twitter_institution.errors }}
+            {{ form.twitter_institution }}
         </p>
-    </div>
 
-    {{ form.email.errors }}
-    {{ form.twitter_personal.errors }}
-    <div class="flex-none md:flex justify-between">
-        <p class="w-full mr-2">
-            {{ form.email.label_tag }}
-            {{ form.email }}
+        <p>
+            {{ form.institution_is_oeg_member.label_tag }}
+            {{ form.institution_is_oeg_member.errors }}
+            &nbsp;
+            {{ form.institution_is_oeg_member }}
         </p>
-        <p class="w-full ml-2">
-            {{ form.twitter_personal.label_tag }}
-            {{ form.twitter_personal }}
+
+        <hr class="my-8">
+
+        <h2>Contact person</h2>
+
+        {{ form.firstname.errors }}
+        {{ form.lastname.errors }}
+        <div class="flex-none md:flex justify-between">
+            <p class="w-full mr-2">
+                {#<label for="id_firstname">First Name:</label>#}
+                {#<input type="text" name="firstname" maxlength="255" id="id_firstname" class="w-full" value="{{ form.firstname.value }}">#}
+                {{ form.firstname.label_tag }}
+                {{ form.firstname }}
+            </p>
+
+            <p class="w-full ml-2">
+                {{ form.lastname.label_tag }}
+                {{ form.lastname }}
+                {#<label for="id_lastname">Last Name:</label>#}
+                {#<input type="text" name="lastname" maxlength="255" id="id_lastname" class="w-full" value="{{ form.lastname.value }}">#}
+            </p>
+        </div>
+
+        {{ form.email.errors }}
+        {{ form.twitter_personal.errors }}
+        <div class="flex-none md:flex justify-between">
+            <p class="w-full mr-2">
+                {{ form.email.label_tag }}
+                {{ form.email }}
+            </p>
+            <p class="w-full ml-2">
+                {{ form.twitter_personal.label_tag }}
+                {{ form.twitter_personal }}
+            </p>
+        </div>
+
+        <p>
+            {{ form.newsletter.label_tag }} <br>
+            {{ form.newsletter.errors }}
+            {{ form.newsletter }}
+            Join the OEGlobal newsletter for updates
         </p>
-    </div>
 
-    <p>
-        {{ form.newsletter.label_tag }}
-        {{ form.newsletter.errors }}
-        {{ form.newsletter }}
-        Join the OEGlobal newsletter for updates
-    </p>
+        <input type="submit" value="Submit" class="button-outline font-bold my-8">
+        </form>
 
-    <input type="submit" value="Submit" class="button-outline font-bold my-8">
-    </form>
-
-    {% if contribute_similar %}
-    <hr class="my-8">
-    <p>You can submit similar entry by <a href="{{ contribute_similar }}">clicking here</a>.</p>
-    {% endif %}
-</div>
+        {% if contribute_similar %}
+        <hr class="my-8">
+        <p>You can submit similar entry by <a href="{{ contribute_similar }}">clicking here</a>.</p>
+        {% endif %}
+        </div><!-- prose -->
+ </div> <!-- card -->
 {% endblock %}
