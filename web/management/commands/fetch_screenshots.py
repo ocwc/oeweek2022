@@ -11,7 +11,7 @@ class Command(BaseCommand):
         for resource in Resource.objects.filter(
             screenshot_status__in=["", "PENDING"],
             year=settings.OEW_YEAR,
-            post_status__in=["draft", "publish"],
+            post_status__in=["", "draft", "publish"],
         ):
             print(resource.id)
             fetch_screenshot_async(resource)

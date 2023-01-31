@@ -27,8 +27,9 @@ class FetchScreenshotTimeout(Exception):
 class Screenshot(QWebView):
     # ref: https://stackoverflow.com/a/12031316, ...
 
+    WH_RATIO = 4 / 3
     MAX_WIDTH = 2 * 584
-    MAX_HEIGHT = 3 * 584
+    MAX_HEIGHT = MAX_WIDTH / WH_RATIO
     MAX_LOAD_TIME = 15 * 1000  # in milliseconds
 
     def __init__(self):
@@ -53,6 +54,9 @@ class Screenshot(QWebView):
             size.setWidth(self.MAX_WIDTH)
         if size.height() > self.MAX_HEIGHT:
             size.setHeight(self.MAX_HEIGHT)
+        heightAdjustedMax = size.width() / self.WH_RATIO
+        if size.height() > heightAdjustedMax:
+            size.setHeight(heightAdjustedMax)
         image = QImage(size, QImage.Format_ARGB32)
         painter = QPainter(image)
         frame.render(painter)
@@ -90,10 +94,10 @@ def _fetch_screenshot(resource):
         print("screenshot fetching aborted (early): %d" % resource.id)
 
     if resource.image:
-        resource.screenshot_status = "DONE"
-        resource.save()
-        print("screenshot already present: %s" % resource.id)
-        return FetchScreenshotResult(None, None, None)
+        print(
+            "screenshot already present: %s - %s => will be replaced"
+            % (resource.id, resource.image.image.name)
+        )
 
     result_dir = tempfile.mkdtemp(prefix="oe_week-resource-screenshot-")
     result_fn = os.path.join(result_dir, "%s.png" % resource.uuid)
