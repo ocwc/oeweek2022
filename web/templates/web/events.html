@@ -53,10 +53,10 @@
           <!-- Mario's placeholder image. Load custom image when possible -->
           <div class="item-media">
               {% if event.consolidated_image_url %}
-              <a href="/events/{{event.year}}/{{event.slug}}/"><img src="{{ event.consolidated_image_url }}" class="object-cover h-150px md:h-120px"></a>
+              <a href="/events/{{event.year}}/{{event.slug}}/"><img src="{{ event.consolidated_image_url }}" class="object-cover w-full h-40"></a>
               {% else %}
                   {% load static %}
-                  <a href="/events/{{event.year}}/{{event.slug}}/"><img rel="stylesheet" src="{% static 'web/images/placeholder-event-sm.png' %}" class="mb-4 w-full"></a>
+                  <a href="/events/{{event.year}}/{{event.slug}}/"><img rel="stylesheet" src="{% static 'web/images/placeholder-event-sm.png' %}" class="object-cover w-full h-40"></a>
               {% endif %}
           </div>
 
