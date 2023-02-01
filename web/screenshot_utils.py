@@ -7,7 +7,7 @@ from django.conf import settings
 
 # special case for "front-end deployment" with "back-end stuff" not installed:
 if not settings.FE_DEPLOYMENT:
-    from PyQt5.QtCore import QUrl
+    from PyQt5.QtCore import Qt, QUrl
     from PyQt5.QtGui import QImage, QPainter
     from PyQt5.QtWidgets import QApplication
     from PyQt5.QtWebKitWidgets import QWebView
@@ -27,8 +27,8 @@ class FetchScreenshotTimeout(Exception):
 class Screenshot(QWebView):
     # ref: https://stackoverflow.com/a/12031316, ...
 
-    MAX_WIDTH = 2 * 584
-    MAX_HEIGHT = 3 * 584
+    DESIRED_WIDTH = 1024
+    DESIRED_HEIGHT = 768
     MAX_LOAD_TIME = 15 * 1000  # in milliseconds
 
     def __init__(self):
@@ -44,15 +44,12 @@ class Screenshot(QWebView):
         # set to webpage size
         frame = self.page().mainFrame()
         size = frame.contentsSize()
-        if size.width() < self.MAX_WIDTH:
-            size.setWidth(self.MAX_WIDTH)
+        size.setWidth(self.DESIRED_WIDTH)
+        size.setHeight(self.DESIRED_HEIGHT)
+        frame.setScrollBarPolicy(Qt.Vertical, Qt.ScrollBarAlwaysOff)
+        frame.setScrollBarPolicy(Qt.Horizontal, Qt.ScrollBarAlwaysOff)
         self.page().setViewportSize(size)
         # render image
-        size = frame.contentsSize()
-        if size.width() > self.MAX_WIDTH:
-            size.setWidth(self.MAX_WIDTH)
-        if size.height() > self.MAX_HEIGHT:
-            size.setHeight(self.MAX_HEIGHT)
         image = QImage(size, QImage.Format_ARGB32)
         painter = QPainter(image)
         frame.render(painter)
@@ -90,13 +87,13 @@ def _fetch_screenshot(resource):
         print("screenshot fetching aborted (early): %d" % resource.id)
 
     if resource.image:
-        resource.screenshot_status = "DONE"
-        resource.save()
-        print("screenshot already present: %s" % resource.id)
-        return FetchScreenshotResult(None, None, None)
+        print(
+            "screenshot already present: %s - %s => will be replaced"
+            % (resource.id, resource.image.image.name)
+        )
 
     result_dir = tempfile.mkdtemp(prefix="oe_week-resource-screenshot-")
-    result_fn = os.path.join(result_dir, "%s.png" % resource.uuid)
+    result_fn = os.path.join(result_dir, "%s.jpg" % resource.uuid)
 
     try:
         s = Screenshot()

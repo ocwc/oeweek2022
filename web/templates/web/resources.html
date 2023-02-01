@@ -22,10 +22,10 @@
 
             <div class="item-media">
                 {% if resource.consolidated_image_url %}
-                <a href="/resources/{{resource.year}}/{{resource.slug}}/"><img src="{{ resource.consolidated_image_url }}" class="object-cover h-150px md:h-120px"></a>
+                <a href="/resources/{{resource.year}}/{{resource.slug}}/"><img src="{{ resource.consolidated_image_url }}" class="object-cover w-full h-40"></a>
                 {% else %}
                     {% load static %}
-                    <a href="/resources/{{resource.year}}/{{resource.slug}}/"><img rel="stylesheet" src="{% static 'web/images/placeholder-asset-sm.png' %}" class="mb-4 w-full"></a>
+                    <a href="/resources/{{resource.year}}/{{resource.slug}}/"><img rel="stylesheet" src="{% static 'web/images/placeholder-asset-sm.png' %}" class="object-cover w-full h-40"></a>
                 {% endif %}
             </div>
             <div class="p-4">
