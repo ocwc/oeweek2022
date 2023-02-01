@@ -93,7 +93,7 @@ def _fetch_screenshot(resource):
         )
 
     result_dir = tempfile.mkdtemp(prefix="oe_week-resource-screenshot-")
-    result_fn = os.path.join(result_dir, "%s.png" % resource.uuid)
+    result_fn = os.path.join(result_dir, "%s.jpg" % resource.uuid)
 
     try:
         s = Screenshot()
