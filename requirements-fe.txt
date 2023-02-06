@@ -21,7 +21,7 @@ django-ckeditor
 django-cors-headers
 
 # DONOTDELETE -- used in multiple places
-django-filter
+django-filter>=22.1,==22.*
 
 # DONOTDELETE -- used in web/models.py
 django-model-utils

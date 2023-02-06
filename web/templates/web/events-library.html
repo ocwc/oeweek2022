@@ -1,0 +1,77 @@
+{% extends 'base.html' %}
+
+{% load static tz %}
+
+{% block extra_head %}
+<script src="{% static 'web/js/htmx.min.js' %}" defer></script>
+{% endblock extra_head %}
+
+{% block content %}
+
+<br>
+
+<h1><!--<i class="fad fa-box-open"></i>--> OE Week 2023 Events</h1>
+
+{%if filter %}
+<form method="get">
+    {{ filter.form.as_p }}
+    <input type="submit" />
+</form>
+{% endif %}
+
+{% if event_count %}
+    <p><i class="fal fa-calculator"></i> <strong>Showing {{ event_count }} events</strong></p>
+    <br>
+{% endif %}
+
+<div class="grid gird-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 md:gap-x-4 gap-y-6">
+
+    {% for event in event_list %}
+
+        <div class="bg-white mb-2 rounded-lg shadow-sm transition-shadow overflow-hidden hover:shadow-lg border-2 border-gray-200 hover:border-purple-500">
+
+            <div class="item-media">
+                {% if event.consolidated_image_url_list %}
+                <a href="/events/{{event.year}}/{{event.slug}}/"><img loading="lazy" src="{{ event.consolidated_image_url_list }}" class="object-cover w-full h-40"></a>
+                {% else %}
+                    {% load static %}
+                    <a href="/events/{{event.year}}/{{event.slug}}/"><img rel="stylesheet" src="{% static 'web/images/placeholder-asset-sm.png' %}" class="object-cover w-full h-40"></a>
+                {% endif %}
+            </div>
+            <div class="p-4">
+                <h3 class="text-base leading-tight mb-2">
+                    <a href="/events/{{event.year}}/{{event.slug}}/">
+                        <span class="hidden">#{{ forloop.counter }}.</span>
+                        <span class="font-bold">{{ event.title }}</span>
+                    </a>
+                </h3>
+                <p class="text-sm"><i class="fal fa-university"></i> {{ event.institution }}</p>
+
+                {% if event.institution_is_oeg_member %}
+                <p class="text-sm mb-1"><i class="fal fa-badge-check"></i><span style="background-color: #ffffcc;"> OEGlobal member<span></p>
+                {% endif %}
+
+                <p class="text-sm mb-1"><i class="fal fa-globe-asia"></i> {{ event.country }}, {{ event.city }}</p>
+
+                <p class="text-sm mb-1">
+                    <i class="fal fa-calendar-star"></i> {{ event.event_time|date:'M d, Y H:i' }} <em>({{ current_timezone }})</em>
+                    {% if event.event_offset_in_hours %}
+                        <span style="color: #cc0000;">&nbsp;
+                        {{ event.event_offset_in_hours }}
+                        </span>
+                    {% endif %}
+
+                    {% if event.event_time_link_to_everytimezone %}
+                        <span style="color: #999999;">&nbsp;
+                        <em><a href="{{ event.event_time_link_to_everytimezone }}" target="_blank">(view in other timezones)</a></em>
+                        </span>
+                    {% endif %}
+                </p>
+            </div>
+        </div>
+
+    {% endfor %}
+
+</div>
+
+{% endblock %}

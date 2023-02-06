@@ -35,6 +35,7 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.pagination import PageNumberPagination
 
+from .filters import AssetFilter, EventFilter
 from .forms import ActivityForm, AssetForm, ResourceFeedbackForm
 from .models import (
     Page,
@@ -297,21 +298,29 @@ def _set_event_day_number(event, tz):
     return event
 
 
-def show_events(request):
-    request_timezone = request.GET.get("timezone", "local")  # "local" = default
-    event_list = (
-        Resource.objects.all()
-        .filter(post_type="event", year=settings.OEW_YEAR, post_status="publish")
-        # TODO: very few items like that => try to sort that out without such exludes
+def _events_query_set(year=None):
+    result = Resource.objects.all().filter(post_type="event", post_status="publish")
+    if year is not None:
+        result = result.filter(year=year)
+    result = (
+        result
+        # TODO: very few items like that => try to sort that out without such excludes
         .exclude(event_source_timezone__exact="")
         .exclude(event_source_timezone__isnull=True)
         .exclude(event_time__isnull=True)
     )
+    return result.order_by(
+        "event_time", Lower("title")
+    )  # "Lower" = for case-insensitive sorting
 
-    event_count = len(event_list)
+
+def show_events(request):
+    request_timezone = request.GET.get("timezone", "local")  # "local" = default
+    event_list = _events_query_set()
+
+    event_count = event_list.count()
     tz = pytz.timezone(get_timezone(request))
     for event in event_list:
-        event.consolidated_image_url = event.get_image_url_for_list()
         _set_event_day_number(event, tz)
 
     # sort django queryset by UTC (property) values, not by local timezone
@@ -339,6 +348,24 @@ def show_events(request):
     return render(request, "web/events.html", context=context)
 
 
+def show_events_library(request):
+    """library: list of resources for all year"""
+    f = EventFilter(request.GET, queryset=_events_query_set())
+
+    current_time_utc = djtz.now()
+    events_count = f.qs.count()
+    context = {
+        "current_time_utc": current_time_utc,
+        "event_list": f.qs,
+        "event_count": events_count,
+        "days_to_go": days_to_go,
+        "filter": f,
+        "reload_after_timezone_change": True,
+    }
+
+    return render(request, "web/events-library.html", context)
+
+
 def handle_old_event_detail(request, slug):
     resource = (
         Resource.objects.filter(slug=slug, post_type="event", post_status="publish")
@@ -362,23 +389,40 @@ def show_event_detail(request, year, slug):
     return render(request, "web/event_detail.html", context=context)
 
 
+def _resources_query_set(year=None):
+    result = Resource.objects.all().filter(post_type="resource", post_status="publish")
+    if year is not None:
+        result = result.filter(year=year)
+    return result.order_by(Lower("title"))  # "Lower" = for case-insensitive sorting
+
+
 def show_resources(request):
-    resource_list = (
-        Resource.objects.all()
-        .filter(post_type="resource", year=settings.OEW_YEAR, post_status="publish")
-        .order_by(Lower("title"))  # "Lower" = for case-insensitive sorting
-    )
-    resource_count = len(resource_list)
+    """list of resources (assets) for current year"""
+    resource_list = _resources_query_set(year=settings.OEW_YEAR)
 
-    for resource in resource_list:
-        resource.consolidated_image_url = resource.get_image_url_for_list()
-
+    resource_count = resource_list.count()
     context = {
         "resource_list": resource_list,
         "resource_count": resource_count,
         "days_to_go": days_to_go,
     }
-    return render(request, "web/resources.html", context=context)
+
+    return render(request, "web/resources.html", context)
+
+
+def show_resources_library(request):
+    """library: list of resources for all year"""
+    f = AssetFilter(request.GET, queryset=_resources_query_set())
+
+    resource_count = f.qs.count()
+    context = {
+        "resource_list": f.qs,
+        "resource_count": resource_count,
+        "days_to_go": days_to_go,
+        "filter": f,
+    }
+
+    return render(request, "web/resources.html", context)
 
 
 def handle_old_resource_detail(request, slug):

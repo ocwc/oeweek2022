@@ -6,12 +6,18 @@
 
 <h1><!--<i class="fad fa-box-open"></i>--> OE Week 2023 Resources</h1>
 
+{%if filter %}
+<form method="get">
+    {{ filter.form.as_p }}
+    <input type="submit" />
+</form>
+{% endif %}
+
 {% if resource_count %}
     <p><i class="fal fa-calculator"></i> <strong>Showing {{ resource_count }} resources</strong></p>
     <br>
 {% else %}
-<p>Call for participation for OEWeek starts on <strong>January 23, 2023</strong>.<br>Please come back to see new events afterwards, or contribute your own.</p>
-
+    <p>Call for participation for OEWeek starts on <strong>January 23, 2023</strong>.<br>Please come back to see new events afterwards, or contribute your own.</p>
 {% endif %}
 
 <div class="grid gird-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 md:gap-x-4 gap-y-6">
@@ -21,8 +27,8 @@
         <div class="bg-white mb-2 rounded-lg shadow-sm transition-shadow overflow-hidden hover:shadow-lg border-2 border-gray-200 hover:border-purple-500">
 
             <div class="item-media">
-                {% if resource.consolidated_image_url %}
-                <a href="/resources/{{resource.year}}/{{resource.slug}}/"><img loading="lazy" src="{{ resource.consolidated_image_url }}" class="object-cover w-full h-40"></a>
+                {% if resource.consolidated_image_url_list %}
+                <a href="/resources/{{resource.year}}/{{resource.slug}}/"><img loading="lazy" src="{{ resource.consolidated_image_url_list }}" class="object-cover w-full h-40"></a>
                 {% else %}
                     {% load static %}
                     <a href="/resources/{{resource.year}}/{{resource.slug}}/"><img rel="stylesheet" src="{% static 'web/images/placeholder-asset-sm.png' %}" class="object-cover w-full h-40"></a>
