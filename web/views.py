@@ -316,7 +316,7 @@ def _events_query_set(year=None):
 
 def show_events(request):
     request_timezone = request.GET.get("timezone", "local")  # "local" = default
-    event_list = _events_query_set()
+    event_list = _events_query_set(year=settings.OEW_YEAR)
 
     event_count = event_list.count()
     tz = pytz.timezone(get_timezone(request))
@@ -338,6 +338,7 @@ def show_events(request):
     ]
 
     context = {
+        "title": "OE Week %s Events" % settings.OEW_YEAR,
         "days": days,
         "event_list": event_list,
         "current_time_utc": current_time_utc,
@@ -355,6 +356,7 @@ def show_events_library(request):
     current_time_utc = djtz.now()
     events_count = f.qs.count()
     context = {
+        "title": "Past Events",
         "current_time_utc": current_time_utc,
         "event_list": f.qs,
         "event_count": events_count,
@@ -401,6 +403,7 @@ def show_resources(request):
 
     resource_count = resource_list.count()
     context = {
+        "title": "OE Week %s Resources" % settings.OEW_YEAR,
         "resource_list": resource_list,
         "resource_count": resource_count,
         "days_to_go": days_to_go,
@@ -415,6 +418,7 @@ def show_resources_library(request):
 
     resource_count = f.qs.count()
     context = {
+        "title": "OE Week Library",
         "resource_list": f.qs,
         "resource_count": resource_count,
         "days_to_go": days_to_go,
