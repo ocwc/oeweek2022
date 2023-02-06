@@ -16,11 +16,13 @@ class CommonResourceFilter(django_filters.FilterSet):
         label="Language",
         widget=Select(attrs={"class": SELECT_CSS_CLASS}),
     )
-    year = django_filters.ModelChoiceFilter(
-        queryset=Resource.objects.values_list("year", flat=True)
-        .distinct("year")
-        .order_by("-year"),
-        distinct=True,
+    year = django_filters.ChoiceFilter(
+        choices=[
+            (c, c)
+            for c in Resource.objects.values_list("year", flat=True)
+            .distinct("year")
+            .order_by("-year")
+        ],
         widget=Select(attrs={"class": SELECT_CSS_CLASS}),
     )
 
