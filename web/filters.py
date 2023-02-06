@@ -13,7 +13,7 @@ class CommonResourceFilter(django_filters.FilterSet):
     language = django_filters.ChoiceFilter(
         field_name="form_language",
         choices=LANGUAGE_CHOICES_FILTER,
-        label="Language",
+        label="Filter by Language",
         widget=Select(attrs={"class": SELECT_CSS_CLASS}),
     )
     year = django_filters.ChoiceFilter(
@@ -23,6 +23,7 @@ class CommonResourceFilter(django_filters.FilterSet):
             .distinct("year")
             .order_by("-year")
         ],
+        label="Filter by Year",
         widget=Select(attrs={"class": SELECT_CSS_CLASS}),
     )
 
@@ -32,7 +33,7 @@ class AssetFilter(CommonResourceFilter):
         field_name="opentags_csv",
         choices=OPENTAGS_CHOICES,
         lookup_expr="contains",
-        label="Open Tags",
+        label="Filter by Open tag",
         widget=Select(attrs={"class": SELECT_CSS_CLASS}),
     )
 
