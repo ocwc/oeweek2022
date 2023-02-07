@@ -14,6 +14,22 @@
 <h1><!--<i class="fad fa-calendar-alt"></i>--> OE Week 2023 Events</h1>
 
 {% if event_count %}
+  <div style="background-color: #dddddd; padding-left: 20px">
+    <h2>Coming up next:</h2>
+
+    <ul>
+      {% for event in event_list|slice:":3" %}
+        <li><a href="/events/{{event.year}}/{{event.slug}}/">{{ event.title }}&nbsp;</a></li>
+      {% endfor %}
+    </ul>
+
+    <p style="padding-top: 15px; padding-bottom: 10px;">(See below for a full list)</p>
+  </div>
+  <br>
+  <br>
+{% endif %}
+
+{% if event_count %}
   <p><i class="fal fa-hand-pointer"></i> <strong>Please click on a date to expand the details.</strong></p>
 
   <p>
@@ -36,7 +52,10 @@
   <div class="bg-white border-gray-300 rounded-lg p-2 md:p-4 my-8">
 
   {% for day in days %}
-  <details {% if day.2|date:'Y-m-d' == current_time_utc|date:'Y-m-d' %}open{% endif %}>
+  {# OPTION 1: expand / collapse based on the day #}
+  {# <details {% if day.2|date:'Y-m-d' == current_time_utc|date:'Y-m-d' %}open{% endif %}> #}
+  {# OPTION 2: expand all by default #}
+  <details open>
 
   <summary class="text-2xl font-bold cursor-pointer mb-4">{{ day.1 }}</summary>
 
@@ -53,7 +72,7 @@
           <!-- Mario's placeholder image. Load custom image when possible -->
           <div class="item-media">
               {% if event.consolidated_image_url %}
-              <a href="/events/{{event.year}}/{{event.slug}}/"><img src="{{ event.consolidated_image_url }}" class="object-cover w-full h-40"></a>
+              <a href="/events/{{event.year}}/{{event.slug}}/"><img loading="lazy" src="{{ event.consolidated_image_url }}" class="object-cover w-full h-40"></a>
               {% else %}
                   {% load static %}
                   <a href="/events/{{event.year}}/{{event.slug}}/"><img rel="stylesheet" src="{% static 'web/images/placeholder-event-sm.png' %}" class="object-cover w-full h-40"></a>

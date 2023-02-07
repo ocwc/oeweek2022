@@ -22,7 +22,7 @@
 
             <div class="item-media">
                 {% if resource.consolidated_image_url %}
-                <a href="/resources/{{resource.year}}/{{resource.slug}}/"><img src="{{ resource.consolidated_image_url }}" class="object-cover w-full h-40"></a>
+                <a href="/resources/{{resource.year}}/{{resource.slug}}/"><img loading="lazy" src="{{ resource.consolidated_image_url }}" class="object-cover w-full h-40"></a>
                 {% else %}
                     {% load static %}
                     <a href="/resources/{{resource.year}}/{{resource.slug}}/"><img rel="stylesheet" src="{% static 'web/images/placeholder-asset-sm.png' %}" class="object-cover w-full h-40"></a>

@@ -228,27 +228,15 @@ class Resource(TimeStampedModel, ReviewModel):
 
     # BEWARE: Before 2022, PostgreSQL was used and tags were stored in ArrayField (see commented-out
     # part bellow). For 2022 and 2023 SQlite is being used. Since SQlite does NOT support ArrayField,
-    # only CharField is used. Later on we plan to move back to PostgreSQL (to take advantage of
-    # MetaBase). And in the mean time we're importing pre-2022 content from PostgreSQL into SQlite,
-    # hence:
-    # 1) opentags_old = models.CharField is being added
-    # 2) it will contain "SELECT ..., array_to_string(opentags, ',') AS opentags_old ..."
-    # 3) once we migrate back to PostgreSQL, migration will be done using
-    #    "SELECT string_to_array(opentags_old, ',') ..." and opentags_old will be removed
-    # x) In the mean time, code working with 'opentags' will most probably NOT work since it was
-    #    written for opentags = ArrayField
-    opentags_old = models.CharField(max_length=255, blank=True)
-    # opentags = ArrayField(
-    #     models.CharField(
-    #         max_length=255,
-    #         blank=True,
-    #     ),
-    #     blank=True,
-    # )
+    # only CharField is used, but named as 'opentags_csv' to avoid name clash with previous uses of
+    # 'opentags'. And to bridge the gap between 'opentags'="list" and
+    # 'opentags_csv'="string containing tags separated by comma", we're employing 'opentags()'.
+    opentags_csv = models.CharField(max_length=255, blank=True)
+
     @property
     def opentags(self):
-        """temporary workaround until we are back to PostgreSQL with opentags = ArrayField"""
-        return []
+        """glue helping us maintain code which relied on opentags = ArrayField"""
+        return self.opentags_csv.split(",")
 
     notified = models.BooleanField(default=False)
     raw_post = models.TextField(blank=True)
