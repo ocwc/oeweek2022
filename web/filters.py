@@ -20,7 +20,7 @@ class CommonResourceFilter(django_filters.FilterSet):
         choices=[
             (c, c)
             for c in Resource.objects.values_list("year", flat=True)
-            .distinct("year")
+            .distinct()
             .order_by("-year")
         ],
         label="Filter by Year",
