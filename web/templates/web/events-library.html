@@ -70,7 +70,7 @@
                 <a href="/events/{{event.year}}/{{event.slug}}/"><img loading="lazy" src="{{ event.consolidated_image_url_list }}" class="object-cover w-full h-40"></a>
                 {% else %}
                     {% load static %}
-                    <a href="/events/{{event.year}}/{{event.slug}}/"><img rel="stylesheet" src="{% static 'web/images/placeholder-asset-sm.png' %}" class="object-cover w-full h-40"></a>
+                    <a href="/events/{{event.year}}/{{event.slug}}/"><img rel="stylesheet" src="{% static 'web/images/placeholder-event-sm.png' %}" class="object-cover w-full h-40"></a>
                 {% endif %}
             </div>
             <div class="p-4">
