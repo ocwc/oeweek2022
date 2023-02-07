@@ -16,8 +16,8 @@
 <div class="card bg-white p-4 lg:p-8 rounded grid lg:grid-cols-2 gap-4">
 
     <div class="detail-media">
-        {% if obj.consolidated_image_url %}
-        <img src="{{ obj.consolidated_image_url }}" class="mb-4 w-full">
+        {% if obj.consolidated_image_url_detail %}
+        <img src="{{ obj.consolidated_image_url_detail }}" class="mb-4 w-full">
         {% else %}
         {% load static %}
         <img rel="stylesheet" src="{% static 'web/images/placeholder-event.png' %}" class="mb-4 w-full">

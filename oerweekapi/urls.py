@@ -96,6 +96,18 @@ urlpatterns = (
         url(r"^thanks/$", views.thanks),
         url(r"^schedule$", RedirectView.as_view(url="/events/", permanent=True)),
         url(r"^schedule/$", RedirectView.as_view(url="/events/", permanent=True)),
+        url(r"^library$", RedirectView.as_view(url="/", permanent=True)),
+        url(r"^library/$", RedirectView.as_view(url="/", permanent=True)),
+        url(
+            r"^library/events$",
+            RedirectView.as_view(url="/library/events/", permanent=True),
+        ),
+        url(r"^library/events/$", views.show_events_library),
+        url(
+            r"^library/resources$",
+            RedirectView.as_view(url="/library/resources/", permanent=True),
+        ),
+        url(r"^library/resources/$", views.show_resources_library),
         url(r"^events$", RedirectView.as_view(url="/events/", permanent=True)),
         url(r"^events/$", views.show_events),
         url(r"^resources$", RedirectView.as_view(url="/resources/", permanent=True)),
@@ -135,8 +147,12 @@ urlpatterns = (
         url(r"^about/2023$", RedirectView.as_view(url="/pages/2023/", permanent=True)),
         url(r"^about/2023/$", RedirectView.as_view(url="/pages/2023/", permanent=True)),
         # redirect from semi-hardcoded "about" page to the newer about page
-        url(r"^pages$", RedirectView.as_view(url="/pages/about/", permanent=False)), # not permanent
-        url(r"^pages/$", RedirectView.as_view(url="/pages/about/", permanent=False)), # not permanent
+        url(
+            r"^pages$", RedirectView.as_view(url="/pages/about/", permanent=False)
+        ),  # not permanent
+        url(
+            r"^pages/$", RedirectView.as_view(url="/pages/about/", permanent=False)
+        ),  # not permanent
         # wagtail URLs
         path("pages/", include(wagtail_urls)),
         # path("search/", search_views.search, name="search"),

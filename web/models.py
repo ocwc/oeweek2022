@@ -349,6 +349,14 @@ class Resource(TimeStampedModel, ReviewModel):
         else:
             return u
 
+    @property
+    def consolidated_image_url_detail(self):
+        return self.get_image_url_for_detail()
+
+    @property
+    def consolidated_image_url_list(self):
+        return self.get_image_url_for_list()
+
     def save(self, *args, **kwargs):
         if not self.slug:
             next = 0
