@@ -50,8 +50,8 @@
       </form>
     </div>
     <div class="detail-media">
-        {% if resource.consolidated_image_url %}
-        <a href="{{ resource.detail_url }}"><img src="{{ resource.consolidated_image_url }}" class="object-cover h-150px md:h-120px"></a>
+        {% if resource.consolidated_image_url_list %}
+        <a href="{{ resource.detail_url }}"><img src="{{ resource.consolidated_image_url_list }}" class="object-cover h-150px md:h-120px"></a>
         {% else %}
           {% load static %}
           <a href="{{ resource.detail_url }}">

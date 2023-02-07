@@ -11,7 +11,7 @@
 
 <br>
 
-<h1><!--<i class="fad fa-calendar-alt"></i>--> OE Week 2023 Events</h1>
+<h1>{{ title }}</h1>
 
 {% if event_count %}
   <div style="background-color: #dddddd; padding-left: 20px">
@@ -71,8 +71,8 @@
       <div class="bg-white mb-2 rounded-lg shadow-sm transition-shadow overflow-hidden hover:shadow-lg border-2 border-gray-200 hover:border-purple-500">
           <!-- Mario's placeholder image. Load custom image when possible -->
           <div class="item-media">
-              {% if event.consolidated_image_url %}
-              <a href="/events/{{event.year}}/{{event.slug}}/"><img loading="lazy" src="{{ event.consolidated_image_url }}" class="object-cover w-full h-40"></a>
+              {% if event.consolidated_image_url_list %}
+              <a href="/events/{{event.year}}/{{event.slug}}/"><img loading="lazy" src="{{ event.consolidated_image_url_list }}" class="object-cover w-full h-40"></a>
               {% else %}
                   {% load static %}
                   <a href="/events/{{event.year}}/{{event.slug}}/"><img rel="stylesheet" src="{% static 'web/images/placeholder-event-sm.png' %}" class="object-cover w-full h-40"></a>

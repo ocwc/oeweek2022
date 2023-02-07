@@ -9,7 +9,7 @@ arrow
 # decorator==4.2.1
 
 # DONOTDELETE -- <3
-django>=3.2,<=3.3
+django>=3.2.17,<=3.3
 
 # DONOTDELETE -- used in web/views.py
 django-braces
@@ -21,7 +21,7 @@ django-ckeditor
 django-cors-headers
 
 # DONOTDELETE -- used in multiple places
-django-filter
+django-filter>=22.1,==22.*
 
 # DONOTDELETE -- used in web/models.py
 django-model-utils
