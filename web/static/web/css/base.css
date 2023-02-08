@@ -1028,3 +1028,8 @@ svg {
   width: auto;
   display: inline-block;
 }
+
+/* Events and Assets */
+.item-content h3.item-title {
+  font-size: 1.2rem;
+}
