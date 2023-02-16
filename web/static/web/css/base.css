@@ -110,6 +110,12 @@
   hyphens: auto;
 }
 
+/* Added by Jan 2023-02-16 (per Alan's suggestion) to fix paragraph spacing issue */
+.detail-content .description p {
+    margin-bottom: 1em;
+}
+
+
 /* Mario - Mobile menu */
 
 .menu-item {
