@@ -110,7 +110,7 @@
   hyphens: auto;
 }
 
-/* Mario Dropdow mennus */
+/* Mario 2023 Dropdow menus */
 
 .dropdown {
   position: relative;
@@ -1047,4 +1047,17 @@ svg {
 /* Events and Assets */
 .item-content h3.item-title {
   font-size: 1.2rem;
+}
+
+
+/* Mario 2023 - mark text */
+
+mark {
+  background-color: var(--color-secondary-yellow-300);
+  padding: 0 1px;
+}
+
+.coming-up h2 {
+  margin-top: 0;
+  font-size: 1.5rem;
 }
