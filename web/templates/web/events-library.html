@@ -74,8 +74,8 @@
                     <a href="/events/{{event.year}}/{{event.slug}}/"><img rel="stylesheet" src="{% static 'web/images/placeholder-event-sm.png' %}" class="object-cover w-full h-40"></a>
                 {% endif %}
             </div>
-            <div class="p-4">
-                <h3 class="text-base leading-tight mb-2">
+            <div class="item-content p-4">
+                <h3 class="item-title text-base leading-tight mb-2">
                     <a href="/events/{{event.year}}/{{event.slug}}/">
                         <span class="hidden">#{{ forloop.counter }}.</span>
                         <span class="font-bold">{{ event.title }}</span>
