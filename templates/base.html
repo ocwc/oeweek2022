@@ -85,50 +85,24 @@
                         <img src="{%static 'web/images/oeweek.svg'%}" alt="Open Education Week Logo">
                     </a>
                     <nav id="mainMenu" role="navigation" class="nav-primary lg:block flex hidden">
-                        <ul class="nav nav-dropdown flex gap-4 flex-col lg:flex-row lg:items-center">
+                        <ul class="nav nav-dropdown flex gap-2 flex-col lg:flex-row lg:items-center">
 
-                            {% if hide_resource_buttons == False %}
-                            <div class="ember-basic-dropdown">
-                                <div id="ember6"
-                                    class="ember-view ember-basic-dropdown-trigger ember-basic-dropdown-trigger--in-place"
-                                    role="button" tabindex="0" data-ebd-id="ember5-trigger"
-                                    aria-owns="ember-basic-dropdown-content-ember5" aria-expanded="false">
+                            <li class="menu-item dropdown">
+                                <a href="/pages/about/"><i class="fal fa-info-circle"></i> About</a>
+                                <ul class="dropdown-content">
+                                    <li class="menu-item"><a href="/pages/promote/">Promo Kit</a></li>
+                                    <li class="menu-item"><a href="https://connect.oeglobal.org/c/oeweek/33">OEG Connect</a></li>
+                                    <li class="menu-item"><a href="/pages/faq/">FAQ</a></li>
+                                </ul>
+                            </li>
 
-                                    <li class="menu-item">
-                                        <a href="/events/"
-                                            id="ember5" class="ember-view"><i class="fal fa-calendar-week"></i> Events</a>
-                                    </li>
-
-                                </div>
-                            </div>
-
-                            <div class="ember-basic-dropdown">
-                                <div id="ember6"
-                                    class="ember-view ember-basic-dropdown-trigger ember-basic-dropdown-trigger--in-place"
-                                    role="button" tabindex="0" data-ebd-id="ember5-trigger"
-                                    aria-owns="ember-basic-dropdown-content-ember5" aria-expanded="false">
-
-                                    <li class="menu-item">
-                                        <a href="/resources/"
-                                            id="ember5" class="ember-view"><i class="fal fa-box-full"></i> Assets</a>
-                                    </li>
-
-                                </div>
-                            </div>
-                            {% endif %}
-
-                            <div class="ember-basic-dropdown">
-                                <div id="ember6"
-                                    class="ember-view ember-basic-dropdown-trigger ember-basic-dropdown-trigger--in-place"
-                                    role="button" tabindex="0" data-ebd-id="ember5-trigger"
-                                    aria-owns="ember-basic-dropdown-content-ember5" aria-expanded="false">
-
-                                    <li class="menu-item">
-                                        <a href="/pages/about/"
-                                            id="ember5" class="ember-view"><i class="fal fa-info-circle"></i> About</a>
-                                    </li>
-                                </div>
-                            </div>
+                            <li class="menu-item dropdown">
+                                <a href="/library/resources/"><i class="fal fa-books"></i> Library</a>
+                                <ul class="dropdown-content">
+                                    <li class="menu-item"><a href="/library/resources/">Asset Archive</a></li>
+                                    <li class="menu-item"><a href="/library/events/">Event Archive</a></li>
+                                </ul>
+                            </li>
 
                             {% if user.is_staff %}
                             <div class="ember-basic-dropdown">
@@ -234,7 +208,7 @@
                     <div class="py-8 flex flex-col items-center justify-center gap-2 lg:mb-20 text-center">
                         <div class="text-sm">Organized by</div>
                         <a href="https://www.oeglobal.org/">
-                            <img src="{%static 'web/images/oeglobal.svg'%}" alt="">
+                            <img src="{% static 'web/images/oeglobal.svg'%}" alt="">
 
                         </a>
                     </div>
