@@ -65,6 +65,9 @@ from .utils import (
 ALLOWED_TAGS = bleach.sanitizer.ALLOWED_TAGS
 ALLOWED_TAGS += ["p"]
 
+SESSION_LIBRARY_BOX_ASSET = "library_box_asset"
+SESSION_LIBRARY_BOX_EVENT = "library_box_event"
+
 
 def is_staff(user):
     return user.is_staff
@@ -107,6 +110,16 @@ def _set_session_tz_from_form_value(request):
     if tzname:
         request.session[SESSION_TIMEZONE] = tzname
         djtz.activate(pytz.timezone(tzname))
+
+
+def _get_library_description_box_status(request, type):
+    if type in request.session:
+        return request.session[type]
+    return True
+
+
+def _set_library_description_box_status(request, type, value):
+    request.session[type] = value
 
 
 def contribute_activity(request, identifier=None):
@@ -365,6 +378,10 @@ def show_events_library(request):
         "reload_after_timezone_change": True,
     }
 
+    if _get_library_description_box_status(request, SESSION_LIBRARY_BOX_EVENT):
+        context["show_description_box"] = True
+    _set_library_description_box_status(request, SESSION_LIBRARY_BOX_EVENT, False)
+
     return render(request, "web/events-library.html", context)
 
 
@@ -424,6 +441,10 @@ def show_resources_library(request):
         "days_to_go": days_to_go,
         "filter": f,
     }
+
+    if _get_library_description_box_status(request, SESSION_LIBRARY_BOX_ASSET):
+        context["show_description_box"] = True
+    _set_library_description_box_status(request, SESSION_LIBRARY_BOX_ASSET, False)
 
     return render(request, "web/resources.html", context)
 
@@ -883,6 +904,11 @@ def set_timezone(request: HtmxHttpRequest) -> HttpResponse:
         result = "timezone changed: %s" % timezone
     else:
         result = "NOK"
+
+    # special case: If user's first visit happens to be /library/events/, SESSION_LIBRARY_BOX_EVENT is set to False by timezone detection
+    # immediately reloads the page hence afterwards no description box is shown. To counter that, we have this here:
+    _set_library_description_box_status(request, SESSION_LIBRARY_BOX_EVENT, True)
+
     return render(
         request,
         "web/timezone.html",

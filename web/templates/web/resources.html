@@ -6,17 +6,19 @@
 
 <h1>{{ title }}</h1>
 
-{%if filter %}
+{% if filter %}
+{% if show_description_box %}
 <div class="bg-red-400 gap-4 p-4 lg:p-8 rounded w-full lg:flex items-center mb-4">
   {% load static %}
 
   <img class="mx-auto w-32 hidden lg:block" src="{% static 'web/images/library-icon.svg' %}">
-  
+
   <p class="font-bold text-white text-lg">
       Collection of open assets shared by the community in previous Open Education Week editions since 2015.
   </p>
 
 </div>
+{% endif %} {# show_description_box #}
 
 <form method="get" onchange="this.submit()">
   <div class="grid gird-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 md:gap-x-4 gap-y-6 bg-red-400 text-white mb-4 p-4">
