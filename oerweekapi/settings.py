@@ -41,6 +41,7 @@ INSTALLED_APPS = (
     "import_export",
     "constance",
     "constance.backends.database",
+    "google_translate",
     # our WagTail-based apps
     "contributor_profile",
     "gp",
