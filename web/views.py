@@ -454,15 +454,34 @@ def show_resources(request):
 def show_resources_library(request):
     """library: list of resources for all year"""
     f = AssetFilter(request.GET, queryset=_resources_query_set())
+    resource_list = f.qs
+    resource_count_total = resource_list.count()
+
+    paginator = Paginator(resource_list, LIBRARY_RESULTS_PER_PAGE)
+    page = request.GET.get("page", 0)
+    if page == 0:
+        query_params = request.GET.copy()
+        query_params["page"] = 1
+        return HttpResponseRedirect(
+            reverse("library_resources") + "?" + query_params.urlencode()
+        )
+    try:
+        resource_list = paginator.page(page)
+    except (EmptyPage, PageNotAnInteger):
+        raise Http404("Page not found.")
 
     resource_count = f.qs.count()
+    resource_count = resource_list.object_list.count()
     context = {
         "title": "OE Week Library",
-        "resource_list": f.qs,
+        "resource_list": resource_list,
         "resource_count": resource_count,
         "days_to_go": days_to_go,
         "filter": f,
+        "paginator": paginator,
     }
+    if resource_count != resource_count_total:
+        context["resource_count_total"] = resource_count_total
 
     if _get_library_description_box_status(request, SESSION_LIBRARY_BOX_ASSET):
         context["show_description_box"] = True
