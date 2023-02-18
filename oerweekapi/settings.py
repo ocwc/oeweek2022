@@ -5,6 +5,12 @@ import datetime
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 FE_DEPLOYMENT = False
 
+# ugly monkey patch, needed to get django-google-translate to initialized under (most probably only) Django 3.2
+from google_translate.apps import TranslateConfig
+
+TranslateConfig.name = "google_translate"
+# end of ugly monkey patch
+
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/1.8/howto/deployment/checklist/
 
@@ -41,6 +47,7 @@ INSTALLED_APPS = (
     "import_export",
     "constance",
     "constance.backends.database",
+    "google_translate",
     # our WagTail-based apps
     "contributor_profile",
     "gp",
