@@ -1,6 +1,6 @@
 {% extends 'base.html' %}
 
-{% load static tz %}
+{% load static tz web_extras %}
 
 {% block extra_head %}
 <script src="{% static 'web/js/htmx.min.js' %}" defer></script>
@@ -58,7 +58,7 @@
 <div class="hidden" id="timezone_result">/{{ current_timezone }}/</div>
 
 {% if event_count %}
-    <p><i class="fal fa-calculator"></i> <strong>Showing {{ event_count }} events</strong></p>
+    <p><i class="fal fa-calculator"></i> <strong>Showing {{ event_count }} {% if events_count_total %}(out of {{ events_count_total }}) {% endif %}events</strong></p>
     <br>
 {% endif %}
 
@@ -111,5 +111,27 @@
     {% endfor %}
 
 </div>
+
+{% if filter and event_list.has_other_pages %}
+<div>
+    {% if event_list.has_previous %}
+    <a href="?{% param_replace page=event_list.previous_page_number %}">&laquo;</a>
+    {% else %}
+    &laquo;
+    {% endif %}
+    {% for i in event_list.paginator.page_range %}
+        {% if event_list.number == i %}
+        <strong>{{ i }}</strong>
+        {% else %}
+        <a href="?{% param_replace page=i %}">{{ i }}</a>
+        {% endif %}
+    {% endfor %}
+    {% if event_list.has_next %}
+    <a href="?{% param_replace page=event_list.next_page_number %}">&raquo;</a>
+    {% else %}
+    &raquo;
+    {% endif %}
+</div>
+{% endif %}
 
 {% endblock %}
