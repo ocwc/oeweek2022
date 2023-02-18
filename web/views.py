@@ -15,6 +15,8 @@ from django.conf import settings
 from django.contrib.auth.decorators import user_passes_test
 from django.core.cache import cache
 from django.core.exceptions import ObjectDoesNotExist
+from django.core.paginator import Paginator
+from django.core.paginator import EmptyPage, PageNotAnInteger
 from django.db import models
 from django.db.models import Q
 from django.db.models.functions import Lower
@@ -65,6 +67,11 @@ from .utils import (
 ALLOWED_TAGS = bleach.sanitizer.ALLOWED_TAGS
 ALLOWED_TAGS += ["p"]
 
+SESSION_LIBRARY_BOX_ASSET = "library_box_asset"
+SESSION_LIBRARY_BOX_EVENT = "library_box_event"
+
+LIBRARY_RESULTS_PER_PAGE = 16
+
 
 def is_staff(user):
     return user.is_staff
@@ -107,6 +114,16 @@ def _set_session_tz_from_form_value(request):
     if tzname:
         request.session[SESSION_TIMEZONE] = tzname
         djtz.activate(pytz.timezone(tzname))
+
+
+def _get_library_description_box_status(request, type):
+    if type in request.session:
+        return request.session[type]
+    return True
+
+
+def _set_library_description_box_status(request, type, value):
+    request.session[type] = value
 
 
 def contribute_activity(request, identifier=None):
@@ -352,18 +369,40 @@ def show_events(request):
 def show_events_library(request):
     """library: list of resources for all year"""
     f = EventFilter(request.GET, queryset=_events_query_set())
+    event_list = f.qs
+    events_count_total = event_list.count()
+
+    paginator = Paginator(event_list, LIBRARY_RESULTS_PER_PAGE)
+    page = request.GET.get("page", 0)
+    if page == 0:
+        query_params = request.GET.copy()
+        query_params["page"] = 1
+        return HttpResponseRedirect(
+            reverse("library_events") + "?" + query_params.urlencode()
+        )
+    try:
+        event_list = paginator.page(page)
+    except (EmptyPage, PageNotAnInteger):
+        raise Http404("Page not found.")
 
     current_time_utc = djtz.now()
-    events_count = f.qs.count()
+    events_count = event_list.object_list.count()
     context = {
         "title": "Past Events",
         "current_time_utc": current_time_utc,
-        "event_list": f.qs,
+        "event_list": event_list,
         "event_count": events_count,
         "days_to_go": days_to_go,
         "filter": f,
+        "paginator": paginator,
         "reload_after_timezone_change": True,
     }
+    if events_count != events_count_total:
+        context["events_count_total"] = events_count_total
+
+    if _get_library_description_box_status(request, SESSION_LIBRARY_BOX_EVENT):
+        context["show_description_box"] = True
+    _set_library_description_box_status(request, SESSION_LIBRARY_BOX_EVENT, False)
 
     return render(request, "web/events-library.html", context)
 
@@ -415,15 +454,38 @@ def show_resources(request):
 def show_resources_library(request):
     """library: list of resources for all year"""
     f = AssetFilter(request.GET, queryset=_resources_query_set())
+    resource_list = f.qs
+    resource_count_total = resource_list.count()
+
+    paginator = Paginator(resource_list, LIBRARY_RESULTS_PER_PAGE)
+    page = request.GET.get("page", 0)
+    if page == 0:
+        query_params = request.GET.copy()
+        query_params["page"] = 1
+        return HttpResponseRedirect(
+            reverse("library_resources") + "?" + query_params.urlencode()
+        )
+    try:
+        resource_list = paginator.page(page)
+    except (EmptyPage, PageNotAnInteger):
+        raise Http404("Page not found.")
 
     resource_count = f.qs.count()
+    resource_count = resource_list.object_list.count()
     context = {
         "title": "OE Week Library",
-        "resource_list": f.qs,
+        "resource_list": resource_list,
         "resource_count": resource_count,
         "days_to_go": days_to_go,
         "filter": f,
+        "paginator": paginator,
     }
+    if resource_count != resource_count_total:
+        context["resource_count_total"] = resource_count_total
+
+    if _get_library_description_box_status(request, SESSION_LIBRARY_BOX_ASSET):
+        context["show_description_box"] = True
+    _set_library_description_box_status(request, SESSION_LIBRARY_BOX_ASSET, False)
 
     return render(request, "web/resources.html", context)
 
@@ -883,6 +945,11 @@ def set_timezone(request: HtmxHttpRequest) -> HttpResponse:
         result = "timezone changed: %s" % timezone
     else:
         result = "NOK"
+
+    # special case: If user's first visit happens to be /library/events/, SESSION_LIBRARY_BOX_EVENT is set to False by timezone detection
+    # immediately reloads the page hence afterwards no description box is shown. To counter that, we have this here:
+    _set_library_description_box_status(request, SESSION_LIBRARY_BOX_EVENT, True)
+
     return render(
         request,
         "web/timezone.html",

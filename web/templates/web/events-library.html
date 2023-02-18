@@ -1,6 +1,6 @@
 {% extends 'base.html' %}
 
-{% load static tz %}
+{% load static tz web_extras %}
 
 {% block extra_head %}
 <script src="{% static 'web/js/htmx.min.js' %}" defer></script>
@@ -13,6 +13,7 @@
 
 <h1>{{ title }}</h1>
 
+{% if show_description_box %}
 <div class="bg-green-600 text-white gap-4 p-4 rounded mx-auto lg:flex items-center mb-4">
   <img class="w-32 hidden lg:block" src="{% static 'web/images/events-icon.svg' %}">
   <div>
@@ -21,6 +22,7 @@
     </p>
   </div>
 </div>
+{% endif %}
 
 <form method="get" onchange="this.submit()">
   <div class="grid gird-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-2 md:gap-x-4 gap-y-6 bg-green-600 text-white mb-4 p-4">
@@ -56,7 +58,7 @@
 <div class="hidden" id="timezone_result">/{{ current_timezone }}/</div>
 
 {% if event_count %}
-    <p><i class="fal fa-calculator"></i> <strong>Showing {{ event_count }} events</strong></p>
+    <p><i class="fal fa-calculator"></i> <strong>Showing {{ event_count }} {% if events_count_total %}(out of {{ events_count_total }}) {% endif %}events</strong></p>
     <br>
 {% endif %}
 
@@ -109,5 +111,27 @@
     {% endfor %}
 
 </div>
+
+{% if event_list.has_other_pages %}
+<div>
+    {% if event_list.has_previous %}
+    <a href="?{% param_replace page=event_list.previous_page_number %}">&laquo;</a>
+    {% else %}
+    &laquo;
+    {% endif %}
+    {% for i in event_list.paginator.page_range %}
+        {% if event_list.number == i %}
+        <strong>{{ i }}</strong>
+        {% else %}
+        <a href="?{% param_replace page=i %}">{{ i }}</a>
+        {% endif %}
+    {% endfor %}
+    {% if event_list.has_next %}
+    <a href="?{% param_replace page=event_list.next_page_number %}">&raquo;</a>
+    {% else %}
+    &raquo;
+    {% endif %}
+</div>
+{% endif %}
 
 {% endblock %}
