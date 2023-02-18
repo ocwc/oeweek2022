@@ -112,7 +112,7 @@
 
 </div>
 
-{% if filter and event_list.has_other_pages %}
+{% if event_list.has_other_pages %}
 <div>
     {% if event_list.has_previous %}
     <a href="?{% param_replace page=event_list.previous_page_number %}">&laquo;</a>
