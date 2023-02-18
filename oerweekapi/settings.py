@@ -93,7 +93,7 @@ CONSTANCE_CONFIG = {
     ),
     "HIDE_RESOURCE_BUTTONS_IN_BASE_TEMPLACE": (
         False,
-        "If True, 'Events' and 'Assets' buttons in base template are hidden",
+        "If True, 'Events' and 'Assets' buttons in base template do NOT link to event/asset lists ('Commong soon' is added instead)",
         bool,
     ),
 }
