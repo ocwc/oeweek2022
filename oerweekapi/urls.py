@@ -102,12 +102,16 @@ urlpatterns = (
             r"^library/events$",
             RedirectView.as_view(url="/library/events/", permanent=True),
         ),
-        url(r"^library/events/$", views.show_events_library),
+        url(r"^library/events/$", views.show_events_library, name="library_events"),
         url(
             r"^library/resources$",
             RedirectView.as_view(url="/library/resources/", permanent=True),
         ),
-        url(r"^library/resources/$", views.show_resources_library),
+        url(
+            r"^library/resources/$",
+            views.show_resources_library,
+            name="library_resources",
+        ),
         url(r"^events$", RedirectView.as_view(url="/events/", permanent=True)),
         url(r"^events/$", views.show_events),
         url(r"^resources$", RedirectView.as_view(url="/resources/", permanent=True)),

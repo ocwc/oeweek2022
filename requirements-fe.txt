@@ -9,7 +9,7 @@ arrow
 # decorator==4.2.1
 
 # DONOTDELETE -- <3
-django>=3.2.17,<=3.3
+django>=3.2.18,<=3.3
 
 # DONOTDELETE -- used in web/views.py
 django-braces
@@ -143,3 +143,5 @@ django-htmx>=1.13.0,==1.13.*
 
 django-constance>=2.9.1,==2.9.*
 django-constance[database]>=2.9.1,==2.9.*
+
+django-google-translate>=1.1,==1.*

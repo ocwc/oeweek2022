@@ -1,4 +1,4 @@
-{% load static wagtailcore_tags wagtailuserbar %}
+{% load static google_translate wagtailcore_tags wagtailuserbar %}
 
 <!DOCTYPE html>
 <html data-lt-installed="true">
@@ -270,7 +270,7 @@
         </div>
     </div> {% comment %} .site-footer  {% endcomment %}
 
-    <footer class="site--footer2 bg-blue-800 text-gray-100 pb-10 pt-10 lg:pt-10">
+    <footer class="site--footer2 bg-blue-800 text-gray-100 pb-20 pt-10 lg:pt-10">
         <div class="container flex flex-col lg:flex-row justify-between text-sm">
             <div class="w-full lg:w-8/12 pb-4 lg:pb-0 flex gap-2">
                 <div class="cc-icons mr-1 flex-grow-0 flex-shrink-0">
@@ -290,10 +290,11 @@
         </div>
     </footer>
 
-    <nav
-        class="mobile-nav block bg-white text-gray-600 fixed md:hidden bottom-0 w-full h-58px z-50 w-screen max-w-full text-xs sf-hidden">
-
+    <nav class="mobile-nav block bg-white text-gray-600 fixed md:hidden bottom-0 w-full h-58px z-50 w-screen max-w-full text-xs sf-hidden">
     </nav>
+
+    <div class="google_translate_wrapper bg-blue-800 text-gray-100 notranslate">{% google_translate type='horizontal' language='en' %}</div>
+
 <script>
     function toggleMenu() {
         var header = document.getElementById("oewHeader");

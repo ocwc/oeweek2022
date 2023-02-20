@@ -110,7 +110,7 @@
   hyphens: auto;
 }
 
-/* Mario Dropdow mennus */
+/* Mario 2023 Dropdow menus */
 
 .dropdown {
   position: relative;
@@ -132,7 +132,7 @@
 }
 
 @media screen and (min-width: 1024px) {
-  
+
   .dropdown-content {
     display: none;
     position: absolute;
@@ -1047,4 +1047,37 @@ svg {
 /* Events and Assets */
 .item-content h3.item-title {
   font-size: 1.2rem;
+}
+
+
+/* Mario 2023 - mark text */
+
+mark {
+  background-color: var(--color-secondary-yellow-300);
+  padding: 0 1px;
+}
+
+.coming-up h2 {
+  margin-top: 0;
+  font-size: 1.5rem;
+}
+
+/* Google Translate wrapper */
+.google_translate_wrapper {
+	box-sizing: border-box;
+	display: block;
+	float: none;
+	height: 3.7rem;
+	position: fixed;
+	right: 4%;
+	width: 14rem;
+
+	bottom: 0px;
+	z-index: 999999;
+
+	border: 1px solid #1a52b2;
+	font-size: 10pt;
+	line-height: 17px;
+	padding: 3px 5px;
+	white-space: normal;
 }

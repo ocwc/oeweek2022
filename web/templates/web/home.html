@@ -50,16 +50,31 @@
                 your favorite topics of the week. </p>
         </a>
 
+        {% if hide_resource_buttons == False %}
         <a href="/events/" class="bg-green-600 p-8 text-white flex flex-col justify-center md:rounded-md border-2 border-green-600 hover:border-green-800 hover:shadow-lg">
+        {% else %}
+        <div class="bg-green-600 p-8 text-white flex flex-col justify-center md:rounded-md border-2 border-green-600 hover:border-green-800 hover:shadow-lg">
+        {% endif %}
             <i class="fad fa-calendar-week fa-5x mx-auto mb-4"></i>
             <h3 class="font-bold text-xl text-center mb-4">2023 Events</h3>
+        {% if hide_resource_buttons == False %}
             <p class="text-base leading-snug">{#Browse the#} <strong>Events and activities</strong> taking place during #OEWeek 2023.</p>
         </a>
         <a href="/resources/" class="bg-red-400 p-8 text-white flex flex-col justify-center md:rounded-md border-2 border-red-400 hover:border-red-800 hover:shadow-lg">
+        {% else %}
+            <p class="text-base leading-snug font-bold text-center">Coming Soon!</p>
+        </div>
+        <div class="bg-red-400 p-8 text-white flex flex-col justify-center md:rounded-md border-2 border-red-400 hover:border-red-800 hover:shadow-lg">
+        {% endif %}
             <i class="fad fa-box-full fa-5x mx-auto mb-6"></i>
             <h3 class="font-bold text-xl text-center mb-4">2023 Assets</h3>
+        {% if hide_resource_buttons == False %}
             <p class="text-base leading-snug">{#Explore the#} <strong>Collection of resources</strong> shared by the community in 2023.</p>
         </a>
+        {% else %}
+            <p class="text-base leading-snug font-bold text-center">Coming soon!</p>
+        </div>
+        {% endif %}
 
     </div>
 
@@ -83,7 +98,7 @@
             <h3 class="text-base mb-2 my-0! text-center">Promotional Kit</h3>
             <p class="text-center">Spread the word with these exclusive and customizable graphic materials.</p>
             <img src="{% static 'web/images/promo-materials.png' %}" class="w-2/3 mx-auto" alt="Open Education Week Promo Materials">
-        
+
         </a>
 
         <div class="md:col-span-4 md:col-start-2 md:p-32">
