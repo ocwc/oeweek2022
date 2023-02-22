@@ -519,21 +519,21 @@ SCHEDULE_DAY_WED = "web"
 SCHEDULE_DAY_THU = "thu"
 SCHEDULE_DAY_FRI = "fri"
 SCHEDULE_DAY_OTHER = "other"
-SCHEDULE_DAY = {
-    # <day parameter of the view>: day number in EO_WEEK_DAYS (e.g. 3rd item in the tuple)
-    SCHEDULE_DAY_ALL: "all",
-    SCHEDULE_DAY_MON: "1",
-    SCHEDULE_DAY_TUE: "2",
-    SCHEDULE_DAY_WED: "3",
-    SCHEDULE_DAY_THU: "4",
-    SCHEDULE_DAY_FRI: "5",
-    SCHEDULE_DAY_OTHER: "other",
+SCHEDULE_DAYS = {
+    # <day parameter of the view>: (<day param...>, <day number in EO_WEEK_DAYS>)
+    SCHEDULE_DAY_ALL: (SCHEDULE_DAY_ALL, "all", "All Days"),
+    SCHEDULE_DAY_MON: (SCHEDULE_DAY_MON, "1", "Mon"),
+    SCHEDULE_DAY_TUE: (SCHEDULE_DAY_TUE, "2", "Tue"),
+    SCHEDULE_DAY_WED: (SCHEDULE_DAY_WED, "3", "Wed"),
+    SCHEDULE_DAY_THU: (SCHEDULE_DAY_THU, "4", "Thu"),
+    SCHEDULE_DAY_FRI: (SCHEDULE_DAY_FRI, "5", "Fri"),
+    SCHEDULE_DAY_OTHER: (SCHEDULE_DAY_OTHER, "other", "Other"),
 }
 
 
 def schedule_list(request, day):
     """schedule: list of events for given day in current year (=settings.OEW_YEAR)"""
-    if day not in SCHEDULE_DAY:
+    if day not in SCHEDULE_DAYS:
         raise Http404("Page not found.")
     event_list = _events_query_set(year=settings.OEW_YEAR)
     event_count = event_list.count()
@@ -541,7 +541,7 @@ def schedule_list(request, day):
     for event in event_list:
         _set_event_day_number(event, tz)
 
-    show_only_day = SCHEDULE_DAY[day]
+    show_only_day = SCHEDULE_DAYS[day][1]
     if day != SCHEDULE_DAY_ALL:
         # note: It would be nice to speed that up (by having a query filtered based on 'day') but since we compute
         # timezone per request/user, filtering is request/session/user dependent ...
@@ -564,6 +564,7 @@ def schedule_list(request, day):
         "event_count": event_count,
         "days_to_go": days_to_go,
         "show_day": show_only_day,
+        "schedule_days": SCHEDULE_DAYS.values(),
         "reload_after_timezone_change": True,
     }
     return render(request, "web/schedule.html", context=context)

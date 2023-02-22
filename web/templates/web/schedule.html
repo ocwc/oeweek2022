@@ -13,9 +13,22 @@
 
 <h1>{{ title }}</h1>
 
-{% if event_count %}
-  {# TODO: day menu: All, Mon, ..., My Favourites #}
+<div class="bg-white my-8 sm:flex">
+  <div class="hidden md:flex md:flex-wrap md:w-full"></div>
+  {% for day in schedule_days %}
+  <div class="p-2 sm:flex-wrap sm:w-full sm:text-center{% if day.1 == show_day %} bg-purple-300{% endif %}">
+    {% if day.1 == show_day %}
+    {{ day.2 }}
+    {% else %}
+    <a href="{% url 'schedule_list' day.0 %}">{{ day.2 }}</a>
+    {% endif %}
+  </div>
+  {% endfor %}
+  <div class="p-2 sm:flex-wrap sm:w-full sm:text-center"><a href="#{# url 'my-favorites' 'other' #}">My Favorites</a></div>
+  <div class="hidden md:flex md:flex-wrap md:w-full"></div>
+</div>
 
+{% if event_count %}
   <p><i class="fal fa-calculator"></i> <strong>Showing {{ event_count }} events</strong></p>
 
   {% for day in days %}
@@ -28,7 +41,7 @@
 
       <div class="overflow-hidden">
         <div class="item-content m-4 relative">
-          <div class="absolute top-0 right-0"><i class="fa-solid fa-bookmark text-green-500"></i></div>
+          <div class="absolute top-0 right-0">{# TODO: <i class="fa-solid fa-bookmark text-green-500"></i> #}</div>
           <div class="m-2 sm:flex sm:flex-wrap">
             <div class="text-purple-800">{{ event.event_time|date:'M d, Y H:i' }}</div>
             <div class="hidden sm:flex sm:px-1">|</div>
@@ -60,7 +73,7 @@
   </p>
   <div class="hidden" id="timezone_result">/{{ current_timezone }}/</div>
 {% else %}
-  <p>Call for participation for OEWeek starts on <strong>January 23, 2023</strong>.<br>Please come back to see new events afterwards, or contribute your own.</p>
+  <p>No events found for given time.</p>
 {% endif %}
 
 {% endblock %}
