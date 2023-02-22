@@ -331,6 +331,19 @@ def _events_query_set(year=None):
     )  # "Lower" = for case-insensitive sorting
 
 
+# TODO: compute from settings.OEW_RANGE[0]
+EO_WEEK_DAYS = [
+    ("Monday", "Monday, March 6", "1"),
+    ("Tuesday", "Tuesday, March 7", "2"),
+    ("Wednesday", "Wednesday, March 8", "3"),
+    ("Thursday", "Thursday, March 9", "4"),
+    ("Friday", "Friday, March 10", "5"),
+    # ('Saturday', 'Saturday, March 11', "6"),
+    # ('Sunday', 'Sunday, March 12', "0"),
+    ("Other", "Other days", "other"),
+]
+
+
 def show_events(request):
     request_timezone = request.GET.get("timezone", "local")  # "local" = default
     event_list = _events_query_set(year=settings.OEW_YEAR)
@@ -343,20 +356,10 @@ def show_events(request):
     # sort django queryset by UTC (property) values, not by local timezone
     event_list = sorted(event_list, key=lambda item: item.event_time)
     current_time_utc = djtz.now()
-    days = [
-        ("Monday", "Monday, March 6", "1"),
-        ("Tuesday", "Tuesday, March 7", "2"),
-        ("Wednesday", "Wednesday, March 8", "3"),
-        ("Thursday", "Thursday, March 9", "4"),
-        ("Friday", "Friday, March 10", "5"),
-        # ('Saturday', 'Saturday, March 11', "6"),
-        # ('Sunday', 'Sunday, March 12', "0"),
-        ("Other", "Other days", "other"),
-    ]
 
     context = {
         "title": "OE Week %s Events" % settings.OEW_YEAR,
-        "days": days,
+        "days": EO_WEEK_DAYS,
         "event_list": event_list,
         "current_time_utc": current_time_utc,
         "event_count": event_count,
@@ -507,6 +510,63 @@ def show_resource_detail(request, year, slug):
         raise Http404("Event %s/%s not found" % (year, slug))
     context = {"obj": resource}
     return render(request, "web/resource_detail.html", context=context)
+
+
+SCHEDULE_DAY_ALL = "all"
+SCHEDULE_DAY_MON = "mon"
+SCHEDULE_DAY_TUE = "tue"
+SCHEDULE_DAY_WED = "web"
+SCHEDULE_DAY_THU = "thu"
+SCHEDULE_DAY_FRI = "fri"
+SCHEDULE_DAY_OTHER = "other"
+SCHEDULE_DAY = {
+    # <day parameter of the view>: day number in EO_WEEK_DAYS (e.g. 3rd item in the tuple)
+    SCHEDULE_DAY_ALL: "all",
+    SCHEDULE_DAY_MON: "1",
+    SCHEDULE_DAY_TUE: "2",
+    SCHEDULE_DAY_WED: "3",
+    SCHEDULE_DAY_THU: "4",
+    SCHEDULE_DAY_FRI: "5",
+    SCHEDULE_DAY_OTHER: "other",
+}
+
+
+def schedule_list(request, day):
+    """schedule: list of events for given day in current year (=settings.OEW_YEAR)"""
+    if day not in SCHEDULE_DAY:
+        raise Http404("Page not found.")
+    event_list = _events_query_set(year=settings.OEW_YEAR)
+    event_count = event_list.count()
+    tz = pytz.timezone(get_timezone(request))
+    for event in event_list:
+        _set_event_day_number(event, tz)
+
+    show_only_day = SCHEDULE_DAY[day]
+    if day != SCHEDULE_DAY_ALL:
+        # note: It would be nice to speed that up (by having a query filtered based on 'day') but since we compute
+        # timezone per request/user, filtering is request/session/user dependent ...
+        new_event_list = []
+        for event in event_list:
+            if event.event_day_number == show_only_day:
+                new_event_list.append(event)
+        event_list = new_event_list
+        event_count = len(event_list)
+
+    # sort django queryset by UTC (property) values, not by local timezone
+    event_list = sorted(event_list, key=lambda item: item.event_time)
+    current_time_utc = djtz.now()
+
+    context = {
+        "title": "Schedule %s" % settings.OEW_YEAR,
+        "days": EO_WEEK_DAYS,
+        "event_list": event_list,
+        "current_time_utc": current_time_utc,
+        "event_count": event_count,
+        "days_to_go": days_to_go,
+        "show_day": show_only_day,
+        "reload_after_timezone_change": True,
+    }
+    return render(request, "web/schedule.html", context=context)
 
 
 @user_passes_test(is_staff, login_url="/admin/")

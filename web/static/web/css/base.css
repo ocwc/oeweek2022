@@ -543,9 +543,11 @@ svg {
   display: flex;
 }
 
+/* clashes with Tailwind -> disabled
 .hidden {
   display: none;
 }
+*/
 
 .flex-row {
   flex-direction: row;

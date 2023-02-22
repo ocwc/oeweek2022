@@ -69,6 +69,7 @@
       <div class="bg-white mb-2 rounded-lg shadow-sm transition-shadow overflow-hidden hover:shadow-lg border-2 border-gray-200 hover:border-purple-500">
           <!-- Mario's placeholder image. Load custom image when possible -->
           <div class="item-media">
+              {# TODO: get rid of the 'if' (here and in `events.html`) by putting the value into `consolidated_image_url_list` #}
               {% if event.consolidated_image_url_list %}
               <a href="/events/{{event.year}}/{{event.slug}}/"><img loading="lazy" src="{{ event.consolidated_image_url_list }}" class="object-cover w-full h-40"></a>
               {% else %}
