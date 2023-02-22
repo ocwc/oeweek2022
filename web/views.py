@@ -542,6 +542,7 @@ def schedule_list(request, day):
         _set_event_day_number(event, tz)
 
     show_only_day = SCHEDULE_DAYS[day][1]
+    eo_week_days_extended = EO_WEEK_DAYS
     if day != SCHEDULE_DAY_ALL:
         # note: It would be nice to speed that up (by having a query filtered based on 'day') but since we compute
         # timezone per request/user, filtering is request/session/user dependent ...
@@ -551,6 +552,21 @@ def schedule_list(request, day):
                 new_event_list.append(event)
         event_list = new_event_list
         event_count = len(event_list)
+        # eo_week_days_extended left as is, no need to do per-day count if we get only same number as already in `event_count`
+    else:
+        # TODO: not very nice => later rework event_list (here and in events_lsit) to something like `[ [ <list for day "1"> ], .... ]` and then we can simplify iterations in templates and use also `{% for ... {% empty %} ... {% endfor %}`
+        event_count_per_day = {}
+        for (name, name_date, number) in EO_WEEK_DAYS:
+            event_count_per_day[number] = 0
+        for event in event_list:
+            if event.event_day_number in event_count_per_day:
+                event_count_per_day[event.event_day_number] += 1
+        # e.g. "days[]" will contain also per-day counts for "day=all"
+        eo_week_days_extended = []
+        for (name, name_date, number) in EO_WEEK_DAYS:
+            eo_week_days_extended.append(
+                (name, name_date, number, event_count_per_day[number])
+            )
 
     # sort django queryset by UTC (property) values, not by local timezone
     event_list = sorted(event_list, key=lambda item: item.event_time)
@@ -558,7 +574,7 @@ def schedule_list(request, day):
 
     context = {
         "title": "Schedule %s" % settings.OEW_YEAR,
-        "days": EO_WEEK_DAYS,
+        "days": eo_week_days_extended,
         "event_list": event_list,
         "current_time_utc": current_time_utc,
         "event_count": event_count,
