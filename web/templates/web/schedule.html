@@ -42,7 +42,7 @@
       <div class="overflow-hidden">
         <div class="item-content m-4 relative">
           <div class="absolute top-0 right-0" hx-post="{% url "toggle_favorite_event" event.year event.slug %}" hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}'>
-            {% with favorited=False %}
+            {% with favorited=event.favorite %}
             {% include "web/toggle-favorite.html" %}
             {% endwith %}
           </div>

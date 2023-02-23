@@ -540,8 +540,14 @@ def schedule_list(request, day):
     event_list = _events_query_set(year=settings.OEW_YEAR)
     event_count = event_list.count()
     tz = pytz.timezone(get_timezone(request))
+
+    favotires = []
+    if SESSION_FAVORITES in request.session:
+        favotires = request.session[SESSION_FAVORITES]
+
     for event in event_list:
         _set_event_day_number(event, tz)
+        event.favorite = event.id in favotires
 
     show_only_day = SCHEDULE_DAYS[day][1]
     eo_week_days_extended = EO_WEEK_DAYS
