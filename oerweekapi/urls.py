@@ -101,6 +101,11 @@ urlpatterns = (
             views.schedule_list,
             name="schedule_list",
         ),
+        path(
+            "schedule/toggle-favorite/<int:year>/<str:slug>/",
+            views.toggle_favorite_event,
+            name="toggle_favorite_event",
+        ),
         url(r"^library$", RedirectView.as_view(url="/", permanent=True)),
         url(r"^library/$", RedirectView.as_view(url="/", permanent=True)),
         url(

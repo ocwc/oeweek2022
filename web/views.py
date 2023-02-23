@@ -37,6 +37,7 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.pagination import PageNumberPagination
 
+from .favorites_utils import create_favorites, toggle_favorite
 from .filters import AssetFilter, EventFilter
 from .forms import ActivityForm, AssetForm, ResourceFeedbackForm
 from .models import (
@@ -69,6 +70,7 @@ ALLOWED_TAGS += ["p"]
 
 SESSION_LIBRARY_BOX_ASSET = "library_box_asset"
 SESSION_LIBRARY_BOX_EVENT = "library_box_event"
+SESSION_FAVORITES = "favorites"
 
 LIBRARY_RESULTS_PER_PAGE = 16
 
@@ -1040,3 +1042,26 @@ def set_timezone_and_reload(request: HtmxHttpRequest) -> HttpResponse:
     response = set_timezone(request)
     response["HX-Refresh"] = "true"
     return response
+
+
+@require_POST
+def toggle_favorite_event(request: HtmxHttpRequest, year, slug) -> HttpResponse:
+    event = Resource.objects.get(
+        post_type="event", post_status="publish", year=year, slug=slug
+    )
+    result = "fail"
+    if event:
+        if SESSION_FAVORITES not in request.session:
+            favorites = create_favorites()
+            request.session[SESSION_FAVORITES] = favorites
+        else:
+            favorites = request.session[SESSION_FAVORITES]
+
+        result = toggle_favorite(favorites, event.id)
+        request.session.modified = True
+
+    return render(
+        request,
+        "web/toggle-favorite.html",
+        {"favorited": result},
+    )

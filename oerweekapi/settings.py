@@ -284,6 +284,9 @@ MAGICLINK_IGNORE_IS_ACTIVE_FLAG = False
 MAGICLINK_ANTISPAM_FORMS = True
 
 
+MAX_FAVORITES = 128
+
+
 CI = os.environ.get("CI")
 if CI:
     from .testsettings import *  # noqa: F401, F403

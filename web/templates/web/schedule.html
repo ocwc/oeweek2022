@@ -41,7 +41,11 @@
 
       <div class="overflow-hidden">
         <div class="item-content m-4 relative">
-          <div class="absolute top-0 right-0">{# TODO: <i class="fa-solid fa-bookmark text-green-500"></i> #}</div>
+          <div class="absolute top-0 right-0" hx-post="{% url "toggle_favorite_event" event.year event.slug %}" hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}'>
+            {% with favorited=False %}
+            {% include "web/toggle-favorite.html" %}
+            {% endwith %}
+          </div>
           <div class="m-2 sm:flex sm:flex-wrap">
             <div class="text-purple-800">{{ event.event_time|date:'M d, Y H:i' }}</div>
             <div class="hidden sm:flex sm:px-1">|</div>
