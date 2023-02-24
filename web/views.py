@@ -369,7 +369,7 @@ def show_events(request):
 def show_events_library(request):
     """library: list of resources for all year"""
     f = EventFilter(request.GET, queryset=_events_query_set())
-    event_list = f.qs
+    event_list = f.qs.order_by("-year")
     events_count_total = event_list.count()
 
     paginator = Paginator(event_list, LIBRARY_RESULTS_PER_PAGE)
@@ -454,7 +454,7 @@ def show_resources(request):
 def show_resources_library(request):
     """library: list of resources for all year"""
     f = AssetFilter(request.GET, queryset=_resources_query_set())
-    resource_list = f.qs
+    resource_list = f.qs.order_by("-year")
     resource_count_total = resource_list.count()
 
     paginator = Paginator(resource_list, LIBRARY_RESULTS_PER_PAGE)
