@@ -24,7 +24,13 @@
     {% endif %}
   </div>
   {% endfor %}
-  <div class="p-2 sm:flex-wrap sm:w-full sm:text-center"><a href="#{# url 'my-favorites' 'other' #}">My Favorites</a></div>
+  <div class="p-2 sm:flex-wrap sm:w-full sm:text-center{% if show_day == "my" %} bg-purple-300{% endif %}">
+    {% if show_day == "my" %}
+    My Favorites
+    {% else %}
+    <a href="{% url 'my_schedule_list' %}">My Favorites</a>
+    {% endif %}
+  </div>
   <div class="hidden md:flex md:flex-wrap md:w-full"></div>
 </div>
 

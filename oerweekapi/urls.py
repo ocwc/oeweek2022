@@ -97,6 +97,11 @@ urlpatterns = (
         url(r"^schedule$", RedirectView.as_view(url="/schedule/", permanent=True)),
         url(r"^schedule/$", RedirectView.as_view(url="/schedule/all/")),
         path(
+            "schedule/my/",
+            views.my_schedule_list,
+            name="my_schedule_list",
+        ),
+        path(
             "schedule/<str:day>/",
             views.schedule_list,
             name="schedule_list",
