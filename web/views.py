@@ -30,6 +30,8 @@ from braces.views import LoginRequiredMixin
 
 from constance import config
 
+from cryptography.fernet import InvalidToken
+
 from django_htmx.middleware import HtmxDetails
 
 from rest_framework import permissions, viewsets, generics, mixins
@@ -37,7 +39,12 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.pagination import PageNumberPagination
 
-from .favorites_utils import create_favorites, toggle_favorite
+from .favorites_utils import (
+    create_favorites,
+    decode_favorites,
+    encode_favorites,
+    toggle_favorite,
+)
 from .filters import AssetFilter, EventFilter
 from .forms import ActivityForm, AssetForm, ResourceFeedbackForm
 from .models import (
@@ -636,9 +643,46 @@ def my_schedule_list(request):
         request, id_filter=favorites, favorites=favorites, year=settings.OEW_YEAR
     )
 
+    my_favorites_permalink = None
+    if len(favorites) > 0:
+        encoded_favorites = encode_favorites(favorites)
+        my_favorites_permalink = request.build_absolute_uri(
+            reverse("custom_schedule_list", args=[encoded_favorites])
+        )
+
     current_time_utc = djtz.now()
     context = {
         "title": "Schedule %s - My favorites" % settings.OEW_YEAR,
+        "days_with_events": days_with_events,
+        "current_time_utc": current_time_utc,
+        "event_count": event_count,
+        "days_to_go": days_to_go,
+        "show_day": "my",  # hack/abuse, but allows us to use same schedule.html
+        "schedule_days": SCHEDULE_DAYS.values(),
+        "my_favorites_permalink": my_favorites_permalink,
+        "reload_after_timezone_change": True,
+    }
+    return render(request, "web/schedule.html", context=context)
+
+
+def custom_schedule_list(request, events):
+    try:
+        favorites_from_url = decode_favorites(events)
+    except (InvalidToken, ValueError) as e:
+        raise Http404("error", e)
+
+    # give current user ability to see list created by someone else and see which events he/she already favorited and which not
+    # note: Year skipped on purpose so as to allow users to see the lists also in the future, once the year when the list was created, passes.
+    favorites_from_session = []
+    if SESSION_FAVORITES in request.session:
+        favorites_from_session = request.session[SESSION_FAVORITES]
+    (days_with_events, event_count) = _get_events_list(
+        request, id_filter=favorites_from_url, favorites=favorites_from_session
+    )
+
+    current_time_utc = djtz.now()
+    context = {
+        "title": "Schedule %s - Custom" % settings.OEW_YEAR,
         "days_with_events": days_with_events,
         "current_time_utc": current_time_utc,
         "event_count": event_count,

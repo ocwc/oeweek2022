@@ -65,6 +65,13 @@
     {% endif %}
   {% endfor %}
 
+  <h2>Share with others</h2>
+
+  {% if my_favorites_permalink %}
+  <p class="my-8">To share this list with others, use following link:
+    <a href="{{ my_favorites_permalink }}">{{ my_favorites_permalink }}</a></p>
+  {% endif %}
+
   <p>
     <form hx-post="{% if reload_after_timezone_change %}{% url 'set_timezone_reload' %}{% else %}{% url 'set_timezone' %}{% endif %}"
           hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}'
@@ -80,7 +87,7 @@
   </p>
   <div class="hidden" id="timezone_result">/{{ current_timezone }}/</div>
 {% else %}
-  <p>No events found for given time.</p>
+  <p>No events found.</p>
 {% endif %}
 
 {% endblock %}

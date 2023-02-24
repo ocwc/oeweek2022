@@ -1,4 +1,12 @@
+import struct
+
+from cryptography.fernet import Fernet
+
 from django.conf import settings
+
+# ref:
+# 1) https://cryptography.io/en/latest/fernet/
+# 2) https://stackoverflow.com/a/8461913
 
 
 def create_favorites():
@@ -21,3 +29,29 @@ def toggle_favorite(favorites, event_id):
 
     favorites.append(event_id)
     return True
+
+
+def encode_favorites(favorites):
+    fmt = "<%dI" % len(favorites)
+    packed = struct.pack(fmt, *favorites)
+
+    f = Fernet(settings.FAVORITES_CRYPTO_KEY)
+    encrypted = f.encrypt(packed)
+
+    return encrypted.decode("UTF-8")
+
+
+def decode_favorites(data):
+    # enforce some worst case (8-bytes per ID) limit
+    if len(data) > (settings.MAX_FAVORITES * 8):
+        raise ValueError("too big: %d" % len(data))
+
+    encrypted = data.encode("UTF-8")
+
+    f = Fernet(settings.FAVORITES_CRYPTO_KEY)
+    decrypted = f.decrypt(encrypted)
+
+    fmt = "<%dI" % (len(decrypted) // 4)
+    favorites = list(struct.unpack(fmt, decrypted))
+
+    return favorites
