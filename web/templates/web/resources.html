@@ -77,7 +77,9 @@
                 <p class="text-sm mb-1"><i class="fal fa-badge-check"></i><span style="background-color: #ffffcc;"> OEGlobal member<span></p>
                 {% endif %}
 
+                {% if resource.country %}
                 <p class="text-sm mb-1"><i class="fal fa-globe-asia"></i> {{ resource.country }}, {{ resource.city }}</p>
+                {% endif %}
             </div>
         </div>
 
