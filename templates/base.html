@@ -96,6 +96,7 @@
                                 </ul>
                             </li>
 
+                            {% if hide_resource_buttons == False %}
                             <div class="ember-basic-dropdown">
                                 <div id="ember6"
                                     class="ember-view ember-basic-dropdown-trigger ember-basic-dropdown-trigger--in-place"
@@ -108,6 +109,20 @@
                                     </li>
                                 </div>
                             </div>
+
+                            <div class="ember-basic-dropdown">
+                                <div id="ember6"
+                                    class="ember-view ember-basic-dropdown-trigger ember-basic-dropdown-trigger--in-place"
+                                    role="button" tabindex="0" data-ebd-id="ember5-trigger"
+                                    aria-owns="ember-basic-dropdown-content-ember5" aria-expanded="false">
+
+                                    <li class="menu-item">
+                                        <a href="{% url 'schedule_list' 'all' %}"
+                                            id="ember5" class="ember-view"><i class="fal fa-calendar-days"></i> 2023 Schedule</a>
+                                    </li>
+                                </div>
+                            </div>
+                            {% endif %}
 
                             <li class="menu-item dropdown">
                                 <a href="/library/resources/"><i class="fal fa-books"></i> Library</a>

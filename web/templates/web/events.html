@@ -14,14 +14,13 @@
 <h1>{{ title }}</h1>
 
 {% if event_count %}
+  {% if comming_up_next_list|length > 0 %}
   <div style="background-color: #dddddd; padding-left: 20px">
     <h2>Coming up next:</h2>
 
     <ul>
-      {% for event in event_list|slice:":3" %}
-        {% if event.event_time > current_time_utc %}
-          <li><a href="/events/{{event.year}}/{{event.slug}}/">{{ event.title }} (in {{ current_time_utc | timesince:event.event_time }})&nbsp;</a></li>
-        {% endif %}
+      {% for event in comming_up_next_list %}
+        <li><a href="/events/{{event.year}}/{{event.slug}}/">{{ event.title }} (in {{ current_time_utc | timesince:event.event_time }})&nbsp;</a></li>
       {% endfor %}
     </ul>
 
@@ -29,9 +28,8 @@
   </div>
   <br>
   <br>
-{% endif %}
+  {% endif %}
 
-{% if event_count %}
   <p><i class="fal fa-hand-pointer"></i> <strong>Please click on a date to expand the details.</strong></p>
 
   <p>
@@ -53,7 +51,7 @@
 
   <div class="bg-white border-gray-300 rounded-lg p-2 md:p-4 my-8">
 
-  {% for day in days %}
+  {% for day in days_with_events %}
   {# OPTION 1: expand / collapse based on the day #}
   {# <details {% if day.2|date:'Y-m-d' == current_time_utc|date:'Y-m-d' %}open{% endif %}> #}
   {# OPTION 2: expand all by default #}
@@ -62,8 +60,7 @@
   <summary class="text-2xl font-bold cursor-pointer mb-4">{{ day.1 }}</summary>
 
   <div class="grid gird-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 md:gap-x-4 gap-y-6">
-  {% for event in event_list %}
-  {% if event.event_day_number == day.2 %}
+    {% for event in day.3 %}
 
       {# {{ forloop.counter }} # starting index 1 #}
       {# {{ forloop.counter0 }} # starting index 0 #}
@@ -73,6 +70,7 @@
       <div class="bg-white mb-2 rounded-lg shadow-sm transition-shadow overflow-hidden hover:shadow-lg border-2 border-gray-200 hover:border-purple-500">
           <!-- Mario's placeholder image. Load custom image when possible -->
           <div class="item-media">
+              {# TODO: get rid of the 'if' (here and in `events.html`) by putting the value into `consolidated_image_url_list` #}
               {% if event.consolidated_image_url_list %}
               <a href="/events/{{event.year}}/{{event.slug}}/"><img loading="lazy" src="{{ event.consolidated_image_url_list }}" class="object-cover w-full h-40"></a>
               {% else %}
@@ -111,8 +109,7 @@
               </p>
           </div>
       </div>
-  {% endif %}
-  {% endfor %}
+    {% endfor %}
   </div>
 
   </details>

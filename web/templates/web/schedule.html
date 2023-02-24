@@ -1,0 +1,103 @@
+{% extends 'base.html' %}
+
+{% load static tz %}
+
+{% block extra_head %}
+<script src="{% static 'web/js/htmx.min.js' %}" defer></script>
+<script>
+  function copyToClipBoard() {
+	var content = document.getElementById('permalink');
+	content.select();
+	navigator.clipboard.writeText(content.value);
+  }
+</script>
+{% endblock extra_head %}
+
+{% block content %}
+{% get_current_timezone as current_timezone %}
+
+<br>
+
+<h1>{{ title }}</h1>
+
+<div class="bg-white my-8 sm:flex">
+  <div class="hidden md:flex md:flex-wrap md:w-full"></div>
+  {% for day in schedule_days %}
+  <div class="p-2 sm:flex-wrap sm:w-full sm:text-center{% if show_day == day.1 %} bg-purple-300{% endif %}">
+    {% if show_day == day.1 %}
+    {{ day.2 }}
+    {% else %}
+    <a href="{% url 'schedule_list' day.0 %}">{{ day.2 }}</a>
+    {% endif %}
+  </div>
+  {% endfor %}
+  <div class="p-2 sm:flex-wrap sm:w-full sm:text-center{% if show_day == "my" %} bg-purple-300{% endif %}">
+    {% if show_day == "my" %}
+    My Favorites
+    {% else %}
+    <a href="{% url 'my_schedule_list' %}">My Favorites</a>
+    {% endif %}
+  </div>
+  <div class="hidden md:flex md:flex-wrap md:w-full"></div>
+</div>
+
+{% if event_count %}
+  <p><i class="fal fa-calculator"></i> <strong>Showing {{ event_count }} events</strong></p>
+
+  {% for day in days_with_events %}
+    {% if day.3|length > 0 %}
+    <h2>{{ day.1 }}</h2>
+
+    <div class="bg-white p-0 my-8 border-2 border-gray-300 divide-y-2 divide-solid divide-gray-300">
+    {% for event in day.3 %}
+      <div class="overflow-hidden">
+        <div class="item-content m-4 relative">
+          <div class="absolute top-0 right-0" hx-post="{% url "toggle_favorite_event" event.year event.slug %}" hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}'>
+            {% with favorited=event.favorite %}
+            {% include "web/toggle-favorite.html" %}
+            {% endwith %}
+          </div>
+          <div class="m-2 sm:flex sm:flex-wrap">
+            <div class="text-purple-800">{{ event.event_time|date:'M d, Y H:i' }}</div>
+            <div class="hidden sm:flex sm:px-1">|</div>
+            <div class="font-bold"><a href="/events/{{event.year}}/{{event.slug}}/">{{ event.title }}</a></div>
+          </div>
+          <div>
+            <span class="m-2 rounded text-black bg-gray-100 p-1"><i class="fal fa-globe-asia"></i> {{event.country }}, {{event.city}}</span>
+          </div>
+        </div>
+      </div>
+    {% endfor %}
+    </div>
+    {% endif %}
+  {% endfor %}
+
+  {% if my_favorites_permalink %}
+  <h2>Share with others</h2>
+
+  <p class="my-8">To share this list with others, you can use following link:</p>
+  <p><form class="mb-16">
+    <input id="permalink" value="{{ my_favorites_permalink }}" class="w-1/2 rounded px-4 py-3">
+    <button class="button-outline" type="button" onclick="copyToClipBoard()"><i class="fa-light fa-copy"></i></button>
+  </form></p>
+  {% endif %}
+
+  <p>
+    <form hx-post="{% if reload_after_timezone_change %}{% url 'set_timezone_reload' %}{% else %}{% url 'set_timezone' %}{% endif %}"
+          hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}'
+          hx-trigger="change" hx-target="#timezone_result">
+        <i class="fal fa-clock"></i> <strong>current time: <span style='background-color: #ffffcc;'>{{ current_time_utc | date:'M d, Y H:i' }}</span></strong>
+        <select name="timezone" class="px-3 py-2 rounded-lg">
+            {% for tz in timezones %}
+            <option value="{{ tz }}"{% if tz == current_timezone %} selected{% endif %}>{{ tz }}</option>
+            {% endfor %}
+        </select>
+        (UTC time: {{ current_time_utc | utc | date:'M d, Y H:i' }})
+    </form>
+  </p>
+  <div class="hidden" id="timezone_result">/{{ current_timezone }}/</div>
+{% else %}
+  <p>No events found.</p>
+{% endif %}
+
+{% endblock %}

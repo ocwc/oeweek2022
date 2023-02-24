@@ -8,6 +8,7 @@ import xlwt
 
 from itertools import groupby
 from datetime import datetime, timezone
+from enum import Enum
 
 import django.utils.timezone as djtz
 
@@ -30,6 +31,8 @@ from braces.views import LoginRequiredMixin
 
 from constance import config
 
+from cryptography.fernet import InvalidToken
+
 from django_htmx.middleware import HtmxDetails
 
 from rest_framework import permissions, viewsets, generics, mixins
@@ -37,6 +40,12 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.pagination import PageNumberPagination
 
+from .favorites_utils import (
+    create_favorites,
+    decode_favorites,
+    encode_favorites,
+    toggle_favorite,
+)
 from .filters import AssetFilter, EventFilter
 from .forms import ActivityForm, AssetForm, ResourceFeedbackForm
 from .models import (
@@ -69,6 +78,7 @@ ALLOWED_TAGS += ["p"]
 
 SESSION_LIBRARY_BOX_ASSET = "library_box_asset"
 SESSION_LIBRARY_BOX_EVENT = "library_box_event"
+SESSION_FAVORITES = "favorites"
 
 LIBRARY_RESULTS_PER_PAGE = 16
 
@@ -301,6 +311,31 @@ def thanks(request):
     return render(request, "web/thanks.html")
 
 
+def _init_oe_week_days():
+    oe_week_days = []
+
+    start_day = arrow.get(settings.OEW_RANGE[0])
+    end_day = arrow.get(settings.OEW_RANGE[1])
+    day = start_day
+    while day < end_day:
+        # TODO: use proper class instead of tuple, so that we can use say `name` instead of `1` in the code and templates
+        oe_week_days.append(
+            (day.format("dddd"), day.format("dddd, MMMM D"), day.format("d"))
+        )
+        day = day.shift(days=1)
+    oe_week_days.append(("Other", "Other days", "other"))
+
+    return oe_week_days
+
+
+EO_WEEK_DAYS = _init_oe_week_days()
+
+
+class ResourceOrdering(Enum):
+    DEFAULT = 1
+    LIBRARY = 2
+
+
 def _set_event_day_number(event, tz):
     result = "other"
     if not event.event_time:
@@ -315,10 +350,20 @@ def _set_event_day_number(event, tz):
     return event
 
 
-def _events_query_set(year=None):
+def _get_events_query_set(
+    year=None,
+    id_filter=None,
+    from_time=None,
+    count_limit=None,
+    ordering=ResourceOrdering.DEFAULT,
+):
     result = Resource.objects.all().filter(post_type="event", post_status="publish")
+
+    # filters (a.k.a. DB's WHERE)
     if year is not None:
         result = result.filter(year=year)
+    if id_filter is not None:
+        result = result.filter(id__in=id_filter)
     result = (
         result
         # TODO: very few items like that => try to sort that out without such excludes
@@ -326,38 +371,87 @@ def _events_query_set(year=None):
         .exclude(event_source_timezone__isnull=True)
         .exclude(event_time__isnull=True)
     )
-    return result.order_by(
-        "event_time", Lower("title")
-    )  # "Lower" = for case-insensitive sorting
+    if from_time:
+        result = result.filter(event_time__gte=from_time)
+
+    # order
+    if ordering == ResourceOrdering.LIBRARY:
+        result = result.order_by("-year", Lower("title"))
+    else:
+        result = result.order_by("event_time", Lower("title"))
+
+    # limit (after order)
+    if count_limit:
+        result = result[:count_limit]
+
+    return result
 
 
-def show_events(request):
-    request_timezone = request.GET.get("timezone", "local")  # "local" = default
-    event_list = _events_query_set(year=settings.OEW_YEAR)
+def _get_events_list(
+    request, event_day_number_filter=None, id_filter=None, favorites=None, year=None
+):
+    """
+    Constructs event_list&co. with form and content adjusted to what we need in `show_events()` and `schedule_list()`.
 
+    :param request:     request we're serving (for timezone info, etc.)
+    :param event_day_number_filter: filter out events from other than given day (default: no filtering)
+    :param id_filter:   use given list of event IDs (can be favorites list) to filter out all other IDs
+    :param favorites:   use given favorites list (list of event IDs) to fill-in `favorite` flag (None = default = do NOT fill flag)
+    :param year:        year for which to get a list (default: all years)
+    :return:            (days_with_events, event_count)
+    """
+    event_list = _get_events_query_set(year=settings.OEW_YEAR, id_filter=id_filter)
     event_count = event_list.count()
+
+    # fill in event day numbers based on timezone of the user, optionally also add `favorite` flag
     tz = pytz.timezone(get_timezone(request))
     for event in event_list:
         _set_event_day_number(event, tz)
+        if favorites:
+            event.favorite = event.id in favorites
 
-    # sort django queryset by UTC (property) values, not by local timezone
-    event_list = sorted(event_list, key=lambda item: item.event_time)
+    # make a list of events per day
+    event_list_per_day = {}
+    for (_, _, number) in EO_WEEK_DAYS:
+        if event_day_number_filter and event_day_number_filter != number:
+            continue
+        event_list_per_day[number] = []
+    for event in event_list:
+        if (
+            event_day_number_filter
+            and event_day_number_filter != event.event_day_number
+        ):
+            continue
+        event_list_per_day[event.event_day_number].append(event)
+
+    # merge event_list_per_day with EO_WEEK_DAYS, skip days with no events
+    # (note: Yes, not very nice and efficient, but since day numbers depend in timezone from request ...)
+    days_with_events = []
+    for (name, name_date, number) in EO_WEEK_DAYS:
+        if event_day_number_filter and event_day_number_filter != number:
+            continue
+        if event_day_number_filter is not None:
+            # adjust event count if showing only subset
+            event_count = len(event_list_per_day[number])
+        if len(event_list_per_day[number]) <= 0:
+            continue
+        days_with_events.append((name, name_date, number, event_list_per_day[number]))
+
+    return (days_with_events, event_count)
+
+
+def show_events(request):
+    (days_with_events, event_count) = _get_events_list(request, year=settings.OEW_YEAR)
     current_time_utc = djtz.now()
-    days = [
-        ("Monday", "Monday, March 6", "1"),
-        ("Tuesday", "Tuesday, March 7", "2"),
-        ("Wednesday", "Wednesday, March 8", "3"),
-        ("Thursday", "Thursday, March 9", "4"),
-        ("Friday", "Friday, March 10", "5"),
-        # ('Saturday', 'Saturday, March 11', "6"),
-        # ('Sunday', 'Sunday, March 12', "0"),
-        ("Other", "Other days", "other"),
-    ]
-
+    comming_up_next_list = _get_events_query_set(
+        year=settings.OEW_YEAR,
+        from_time=current_time_utc,
+        count_limit=settings.COMING_UP_NEXT_COUNT,
+    )
     context = {
         "title": "OE Week %s Events" % settings.OEW_YEAR,
-        "days": days,
-        "event_list": event_list,
+        "days_with_events": days_with_events,
+        "comming_up_next_list": comming_up_next_list,
         "current_time_utc": current_time_utc,
         "event_count": event_count,
         "days_to_go": days_to_go,
@@ -368,8 +462,10 @@ def show_events(request):
 
 def show_events_library(request):
     """library: list of resources for all year"""
-    f = EventFilter(request.GET, queryset=_events_query_set())
-    event_list = f.qs.order_by("-year")
+    f = EventFilter(
+        request.GET, queryset=_get_events_query_set(ordering=ResourceOrdering.LIBRARY)
+    )
+    event_list = f.qs
     events_count_total = event_list.count()
 
     paginator = Paginator(event_list, LIBRARY_RESULTS_PER_PAGE)
@@ -424,7 +520,6 @@ def show_event_detail(request, year, slug):
         raise Http404("Event %s/%s not found" % (year, slug))
     context = {
         "obj": event,
-        # "page": { "title": event.title },  # add title to base.py
         "reload_after_timezone_change": True,
     }
     return render(request, "web/event_detail.html", context=context)
@@ -432,9 +527,18 @@ def show_event_detail(request, year, slug):
 
 def _resources_query_set(year=None):
     result = Resource.objects.all().filter(post_type="resource", post_status="publish")
+
+    # filters (a.k.a. DB's WHERE)
     if year is not None:
         result = result.filter(year=year)
-    return result.order_by(Lower("title"))  # "Lower" = for case-insensitive sorting
+
+    # order
+    if ordering == ResourceOrdering.LIBRARY:
+        result = result.order_by("-year", Lower("title"))
+    else:
+        result = result.order_by(Lower("title"))
+
+    return result
 
 
 def show_resources(request):
@@ -454,8 +558,10 @@ def show_resources(request):
 
 def show_resources_library(request):
     """library: list of resources for all year"""
-    f = AssetFilter(request.GET, queryset=_resources_query_set())
-    resource_list = f.qs.order_by("-year")
+    f = AssetFilter(
+        request.GET, queryset=_resources_query_set(ordering=ResourceOrdering.LIBRARY)
+    )
+    resource_list = f.qs
     resource_count_total = resource_list.count()
 
     paginator = Paginator(resource_list, LIBRARY_RESULTS_PER_PAGE)
@@ -508,9 +614,118 @@ def show_resource_detail(request, year, slug):
         raise Http404("Event %s/%s not found" % (year, slug))
     context = {
         "obj": resource,
-        # "page": { "title": resource.title },  # add title to base.py
     }
     return render(request, "web/resource_detail.html", context=context)
+
+
+SCHEDULE_DAY_ALL = "all"
+SCHEDULE_DAY_MON = "mon"
+SCHEDULE_DAY_TUE = "tue"
+SCHEDULE_DAY_WED = "web"
+SCHEDULE_DAY_THU = "thu"
+SCHEDULE_DAY_FRI = "fri"
+SCHEDULE_DAY_OTHER = "other"
+SCHEDULE_DAYS = {
+    # <day parameter of the view>: (<day param...>, <day number in EO_WEEK_DAYS>)
+    SCHEDULE_DAY_ALL: (SCHEDULE_DAY_ALL, "all", "All Days"),
+    SCHEDULE_DAY_MON: (SCHEDULE_DAY_MON, "1", "Mon"),
+    SCHEDULE_DAY_TUE: (SCHEDULE_DAY_TUE, "2", "Tue"),
+    SCHEDULE_DAY_WED: (SCHEDULE_DAY_WED, "3", "Wed"),
+    SCHEDULE_DAY_THU: (SCHEDULE_DAY_THU, "4", "Thu"),
+    SCHEDULE_DAY_FRI: (SCHEDULE_DAY_FRI, "5", "Fri"),
+    SCHEDULE_DAY_OTHER: (SCHEDULE_DAY_OTHER, "other", "Other"),
+}
+
+
+def schedule_list(request, day):
+    """schedule: list of events for given day in current year (=settings.OEW_YEAR)"""
+    if day not in SCHEDULE_DAYS:
+        raise Http404("Page not found.")
+    show_only_day = SCHEDULE_DAYS[day][1]
+
+    favorites = []
+    if SESSION_FAVORITES in request.session:
+        favorites = request.session[SESSION_FAVORITES]
+
+    (days_with_events, event_count) = _get_events_list(
+        request,
+        event_day_number_filter=None if day == SCHEDULE_DAY_ALL else show_only_day,
+        favorites=favorites,
+        year=settings.OEW_YEAR,
+    )
+
+    current_time_utc = djtz.now()
+    context = {
+        "title": "Schedule %s" % settings.OEW_YEAR,
+        "days_with_events": days_with_events,
+        "current_time_utc": current_time_utc,
+        "event_count": event_count,
+        "days_to_go": days_to_go,
+        "show_day": show_only_day,
+        "schedule_days": SCHEDULE_DAYS.values(),
+        "reload_after_timezone_change": True,
+    }
+    return render(request, "web/schedule.html", context=context)
+
+
+def my_schedule_list(request):
+    """my schedule: list of events in favorites list (in current session)"""
+    favorites = []
+    if SESSION_FAVORITES in request.session:
+        favorites = request.session[SESSION_FAVORITES]
+    (days_with_events, event_count) = _get_events_list(
+        request, id_filter=favorites, favorites=favorites, year=settings.OEW_YEAR
+    )
+
+    my_favorites_permalink = None
+    if len(favorites) > 0:
+        encoded_favorites = encode_favorites(favorites)
+        my_favorites_permalink = request.build_absolute_uri(
+            reverse("custom_schedule_list", args=[encoded_favorites])
+        )
+
+    current_time_utc = djtz.now()
+    context = {
+        "title": "Schedule %s - My favorites" % settings.OEW_YEAR,
+        "days_with_events": days_with_events,
+        "current_time_utc": current_time_utc,
+        "event_count": event_count,
+        "days_to_go": days_to_go,
+        "show_day": "my",  # hack/abuse, but allows us to use same schedule.html
+        "schedule_days": SCHEDULE_DAYS.values(),
+        "my_favorites_permalink": my_favorites_permalink,
+        "reload_after_timezone_change": True,
+    }
+    return render(request, "web/schedule.html", context=context)
+
+
+def custom_schedule_list(request, events):
+    try:
+        favorites_from_url = decode_favorites(events)
+    except (InvalidToken, ValueError) as e:
+        raise Http404("error", e)
+
+    # give current user ability to see list created by someone else and see which events he/she already favorited and which not
+    # note: Year skipped on purpose so as to allow users to see the lists also in the future, once the year when the list was created, passes.
+    favorites_from_session = []
+    if SESSION_FAVORITES in request.session:
+        favorites_from_session = request.session[SESSION_FAVORITES]
+    (days_with_events, event_count) = _get_events_list(
+        request, id_filter=favorites_from_url, favorites=favorites_from_session
+    )
+
+    current_time_utc = djtz.now()
+    context = {
+        "title": "Schedule %s - Custom" % settings.OEW_YEAR,
+        "days_with_events": days_with_events,
+        "current_time_utc": current_time_utc,
+        "event_count": event_count,
+        "days_to_go": days_to_go,
+        "show_day": "my",  # hack/abuse, but allows us to use same schedule.html
+        "schedule_days": SCHEDULE_DAYS.values(),
+        "reload_after_timezone_change": True,
+    }
+    return render(request, "web/schedule.html", context=context)
 
 
 @user_passes_test(is_staff, login_url="/admin/")
@@ -967,3 +1182,26 @@ def set_timezone_and_reload(request: HtmxHttpRequest) -> HttpResponse:
     response = set_timezone(request)
     response["HX-Refresh"] = "true"
     return response
+
+
+@require_POST
+def toggle_favorite_event(request: HtmxHttpRequest, year, slug) -> HttpResponse:
+    event = Resource.objects.get(
+        post_type="event", post_status="publish", year=year, slug=slug
+    )
+    result = "fail"
+    if event:
+        if SESSION_FAVORITES not in request.session:
+            favorites = create_favorites()
+            request.session[SESSION_FAVORITES] = favorites
+        else:
+            favorites = request.session[SESSION_FAVORITES]
+
+        result = toggle_favorite(favorites, event.id)
+        request.session.modified = True
+
+    return render(
+        request,
+        "web/toggle-favorite.html",
+        {"favorited": result},
+    )

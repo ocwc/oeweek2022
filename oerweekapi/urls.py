@@ -94,8 +94,28 @@ urlpatterns = (
         ),
         path("edit/<uuid:identifier>/", views.edit_resource),
         url(r"^thanks/$", views.thanks),
-        url(r"^schedule$", RedirectView.as_view(url="/events/", permanent=True)),
-        url(r"^schedule/$", RedirectView.as_view(url="/events/", permanent=True)),
+        url(r"^schedule$", RedirectView.as_view(url="/schedule/", permanent=True)),
+        url(r"^schedule/$", RedirectView.as_view(url="/schedule/all/")),
+        path(
+            "schedule/custom/<str:events>/",
+            views.custom_schedule_list,
+            name="custom_schedule_list",
+        ),
+        path(
+            "schedule/my/",
+            views.my_schedule_list,
+            name="my_schedule_list",
+        ),
+        path(
+            "schedule/<str:day>/",
+            views.schedule_list,
+            name="schedule_list",
+        ),
+        path(
+            "schedule/toggle-favorite/<int:year>/<str:slug>/",
+            views.toggle_favorite_event,
+            name="toggle_favorite_event",
+        ),
         url(r"^library$", RedirectView.as_view(url="/", permanent=True)),
         url(r"^library/$", RedirectView.as_view(url="/", permanent=True)),
         url(
