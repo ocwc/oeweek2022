@@ -445,6 +445,8 @@ def show_events_library(request):
     """library: list of resources for all year"""
     f = EventFilter(request.GET, queryset=_get_events_query_set())
     event_list = f.qs
+    # TODO: handle with custom 'order' parameter for _events_query_set()
+    #event_list = f.qs.order_by("-year")
     events_count_total = event_list.count()
 
     paginator = Paginator(event_list, LIBRARY_RESULTS_PER_PAGE)
@@ -499,6 +501,7 @@ def show_event_detail(request, year, slug):
         raise Http404("Event %s/%s not found" % (year, slug))
     context = {
         "obj": event,
+        #XXX "page": { "title": event.title },  # add title to base.py
         "reload_after_timezone_change": True,
     }
     return render(request, "web/event_detail.html", context=context)
@@ -530,6 +533,8 @@ def show_resources_library(request):
     """library: list of resources for all year"""
     f = AssetFilter(request.GET, queryset=_resources_query_set())
     resource_list = f.qs
+    # TODO: handle with custom 'order' parameter for _events_query_set()
+    #event_list = f.qs.order_by("-year")
     resource_count_total = resource_list.count()
 
     paginator = Paginator(resource_list, LIBRARY_RESULTS_PER_PAGE)
@@ -580,7 +585,10 @@ def show_resource_detail(request, year, slug):
     resource = get_object_or_404(Resource, year=year, slug=slug, post_type="resource")
     if resource.post_status != "publish" and not request.user.is_staff:
         raise Http404("Event %s/%s not found" % (year, slug))
-    context = {"obj": resource}
+    context = {
+        "obj": resource,
+        #XXX "page": { "title": resource.title },  # add title to base.py
+    }
     return render(request, "web/resource_detail.html", context=context)
 
 

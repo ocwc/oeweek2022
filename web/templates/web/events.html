@@ -20,7 +20,7 @@
 
     <ul>
       {% for event in comming_up_next_list %}
-        <li><a href="/events/{{event.year}}/{{event.slug}}/">{{ event.title }}&nbsp;</a></li>
+        <li><a href="/events/{{event.year}}/{{event.slug}}/">{{ event.title }} (in {{ current_time_utc | timesince:event.event_time }})&nbsp;</a></li>
       {% endfor %}
     </ul>
 

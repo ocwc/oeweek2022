@@ -2,6 +2,10 @@
 
 {% load static tz %}
 
+{% block title %}
+- {{ obj.title }}
+{% endblock title %}
+
 {% block extra_head %}
 <script src="{% static 'web/js/htmx.min.js' %}" defer></script>
 {% endblock extra_head %}
