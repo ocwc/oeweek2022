@@ -16,8 +16,8 @@
 <div class="bg-white my-8 sm:flex">
   <div class="hidden md:flex md:flex-wrap md:w-full"></div>
   {% for day in schedule_days %}
-  <div class="p-2 sm:flex-wrap sm:w-full sm:text-center{% if day.1 == show_day %} bg-purple-300{% endif %}">
-    {% if day.1 == show_day %}
+  <div class="p-2 sm:flex-wrap sm:w-full sm:text-center{% if show_day == day.1 %} bg-purple-300{% endif %}">
+    {% if show_day == day.1 %}
     {{ day.2 }}
     {% else %}
     <a href="{% url 'schedule_list' day.0 %}">{{ day.2 }}</a>
@@ -32,7 +32,7 @@
   <p><i class="fal fa-calculator"></i> <strong>Showing {{ event_count }} events</strong></p>
 
   {% for day in days_with_events %}
-    {% if show_day == day.2 or show_day == "all" and day.3|length > 0 %}
+    {% if day.3|length > 0 %}
     <h2>{{ day.1 }}</h2>
 
     <div class="bg-white p-0 my-8 border-2 border-gray-300 divide-y-2 divide-solid divide-gray-300">

@@ -337,10 +337,12 @@ def _set_event_day_number(event, tz):
     return event
 
 
-def _get_events_query_set(year=None, from_time=None, count_limit=None):
+def _get_events_query_set(year=None, id_filter=None, from_time=None, count_limit=None):
     result = Resource.objects.all().filter(post_type="event", post_status="publish")
     if year is not None:
         result = result.filter(year=year)
+    if id_filter is not None:
+        result = result.filter(id__in=id_filter)
     result = (
         result
         # TODO: very few items like that => try to sort that out without such excludes
@@ -359,16 +361,20 @@ def _get_events_query_set(year=None, from_time=None, count_limit=None):
     return result
 
 
-def _get_events_list(request, favorites=None, year=None):
+def _get_events_list(
+    request, event_day_number_filter=None, id_filter=None, favorites=None, year=None
+):
     """
     Constructs event_list&co. with form and content adjusted to what we need in `show_events()` and `schedule_list()`.
 
     :param request:     request we're serving (for timezone info, etc.)
-    :param favorites:   use given favorites list to fill-in `favorite` flag (None = default = do NOT fill flag)
+    :param event_day_number_filter: filter out events from other than given day (default: no filtering)
+    :param id_filter:   use given list of event IDs (can be favorites list) to filter out all other IDs
+    :param favorites:   use given favorites list (list of event IDs) to fill-in `favorite` flag (None = default = do NOT fill flag)
     :param year:        year for which to get a list (default: all years)
-    :return:            (days_with_events, event_list, event_count)
+    :return:            (days_with_events, event_count)
     """
-    event_list = _get_events_query_set(year=settings.OEW_YEAR)
+    event_list = _get_events_query_set(year=settings.OEW_YEAR, id_filter=id_filter)
     event_count = event_list.count()
 
     # fill in event day numbers based on timezone of the user, optionally also add `favorite` flag
@@ -381,23 +387,35 @@ def _get_events_list(request, favorites=None, year=None):
     # make a list of events per day
     event_list_per_day = {}
     for (_, _, number) in EO_WEEK_DAYS:
+        if event_day_number_filter and event_day_number_filter != number:
+            continue
         event_list_per_day[number] = []
     for event in event_list:
+        if (
+            event_day_number_filter
+            and event_day_number_filter != event.event_day_number
+        ):
+            continue
         event_list_per_day[event.event_day_number].append(event)
 
-    # merge event_list_per_day with EO_WEEK_DAYS
+    # merge event_list_per_day with EO_WEEK_DAYS, skip days with no events
     # (note: Yes, not very nice and efficient, but since day numbers depend in timezone from request ...)
     days_with_events = []
     for (name, name_date, number) in EO_WEEK_DAYS:
+        if event_day_number_filter and event_day_number_filter != number:
+            continue
+        if event_day_number_filter is not None:
+            # adjust event count if showing only subset
+            event_count = len(event_list_per_day[number])
+        if len(event_list_per_day[number]) <= 0:
+            continue
         days_with_events.append((name, name_date, number, event_list_per_day[number]))
 
-    return (days_with_events, event_list, event_count)
+    return (days_with_events, event_count)
 
 
 def show_events(request):
-    (days_with_events, event_list, event_count) = _get_events_list(
-        request, year=settings.OEW_YEAR
-    )
+    (days_with_events, event_count) = _get_events_list(request, year=settings.OEW_YEAR)
     current_time_utc = djtz.now()
     comming_up_next_list = _get_events_query_set(
         year=settings.OEW_YEAR,
@@ -582,20 +600,18 @@ def schedule_list(request, day):
     """schedule: list of events for given day in current year (=settings.OEW_YEAR)"""
     if day not in SCHEDULE_DAYS:
         raise Http404("Page not found.")
+    show_only_day = SCHEDULE_DAYS[day][1]
 
     favorites = []
     if SESSION_FAVORITES in request.session:
         favorites = request.session[SESSION_FAVORITES]
-    (days_with_events, event_list, event_count) = _get_events_list(
-        request, favorites=favorites, year=settings.OEW_YEAR
-    )
 
-    # filter out selected day + (maybe) fill-in event counts per day:
-    show_only_day = SCHEDULE_DAYS[day][1]
-    if day != SCHEDULE_DAY_ALL:
-        for (_, _, number, event_list) in days_with_events:
-            if number == show_only_day:
-                event_count = len(event_list)
+    (days_with_events, event_count) = _get_events_list(
+        request,
+        event_day_number_filter=None if day == SCHEDULE_DAY_ALL else show_only_day,
+        favorites=favorites,
+        year=settings.OEW_YEAR,
+    )
 
     current_time_utc = djtz.now()
     context = {
