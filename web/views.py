@@ -333,6 +333,31 @@ def _events_query_set(year=None):
     )  # "Lower" = for case-insensitive sorting
 
 
+def _events_list(request, favorites=None, year=None):
+    """
+    Constructs event_list&co. with form and content adjusted to what we need in `show_events()` and `schedule_list()`.
+
+    :param request:     request we're serving (for timezone info, etc.)
+    :param favorites:   use given favorites list to fill-in `favorite` flag (None = default = do NOT fill flag)
+    :param year:        year for which to get a list (default: all years)
+    :return:        (event_list, event_count)
+    """
+    event_list = _events_query_set(year=settings.OEW_YEAR)
+    event_count = event_list.count()
+
+    # fill in event day numbers based on timezone of the user, optionally also add `favorite` flag
+    tz = pytz.timezone(get_timezone(request))
+    for event in event_list:
+        _set_event_day_number(event, tz)
+        if favorites:
+            event.favorite = event.id in favorites
+
+    # sort django queryset by UTC (property) values, not by local timezone
+    event_list = sorted(event_list, key=lambda item: item.event_time)
+
+    return (event_list, event_count)
+
+
 # TODO: compute from settings.OEW_RANGE[0]
 EO_WEEK_DAYS = [
     ("Monday", "Monday, March 6", "1"),
@@ -347,18 +372,8 @@ EO_WEEK_DAYS = [
 
 
 def show_events(request):
-    request_timezone = request.GET.get("timezone", "local")  # "local" = default
-    event_list = _events_query_set(year=settings.OEW_YEAR)
-
-    event_count = event_list.count()
-    tz = pytz.timezone(get_timezone(request))
-    for event in event_list:
-        _set_event_day_number(event, tz)
-
-    # sort django queryset by UTC (property) values, not by local timezone
-    event_list = sorted(event_list, key=lambda item: item.event_time)
+    (event_list, event_count) = _events_list(request, year=settings.OEW_YEAR)
     current_time_utc = djtz.now()
-
     context = {
         "title": "OE Week %s Events" % settings.OEW_YEAR,
         "days": EO_WEEK_DAYS,
@@ -537,18 +552,15 @@ def schedule_list(request, day):
     """schedule: list of events for given day in current year (=settings.OEW_YEAR)"""
     if day not in SCHEDULE_DAYS:
         raise Http404("Page not found.")
-    event_list = _events_query_set(year=settings.OEW_YEAR)
-    event_count = event_list.count()
-    tz = pytz.timezone(get_timezone(request))
 
     favorites = []
     if SESSION_FAVORITES in request.session:
         favorites = request.session[SESSION_FAVORITES]
+    (event_list, event_count) = _events_list(
+        request, favorites=favorites, year=settings.OEW_YEAR
+    )
 
-    for event in event_list:
-        _set_event_day_number(event, tz)
-        event.favorite = event.id in favorites
-
+    # filter out selected day + (maybe) fill-in event counts per day:
     show_only_day = SCHEDULE_DAYS[day][1]
     eo_week_days_extended = EO_WEEK_DAYS
     if day != SCHEDULE_DAY_ALL:
@@ -576,10 +588,7 @@ def schedule_list(request, day):
                 (name, name_date, number, event_count_per_day[number])
             )
 
-    # sort django queryset by UTC (property) values, not by local timezone
-    event_list = sorted(event_list, key=lambda item: item.event_time)
     current_time_utc = djtz.now()
-
     context = {
         "title": "Schedule %s" % settings.OEW_YEAR,
         "days": eo_week_days_extended,
