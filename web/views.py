@@ -525,7 +525,7 @@ def show_event_detail(request, year, slug):
     return render(request, "web/event_detail.html", context=context)
 
 
-def _resources_query_set(year=None):
+def _resources_query_set(year=None, ordering=ResourceOrdering.DEFAULT):
     result = Resource.objects.all().filter(post_type="resource", post_status="publish")
 
     # filters (a.k.a. DB's WHERE)
