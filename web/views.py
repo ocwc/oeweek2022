@@ -352,9 +352,6 @@ def _events_list(request, favorites=None, year=None):
         if favorites:
             event.favorite = event.id in favorites
 
-    # sort django queryset by UTC (property) values, not by local timezone
-    event_list = sorted(event_list, key=lambda item: item.event_time)
-
     return (event_list, event_count)
 
 
