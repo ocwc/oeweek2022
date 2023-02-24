@@ -4,6 +4,13 @@
 
 {% block extra_head %}
 <script src="{% static 'web/js/htmx.min.js' %}" defer></script>
+<script>
+  function copyToClipBoard() {
+	var content = document.getElementById('permalink');
+	content.select();
+	navigator.clipboard.writeText(content.value);
+  }
+</script>
 {% endblock extra_head %}
 
 {% block content %}
@@ -65,11 +72,14 @@
     {% endif %}
   {% endfor %}
 
+  {% if my_favorites_permalink %}
   <h2>Share with others</h2>
 
-  {% if my_favorites_permalink %}
-  <p class="my-8">To share this list with others, use following link:
-    <a href="{{ my_favorites_permalink }}">{{ my_favorites_permalink }}</a></p>
+  <p class="my-8">To share this list with others, you can use following link:</p>
+  <p><form class="mb-16">
+    <input id="permalink" value="{{ my_favorites_permalink }}" class="w-1/2 rounded px-4 py-3">
+    <button class="button-outline" type="button" onclick="copyToClipBoard()"><i class="fa-light fa-copy"></i></button>
+  </form></p>
   {% endif %}
 
   <p>
