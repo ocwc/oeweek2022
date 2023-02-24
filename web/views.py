@@ -310,6 +310,7 @@ def _init_oe_week_days():
     end_day = arrow.get(settings.OEW_RANGE[1])
     day = start_day
     while day < end_day:
+        # TODO: use proper class instead of tuple, so that we can use say `name` instead of `1` in the code and templates
         oe_week_days.append(
             (day.format("dddd"), day.format("dddd, MMMM D"), day.format("d"))
         )
@@ -365,7 +366,7 @@ def _get_events_list(request, favorites=None, year=None):
     :param request:     request we're serving (for timezone info, etc.)
     :param favorites:   use given favorites list to fill-in `favorite` flag (None = default = do NOT fill flag)
     :param year:        year for which to get a list (default: all years)
-    :return:        (event_list, event_count)
+    :return:            (days_with_events, event_list, event_count)
     """
     event_list = _get_events_query_set(year=settings.OEW_YEAR)
     event_count = event_list.count()
@@ -377,11 +378,26 @@ def _get_events_list(request, favorites=None, year=None):
         if favorites:
             event.favorite = event.id in favorites
 
-    return (event_list, event_count)
+    # make a list of events per day
+    event_list_per_day = {}
+    for (_, _, number) in EO_WEEK_DAYS:
+        event_list_per_day[number] = []
+    for event in event_list:
+        event_list_per_day[event.event_day_number].append(event)
+
+    # merge event_list_per_day with EO_WEEK_DAYS
+    # (note: Yes, not very nice and efficient, but since day numbers depend in timezone from request ...)
+    days_with_events = []
+    for (name, name_date, number) in EO_WEEK_DAYS:
+        days_with_events.append((name, name_date, number, event_list_per_day[number]))
+
+    return (days_with_events, event_list, event_count)
 
 
 def show_events(request):
-    (event_list, event_count) = _get_events_list(request, year=settings.OEW_YEAR)
+    (days_with_events, event_list, event_count) = _get_events_list(
+        request, year=settings.OEW_YEAR
+    )
     current_time_utc = djtz.now()
     comming_up_next_list = _get_events_query_set(
         year=settings.OEW_YEAR,
@@ -390,8 +406,7 @@ def show_events(request):
     )
     context = {
         "title": "OE Week %s Events" % settings.OEW_YEAR,
-        "days": EO_WEEK_DAYS,
-        "event_list": event_list,
+        "days_with_events": days_with_events,
         "comming_up_next_list": comming_up_next_list,
         "current_time_utc": current_time_utc,
         "event_count": event_count,
@@ -571,43 +586,21 @@ def schedule_list(request, day):
     favorites = []
     if SESSION_FAVORITES in request.session:
         favorites = request.session[SESSION_FAVORITES]
-    (event_list, event_count) = _get_events_list(
+    (days_with_events, event_list, event_count) = _get_events_list(
         request, favorites=favorites, year=settings.OEW_YEAR
     )
 
     # filter out selected day + (maybe) fill-in event counts per day:
     show_only_day = SCHEDULE_DAYS[day][1]
-    eo_week_days_extended = EO_WEEK_DAYS
     if day != SCHEDULE_DAY_ALL:
-        # note: It would be nice to speed that up (by having a query filtered based on 'day') but since we compute
-        # timezone per request/user, filtering is request/session/user dependent ...
-        new_event_list = []
-        for event in event_list:
-            if event.event_day_number == show_only_day:
-                new_event_list.append(event)
-        event_list = new_event_list
-        event_count = len(event_list)
-        # eo_week_days_extended left as is, no need to do per-day count if we get only same number as already in `event_count`
-    else:
-        # TODO: not very nice => later rework event_list (here and in events_lsit) to something like `[ [ <list for day "1"> ], .... ]` and then we can simplify iterations in templates and use also `{% for ... {% empty %} ... {% endfor %}`
-        event_count_per_day = {}
-        for (name, name_date, number) in EO_WEEK_DAYS:
-            event_count_per_day[number] = 0
-        for event in event_list:
-            if event.event_day_number in event_count_per_day:
-                event_count_per_day[event.event_day_number] += 1
-        # e.g. "days[]" will contain also per-day counts for "day=all"
-        eo_week_days_extended = []
-        for (name, name_date, number) in EO_WEEK_DAYS:
-            eo_week_days_extended.append(
-                (name, name_date, number, event_count_per_day[number])
-            )
+        for (_, _, number, event_list) in days_with_events:
+            if number == show_only_day:
+                event_count = len(event_list)
 
     current_time_utc = djtz.now()
     context = {
         "title": "Schedule %s" % settings.OEW_YEAR,
-        "days": eo_week_days_extended,
-        "event_list": event_list,
+        "days_with_events": days_with_events,
         "current_time_utc": current_time_utc,
         "event_count": event_count,
         "days_to_go": days_to_go,
