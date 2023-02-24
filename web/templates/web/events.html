@@ -14,12 +14,12 @@
 <h1>{{ title }}</h1>
 
 {% if event_count %}
-  {% if comming_up_next_list|length > 0 %}
+  {% if coming_up_next_list|length > 0 %}
   <div style="background-color: #dddddd; padding-left: 20px">
     <h2>Coming up next:</h2>
 
     <ul>
-      {% for event in comming_up_next_list %}
+      {% for event in coming_up_next_list %}
         <li><a href="/events/{{event.year}}/{{event.slug}}/">{{ event.title }} (in {{ current_time_utc | timesince:event.event_time }})&nbsp;</a></li>
       {% endfor %}
     </ul>

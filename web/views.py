@@ -443,7 +443,7 @@ def _get_events_list(
 def show_events(request):
     (days_with_events, event_count) = _get_events_list(request, year=settings.OEW_YEAR)
     current_time_utc = djtz.now()
-    comming_up_next_list = _get_events_query_set(
+    coming_up_next_list = _get_events_query_set(
         year=settings.OEW_YEAR,
         from_time=current_time_utc,
         count_limit=settings.COMING_UP_NEXT_COUNT,
@@ -451,7 +451,7 @@ def show_events(request):
     context = {
         "title": "OE Week %s Events" % settings.OEW_YEAR,
         "days_with_events": days_with_events,
-        "comming_up_next_list": comming_up_next_list,
+        "coming_up_next_list": coming_up_next_list,
         "current_time_utc": current_time_utc,
         "event_count": event_count,
         "days_to_go": days_to_go,
@@ -655,9 +655,15 @@ def schedule_list(request, day):
     )
 
     current_time_utc = djtz.now()
+    coming_up_next_list = _get_events_query_set(
+        year=settings.OEW_YEAR,
+        from_time=current_time_utc,
+        count_limit=settings.COMING_UP_NEXT_COUNT,
+    )
     context = {
         "title": "Schedule %s" % settings.OEW_YEAR,
         "days_with_events": days_with_events,
+        "coming_up_next_list": coming_up_next_list,
         "current_time_utc": current_time_utc,
         "event_count": event_count,
         "days_to_go": days_to_go,
