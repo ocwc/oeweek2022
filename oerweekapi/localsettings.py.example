@@ -19,3 +19,8 @@ DEBUG = False
 # In case Sing-up and Profile functionality is NOT needed:
 # (Note, since that switch is meant as temporary, it does NOT fully disable magiclink and other associated functionality. And later will be removed. => TODO)
 #SIGNUP_ENABLED = False
+
+# import base64
+# import os
+# print(base64.urlsafe_b64encode(os.urandom(32)))
+#FAVORITES_CRYPTO_KEY = b'AAA'

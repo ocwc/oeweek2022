@@ -221,7 +221,7 @@ DJANGO_WYSIWYG_FLAVOR = "ckeditor"
 LOGIN_URL = "/api-auth/login/"
 
 # all in UTC, see TIME_ZONE above
-# TODO: refactor into CONSTANCE_CONFIG
+# TODO: refactor into CONSTANCE_CONFIG, but make sure than to do some sanity checks, since other code (like views.SCHEDULE_DAYS) assumes OEW_RANGE from "Mon" to "Fri"
 OEW_YEAR = 2023
 OEW_RANGE = ["2023-03-06 00:00:00", "2023-03-10 23:59:59"]
 # OEW_CFP_OPEN = "2023-01-16"
@@ -282,6 +282,10 @@ MAGICLINK_ALLOW_SUPERUSER_LOGIN = False
 MAGICLINK_ALLOW_STAFF_LOGIN = False
 MAGICLINK_IGNORE_IS_ACTIVE_FLAG = False
 MAGICLINK_ANTISPAM_FORMS = True
+
+
+COMING_UP_NEXT_COUNT = 3
+MAX_FAVORITES = 128
 
 
 CI = os.environ.get("CI")
