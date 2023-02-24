@@ -317,7 +317,7 @@ def _set_event_day_number(event, tz):
     return event
 
 
-def _events_query_set(year=None, from_time=None, count_limit=None):
+def _get_events_query_set(year=None, from_time=None, count_limit=None):
     result = Resource.objects.all().filter(post_type="event", post_status="publish")
     if year is not None:
         result = result.filter(year=year)
@@ -339,7 +339,7 @@ def _events_query_set(year=None, from_time=None, count_limit=None):
     return result
 
 
-def _events_list(request, favorites=None, year=None):
+def _get_events_list(request, favorites=None, year=None):
     """
     Constructs event_list&co. with form and content adjusted to what we need in `show_events()` and `schedule_list()`.
 
@@ -348,7 +348,7 @@ def _events_list(request, favorites=None, year=None):
     :param year:        year for which to get a list (default: all years)
     :return:        (event_list, event_count)
     """
-    event_list = _events_query_set(year=settings.OEW_YEAR)
+    event_list = _get_events_query_set(year=settings.OEW_YEAR)
     event_count = event_list.count()
 
     # fill in event day numbers based on timezone of the user, optionally also add `favorite` flag
@@ -381,9 +381,9 @@ EO_WEEK_DAYS = _init_oe_week_days()
 
 
 def show_events(request):
-    (event_list, event_count) = _events_list(request, year=settings.OEW_YEAR)
+    (event_list, event_count) = _get_events_list(request, year=settings.OEW_YEAR)
     current_time_utc = djtz.now()
-    comming_up_next_list = _events_query_set(
+    comming_up_next_list = _get_events_query_set(
         year=settings.OEW_YEAR,
         from_time=current_time_utc,
         count_limit=settings.COMING_UP_NEXT_COUNT,
@@ -403,7 +403,7 @@ def show_events(request):
 
 def show_events_library(request):
     """library: list of resources for all year"""
-    f = EventFilter(request.GET, queryset=_events_query_set())
+    f = EventFilter(request.GET, queryset=_get_events_query_set())
     event_list = f.qs
     events_count_total = event_list.count()
 
@@ -571,7 +571,7 @@ def schedule_list(request, day):
     favorites = []
     if SESSION_FAVORITES in request.session:
         favorites = request.session[SESSION_FAVORITES]
-    (event_list, event_count) = _events_list(
+    (event_list, event_count) = _get_events_list(
         request, favorites=favorites, year=settings.OEW_YEAR
     )
 
