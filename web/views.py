@@ -407,7 +407,7 @@ def _get_events_list(
     tz = pytz.timezone(get_timezone(request))
     for event in event_list:
         _set_event_day_number(event, tz)
-        if favorites:
+        if favorites is not None:
             event.favorite = event.id in favorites
 
     # make a list of events per day
