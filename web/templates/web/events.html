@@ -19,7 +19,7 @@
 
     <ul>
       {% for event in event_list|slice:":3" %}
-        <li><a href="/events/{{event.year}}/{{event.slug}}/">{{ event.title }}&nbsp;</a></li>
+        <li><a href="/events/{{event.year}}/{{event.slug}}/">{{ event.title }} (in {{ current_time_utc | timesince:event.event_time }})&nbsp;</a></li>
       {% endfor %}
     </ul>
 
