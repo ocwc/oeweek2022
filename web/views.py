@@ -8,6 +8,7 @@ import xlwt
 
 from itertools import groupby
 from datetime import datetime, timezone
+from enum import Enum
 
 import django.utils.timezone as djtz
 
@@ -330,6 +331,11 @@ def _init_oe_week_days():
 EO_WEEK_DAYS = _init_oe_week_days()
 
 
+class ResourceOrdering(Enum):
+    DEFAULT = 1
+    LIBRARY = 2
+
+
 def _set_event_day_number(event, tz):
     result = "other"
     if not event.event_time:
@@ -344,8 +350,16 @@ def _set_event_day_number(event, tz):
     return event
 
 
-def _get_events_query_set(year=None, id_filter=None, from_time=None, count_limit=None):
+def _get_events_query_set(
+    year=None,
+    id_filter=None,
+    from_time=None,
+    count_limit=None,
+    ordering=ResourceOrdering.DEFAULT,
+):
     result = Resource.objects.all().filter(post_type="event", post_status="publish")
+
+    # filters (a.k.a. DB's WHERE)
     if year is not None:
         result = result.filter(year=year)
     if id_filter is not None:
@@ -359,8 +373,13 @@ def _get_events_query_set(year=None, id_filter=None, from_time=None, count_limit
     )
     if from_time:
         result = result.filter(event_time__gte=from_time)
+
     # order
-    result = result.order_by("event_time", Lower("title"))
+    if ordering == ResourceOrdering.LIBRARY:
+        result = result.order_by("-year", Lower("title"))
+    else:
+        result = result.order_by("event_time", Lower("title"))
+
     # limit (after order)
     if count_limit:
         result = result[:count_limit]
@@ -443,10 +462,10 @@ def show_events(request):
 
 def show_events_library(request):
     """library: list of resources for all year"""
-    f = EventFilter(request.GET, queryset=_get_events_query_set())
+    f = EventFilter(
+        request.GET, queryset=_get_events_query_set(ordering=ResourceOrdering.LIBRARY)
+    )
     event_list = f.qs
-    # TODO: handle with custom 'order' parameter for _events_query_set()
-    #event_list = f.qs.order_by("-year")
     events_count_total = event_list.count()
 
     paginator = Paginator(event_list, LIBRARY_RESULTS_PER_PAGE)
@@ -501,7 +520,6 @@ def show_event_detail(request, year, slug):
         raise Http404("Event %s/%s not found" % (year, slug))
     context = {
         "obj": event,
-        #XXX "page": { "title": event.title },  # add title to base.py
         "reload_after_timezone_change": True,
     }
     return render(request, "web/event_detail.html", context=context)
@@ -509,9 +527,18 @@ def show_event_detail(request, year, slug):
 
 def _resources_query_set(year=None):
     result = Resource.objects.all().filter(post_type="resource", post_status="publish")
+
+    # filters (a.k.a. DB's WHERE)
     if year is not None:
         result = result.filter(year=year)
-    return result.order_by(Lower("title"))  # "Lower" = for case-insensitive sorting
+
+    # order
+    if ordering == ResourceOrdering.LIBRARY:
+        result = result.order_by("-year", Lower("title"))
+    else:
+        result = result.order_by(Lower("title"))
+
+    return result
 
 
 def show_resources(request):
@@ -531,10 +558,10 @@ def show_resources(request):
 
 def show_resources_library(request):
     """library: list of resources for all year"""
-    f = AssetFilter(request.GET, queryset=_resources_query_set())
+    f = AssetFilter(
+        request.GET, queryset=_resources_query_set(ordering=ResourceOrdering.LIBRARY)
+    )
     resource_list = f.qs
-    # TODO: handle with custom 'order' parameter for _events_query_set()
-    #event_list = f.qs.order_by("-year")
     resource_count_total = resource_list.count()
 
     paginator = Paginator(resource_list, LIBRARY_RESULTS_PER_PAGE)
@@ -587,7 +614,6 @@ def show_resource_detail(request, year, slug):
         raise Http404("Event %s/%s not found" % (year, slug))
     context = {
         "obj": resource,
-        #XXX "page": { "title": resource.title },  # add title to base.py
     }
     return render(request, "web/resource_detail.html", context=context)
 
