@@ -303,6 +303,25 @@ def thanks(request):
     return render(request, "web/thanks.html")
 
 
+def _init_oe_week_days():
+    oe_week_days = []
+
+    start_day = arrow.get(settings.OEW_RANGE[0])
+    end_day = arrow.get(settings.OEW_RANGE[1])
+    day = start_day
+    while day < end_day:
+        oe_week_days.append(
+            (day.format("dddd"), day.format("dddd, MMMM D"), day.format("d"))
+        )
+        day = day.shift(days=1)
+    oe_week_days.append(("Other", "Other days", "other"))
+
+    return oe_week_days
+
+
+EO_WEEK_DAYS = _init_oe_week_days()
+
+
 def _set_event_day_number(event, tz):
     result = "other"
     if not event.event_time:
@@ -359,25 +378,6 @@ def _get_events_list(request, favorites=None, year=None):
             event.favorite = event.id in favorites
 
     return (event_list, event_count)
-
-
-def _init_oe_week_days():
-    oe_week_days = []
-
-    start_day = arrow.get(settings.OEW_RANGE[0])
-    end_day = arrow.get(settings.OEW_RANGE[1])
-    day = start_day
-    while day < end_day:
-        oe_week_days.append(
-            (day.format("dddd"), day.format("dddd, MMMM D"), day.format("d"))
-        )
-        day = day.shift(days=1)
-    oe_week_days.append(("Other", "Other days", "other"))
-
-    return oe_week_days
-
-
-EO_WEEK_DAYS = _init_oe_week_days()
 
 
 def show_events(request):
