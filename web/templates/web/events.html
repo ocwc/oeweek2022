@@ -14,11 +14,12 @@
 <h1>{{ title }}</h1>
 
 {% if event_count %}
+  {% if comming_up_next_list|length > 0 %}
   <div style="background-color: #dddddd; padding-left: 20px">
     <h2>Coming up next:</h2>
 
     <ul>
-      {% for event in event_list|slice:":3" %}
+      {% for event in comming_up_next_list %}
         <li><a href="/events/{{event.year}}/{{event.slug}}/">{{ event.title }}&nbsp;</a></li>
       {% endfor %}
     </ul>
@@ -27,6 +28,7 @@
   </div>
   <br>
   <br>
+  {% endif %}
 
   <p><i class="fal fa-hand-pointer"></i> <strong>Please click on a date to expand the details.</strong></p>
 

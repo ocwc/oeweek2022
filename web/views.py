@@ -317,7 +317,7 @@ def _set_event_day_number(event, tz):
     return event
 
 
-def _events_query_set(year=None):
+def _events_query_set(year=None, from_time=None, count_limit=None):
     result = Resource.objects.all().filter(post_type="event", post_status="publish")
     if year is not None:
         result = result.filter(year=year)
@@ -328,9 +328,15 @@ def _events_query_set(year=None):
         .exclude(event_source_timezone__isnull=True)
         .exclude(event_time__isnull=True)
     )
-    return result.order_by(
-        "event_time", Lower("title")
-    )  # "Lower" = for case-insensitive sorting
+    if from_time:
+        result = result.filter(event_time__gte=from_time)
+    # order
+    result = result.order_by("event_time", Lower("title"))
+    # limit (after order)
+    if count_limit:
+        result = result[:count_limit]
+
+    return result
 
 
 def _events_list(request, favorites=None, year=None):
@@ -371,10 +377,16 @@ EO_WEEK_DAYS = [
 def show_events(request):
     (event_list, event_count) = _events_list(request, year=settings.OEW_YEAR)
     current_time_utc = djtz.now()
+    comming_up_next_list = _events_query_set(
+        year=settings.OEW_YEAR,
+        from_time=current_time_utc,
+        count_limit=settings.COMING_UP_NEXT_COUNT,
+    )
     context = {
         "title": "OE Week %s Events" % settings.OEW_YEAR,
         "days": EO_WEEK_DAYS,
         "event_list": event_list,
+        "comming_up_next_list": comming_up_next_list,
         "current_time_utc": current_time_utc,
         "event_count": event_count,
         "days_to_go": days_to_go,
