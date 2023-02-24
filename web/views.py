@@ -361,17 +361,23 @@ def _events_list(request, favorites=None, year=None):
     return (event_list, event_count)
 
 
-# TODO: compute from settings.OEW_RANGE[0]
-EO_WEEK_DAYS = [
-    ("Monday", "Monday, March 6", "1"),
-    ("Tuesday", "Tuesday, March 7", "2"),
-    ("Wednesday", "Wednesday, March 8", "3"),
-    ("Thursday", "Thursday, March 9", "4"),
-    ("Friday", "Friday, March 10", "5"),
-    # ('Saturday', 'Saturday, March 11', "6"),
-    # ('Sunday', 'Sunday, March 12', "0"),
-    ("Other", "Other days", "other"),
-]
+def _init_oe_week_days():
+    oe_week_days = []
+
+    start_day = arrow.get(settings.OEW_RANGE[0])
+    end_day = arrow.get(settings.OEW_RANGE[1])
+    day = start_day
+    while day < end_day:
+        oe_week_days.append(
+            (day.format("dddd"), day.format("dddd, MMMM D"), day.format("d"))
+        )
+        day = day.shift(days=1)
+    oe_week_days.append(("Other", "Other days", "other"))
+
+    return oe_week_days
+
+
+EO_WEEK_DAYS = _init_oe_week_days()
 
 
 def show_events(request):
