@@ -424,6 +424,7 @@ def show_event_detail(request, year, slug):
         raise Http404("Event %s/%s not found" % (year, slug))
     context = {
         "obj": event,
+        # "page": { "title": event.title },  # add title to base.py
         "reload_after_timezone_change": True,
     }
     return render(request, "web/event_detail.html", context=context)
@@ -505,7 +506,10 @@ def show_resource_detail(request, year, slug):
     resource = get_object_or_404(Resource, year=year, slug=slug, post_type="resource")
     if resource.post_status != "publish" and not request.user.is_staff:
         raise Http404("Event %s/%s not found" % (year, slug))
-    context = {"obj": resource}
+    context = {
+        "obj": resource,
+        # "page": { "title": resource.title },  # add title to base.py
+    }
     return render(request, "web/resource_detail.html", context=context)
 
 
