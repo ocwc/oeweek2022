@@ -1,3 +1,4 @@
+import os
 from sqlite3 import OperationalError
 
 from django.apps import AppConfig
@@ -42,6 +43,9 @@ class WebConfig(AppConfig):
             print(
                 "WARNING, back-end stuff disabled => scheduling of back-end tasks skipped"
             )
+            return
+        if not os.environ.get("RUN_MAIN"):
+            print("not a main runserver => scheduling of back-end tasks skipped")
             return
 
         from django_q.tasks import Schedule
