@@ -484,7 +484,7 @@ def show_events_library(request):
     current_time_utc = djtz.now()
     events_count = event_list.object_list.count()
     context = {
-        "title": "Past Events",
+        "title": "All Events",
         "current_time_utc": current_time_utc,
         "event_list": event_list,
         "event_count": events_count,
@@ -621,7 +621,7 @@ def show_resource_detail(request, year, slug):
 SCHEDULE_DAY_ALL = "all"
 SCHEDULE_DAY_MON = "mon"
 SCHEDULE_DAY_TUE = "tue"
-SCHEDULE_DAY_WED = "web"
+SCHEDULE_DAY_WED = "wed"
 SCHEDULE_DAY_THU = "thu"
 SCHEDULE_DAY_FRI = "fri"
 SCHEDULE_DAY_OTHER = "other"
