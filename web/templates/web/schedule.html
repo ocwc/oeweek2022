@@ -20,6 +20,21 @@
 
 <h1>{{ title }}</h1>
 
+<p>
+  <form hx-post="{% if reload_after_timezone_change %}{% url 'set_timezone_reload' %}{% else %}{% url 'set_timezone' %}{% endif %}"
+        hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}'
+        hx-trigger="change" hx-target="#timezone_result">
+      <i class="fal fa-clock"></i> <strong>current time: <span style='background-color: #ffffcc;'>{{ current_time_utc | date:'M d, Y H:i' }}</span></strong>
+      <select name="timezone" class="px-3 py-2 rounded-lg">
+          {% for tz in timezones %}
+          <option value="{{ tz }}"{% if tz == current_timezone %} selected{% endif %}>{{ tz }}</option>
+          {% endfor %}
+      </select>
+      (UTC time: {{ current_time_utc | utc | date:'M d, Y H:i' }})
+  </form>
+</p>
+<div class="hidden" id="timezone_result">/{{ current_timezone }}/</div>
+
   {% if coming_up_next_list|length > 0 %}
   <div style="background-color: #dddddd; padding-left: 20px">
     <h2>Coming up next:</h2>
