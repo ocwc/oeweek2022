@@ -484,7 +484,7 @@ def show_events_library(request):
     current_time_utc = djtz.now()
     events_count = event_list.object_list.count()
     context = {
-        "title": "Past Events",
+        "title": "All Events",
         "current_time_utc": current_time_utc,
         "event_list": event_list,
         "event_count": events_count,
