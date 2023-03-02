@@ -24,7 +24,7 @@
   <form hx-post="{% if reload_after_timezone_change %}{% url 'set_timezone_reload' %}{% else %}{% url 'set_timezone' %}{% endif %}"
         hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}'
         hx-trigger="change" hx-target="#timezone_result">
-      <i class="fal fa-clock"></i> <strong>current time: <span style='background-color: #ffffcc;'>{{ current_time_utc | date:'M d, Y H:i' }}</span></strong>
+      <i class="fal fa-clock"></i> current time: <mark>{{ current_time_utc | date:'M d, Y H:i' }}</mark>
       <select name="timezone" class="px-3 py-2 rounded-lg">
           {% for tz in timezones %}
           <option value="{{ tz }}"{% if tz == current_timezone %} selected{% endif %}>{{ tz }}</option>
@@ -36,16 +36,16 @@
 <div class="hidden" id="timezone_result">/{{ current_timezone }}/</div>
 
   {% if coming_up_next_list|length > 0 %}
-  <div style="background-color: #dddddd; padding-left: 20px">
-    <h2>Coming up next:</h2>
+  <div class="mt-4">
+    <p class="text-lg mb-2"><i class="fa-sharp fa-regular fa-alarm-exclamation"></i> Coming up next:</p>
 
-    <ul>
+    <ul class="list-none p-0 my-0 flex flex-wrap">
       {% for event in coming_up_next_list %}
-        <li><a href="/events/{{event.year}}/{{event.slug}}/">{{ event.title }} (in {{ current_time_utc | timesince:event.event_time }})&nbsp;</a></li>
+        <li class="item-content bg-white border-2 border-gray-200 p-4"><a class="hover:text-purple-800" href="/events/{{event.year}}/{{event.slug}}/"><strong>{{ event.title }}</strong> (in {{ current_time_utc | timesince:event.event_time }})&nbsp;</a></li>
       {% endfor %}
     </ul>
 
-    <p style="padding-top: 15px; padding-bottom: 10px;">(See below for a full list)</p>
+    <p class="text-sm mt-2">(See below for a full list)</p>
   </div>
   <br>
   <br>
@@ -73,7 +73,7 @@
 </div>
 
 {% if event_count %}
-  <p><i class="fal fa-calculator"></i> <strong>Showing {{ event_count }} events</strong></p>
+  <p><i class="fal fa-calculator"></i> Showing {{ event_count }} events<p>
 
   {% for day in days_with_events %}
     {% if day.3|length > 0 %}
@@ -119,7 +119,7 @@
     <form hx-post="{% if reload_after_timezone_change %}{% url 'set_timezone_reload' %}{% else %}{% url 'set_timezone' %}{% endif %}"
           hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}'
           hx-trigger="change" hx-target="#timezone_result">
-        <i class="fal fa-clock"></i> <strong>current time: <span style='background-color: #ffffcc;'>{{ current_time_utc | date:'M d, Y H:i' }}</span></strong>
+        <i class="fal fa-clock"></i> current time: <mark>{{ current_time_utc | date:'M d, Y H:i' }}</mark>
         <select name="timezone" class="px-3 py-2 rounded-lg">
             {% for tz in timezones %}
             <option value="{{ tz }}"{% if tz == current_timezone %} selected{% endif %}>{{ tz }}</option>
