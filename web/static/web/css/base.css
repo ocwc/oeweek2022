@@ -149,6 +149,10 @@
 
 /* Mario - Mobile menu */
 
+.nav-primary {
+  display: none;
+}
+
 .menu-item {
   letter-spacing: 1px;
   padding: 0;
@@ -538,12 +542,11 @@ svg {
 .border-t {
   border-top-width: 1px;
 }
-
+/* clashes with Tailwind -> disabled
 .flex {
   display: flex;
 }
 
-/* clashes with Tailwind -> disabled
 .hidden {
   display: none;
 }
